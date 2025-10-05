@@ -118,7 +118,7 @@ O projeto segue o modelo CRC (**Class–Responsibility–Collaboration**) para o
 
 1. **Clone o repositório:**
    ```bash
-   git clone https://github.com/Dev-LFSO/carteirinha-digital.git
+   git clone https://github.com/INF112-Programacao2/20252-team-12.git
    cd carteirinha-digital
    ```
 
