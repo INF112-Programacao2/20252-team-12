@@ -81,12 +81,12 @@ O projeto segue o modelo CRC (**Class–Responsibility–Collaboration**) para o
 
 ## ⚙️ Funcionalidades Principais
 
-✅ Cadastro de pessoas.  
-✅ Consulta de saldo por estudante.  
-✅ Recarga de carteirinha (crédito).  
-✅ Débito automático em compras/sistemas simulados.  
-✅ Ajustes administrativos de saldo.   
-✅ Hierarquia de permissões (Estudante / Administrador).
+- Cadastro de pessoas.  
+- Consulta de saldo por estudante.  
+- Recarga de carteirinha (crédito).  
+- Débito automático em compras/sistemas simulados.  
+- Ajustes administrativos de saldo.   
+- Hierarquia de permissões (Estudante / Administrador).
 
 ---
 
