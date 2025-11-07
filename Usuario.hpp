@@ -2,31 +2,32 @@
 #define USUARIO_HPP
 
 #include <string>
+#include <ctime>
 
 // Classe Usuario
 
 class Usuario{
 
     private:
-        std::string nome;                           // Lembrar de ler nome como uma linha inteira
-        std::string data_de_nascimento;             // e dar cin.ignore() depois.
+        std::string nome;                      // Lembrar de ler nome como uma linha inteira
+        time_t data_de_nascimento;             // e dar cin.ignore() depois.
         std::string email;
-        std::string senha;
-
-        std::string getSenha();                     // Senha é privado e apenas a própria
-        void setSenha(std::string _senha);          // classe e suas filhas podem pegar e alterar.
+        std::string senha;        
 
     public:
         Usuario(const std::string& _nome, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha);
         ~Usuario();
 
         std::string getNome();
-        std::string getDataDeNascimento();
+        time_t getDataDeNascimento();
+        std::string getDataDeNascimentoFormatada();
         std::string getEmail();
+        std::string getSenha();  
         
         void setNome(std::string _nome);
         void setDataDeNascimento(std::string _data_de_nascimento);
         void setEmail(std::string _email);
+        void setSenha(std::string _senha);
 };
 
 #endif
