@@ -2,7 +2,7 @@
 #include <vector>
 #include "Usuario.hpp"
 
-std::vector<std::string> split(const std::string& s, char delim) {
+static std::vector<std::string> split(const std::string& s, char delim) {
     std::vector<std::string> elems;
     size_t start = 0;
     while (true) {
@@ -17,7 +17,7 @@ std::vector<std::string> split(const std::string& s, char delim) {
     return elems;
 }
 
-bool validaData(const std::string& data) {
+static bool validaData(const std::string& data) {
     // aceita D/M/YYYY, DD/MM/YYYY, com '/' como separador
     auto parts = split(data, '/');
     if (parts.size() != 3) {
@@ -57,7 +57,7 @@ bool validaData(const std::string& data) {
     return true;
 }
 
-time_t converterStringParaData(const std::string& dataStr) {
+static time_t converterStringParaData(const std::string& dataStr) {
     struct tm tm = {0};
     if (sscanf(dataStr.c_str(), "%d/%d/%d", &tm.tm_mday, &tm.tm_mon, &tm.tm_year) != 3) {
         throw std::invalid_argument("Falha ao interpretar a data. Use D/M/YYYY ou DD/MM/YYYY");
@@ -90,8 +90,9 @@ time_t Usuario::getDataDeNascimento(){
 
 std::string Usuario::getDataDeNascimentoFormatada(){
     char buffer[80];
-    struct tm timeinfo;
-    #if defined(_WIN32) || defined(_WIN64)
+    std::tm timeinfo;
+
+    #if defined(_MSC_VER)
         localtime_s(&timeinfo, &this->data_de_nascimento);
     #elif defined(__unix__) || defined(__APPLE__) || defined(__MACH__)
         localtime_r(&this->data_de_nascimento, &timeinfo);
@@ -100,6 +101,7 @@ std::string Usuario::getDataDeNascimentoFormatada(){
         if (!tmp) return std::string();
         timeinfo = *tmp;
     #endif
+
     strftime(buffer, sizeof(buffer), "%d/%m/%Y", &timeinfo);
     return std::string(buffer);
 }
