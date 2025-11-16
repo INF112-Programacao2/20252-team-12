@@ -2,20 +2,20 @@
 #include "Usuario.hpp"
 #include <iostream>
 
-Estudante::Estudante(const std::string& _nome, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const std::string& _matricula, const std::string& _curso) : Usuario(_nome,_data_de_nascimento, _email, _senha), matricula(_matricula), curso(_curso), empréstimos(){
+Estudante::Estudante(const std::string& _nome, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const std::string& _matricula, const std::string& _curso) : Usuario(_nome,_data_de_nascimento, _email, _senha), matricula(_matricula), curso(_curso), emprestimos(){
     this->carteirinha = new Carteirinha();
 }
 
 Estudante::~Estudante(){
-    for (auto empréstimo : this->empréstimos){
-        delete empréstimo;
+    for (auto emprestimo : this->emprestimos){
+        delete emprestimo;
     }
     delete this->carteirinha;
 }
 
-void Estudante::exibirEmpréstimos(){
-    for (auto emprestimo : this->empréstimos){
-        emprestimo->exibirInformações();
+void Estudante::exibirEmprestimos(){
+    for (auto emprestimo : this->emprestimos){
+        emprestimo->exibirInformacoes();
     }
 }
 void Estudante::pegarLivro(const Biblioteca& biblioteca){
@@ -52,3 +52,36 @@ void Estudante::consultarSaldo(){
 }
 
 void Estudante::comerRU(){}
+
+
+//getters (thales)
+
+std::string Estudante::get_matricula () const {
+    return this-> matricula;
+}
+
+std::string Estudante::get_curso() const {
+    return this->   curso;
+}
+
+Carteirinha* Estudante::get_carteirinha() const {
+    return this ->carteirinha;
+}
+
+std::vector<Emprestimo*> Estudante::get_emprestimos() const {
+    return this->emprestimos;
+}
+
+//setters (thales)
+
+void Estudante::set_matricula(std::string _matricula) {
+    this->matricula = _matricula;
+}
+
+void Estudante::set_curso(std::string _curso) {
+    this->curso = _curso;
+}
+
+void Estudante::set_carteirinha(Carteirinha *_carteirinha){
+    this->carteirinha = _carteirinha;
+}

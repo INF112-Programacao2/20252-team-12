@@ -97,13 +97,13 @@ static time_t converterStringParaData(const std::string& dataStr) {
 int Emprestimo::nextId = 1;
 double Emprestimo::multa = 10.0;            // Pode ser modificado em todos os objetos
 
-Emprestimo::Emprestimo(Estudante& _origem, Livro& _livro, const std::string& _dataDeEmpréstimo, const std::string& _dataDeDevolução){
+Emprestimo::Emprestimo(Estudante& _origem, Livro& _livro, const std::string& _dataDeEmprestimo, const std::string& _dataDeDevolução){
     this->id = nextId++;
     this->origem = &_origem;
     this->livro = &_livro;
     this->devolvido = false;
-    if (validaData(_dataDeEmpréstimo)){
-        this->dataDeEmpréstimo = converterStringParaData(_dataDeEmpréstimo);
+    if (validaData(_dataDeEmprestimo)){
+        this->dataDeEmprestimo = converterStringParaData(_dataDeEmprestimo);
     }
     if (validaData(_dataDeDevolução)){
         this->dataDeDevolução = converterStringParaData(_dataDeDevolução);
@@ -132,8 +132,8 @@ Livro* Emprestimo::getLivro() {
     return this->livro;
 }
 
-std::string Emprestimo::getDataDeEmpréstimo() {
-    return getDataFormatada(this->dataDeEmpréstimo);
+std::string Emprestimo::getDataDeEmprestimo() {
+    return getDataFormatada(this->dataDeEmprestimo);
 }
 
 std::string Emprestimo::getDataDeDevolução() {
@@ -159,9 +159,9 @@ void Emprestimo::setLivro(Livro& _livro) {
     this->livro = &_livro;
 }
 
-void Emprestimo::setDataDeEmpréstimo(std::string _dataDeEmpréstimo) {
-    if (validaData(_dataDeEmpréstimo)){
-        this->dataDeEmpréstimo = converterStringParaData(_dataDeEmpréstimo);
+void Emprestimo::setDataDeEmprestimo(std::string _dataDeEmprestimo) {
+    if (validaData(_dataDeEmprestimo)){
+        this->dataDeEmprestimo = converterStringParaData(_dataDeEmprestimo);
     }
 }
 
@@ -189,6 +189,6 @@ double Emprestimo::calculaValorMulta() {
 void Emprestimo::exibirInformações(){
     std::cout << this->origem->getNome() << " realizou um empréstimo do livro " << this->livro->getTitulo() << " com ID: " << this->livro->getId() << std::endl;
     std::cout << "STATUS: " << ((this->devolvido) ? "Devolvido" : "Não Devolvido") << std::endl;
-    std::cout << "DATA DE EMPRÉSTIMO: " << getDataFormatada(this->dataDeEmpréstimo) << std::endl;
+    std::cout << "DATA DE EMPRÉSTIMO: " << getDataFormatada(this->dataDeEmprestimo) << std::endl;
     std::cout << "DATA DE DEVOLUÇÃO: " << getDataFormatada(this->dataDeDevolução) << std::endl;
 }

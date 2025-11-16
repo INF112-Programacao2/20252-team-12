@@ -9,7 +9,7 @@ class Livro{
         int id;
         std::string titulo;
         std::string autor;
-        std::string tipo;
+        std::string tipo; //não seria melhor gênero? (thales)
         bool disponivel;
         int numExemplaresTotal;
         int numExemplaresDisponiveis;

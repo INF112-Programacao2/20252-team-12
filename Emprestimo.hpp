@@ -14,10 +14,10 @@ class Emprestimo{
         bool devolvido;
         Estudante* origem;
         Livro* livro;
-        time_t dataDeEmpréstimo;
+        time_t dataDeEmprestimo;
         time_t dataDeDevolução;
     public:
-        Emprestimo(Estudante& _origem, Livro& _livro, const std::string& _dataDeEmpréstimo, const std::string& _dataDeDevolução);
+        Emprestimo(Estudante& _origem, Livro& _livro, const std::string& _dataDeEmprestimo, const std::string& _dataDeDevolução);
         ~Emprestimo();
 
         int getId();
@@ -25,7 +25,7 @@ class Emprestimo{
         bool isDevolvido();
         Estudante* getOrigem();
         Livro* getLivro();
-        std::string getDataDeEmpréstimo();
+        std::string getDataDeEmprestimo();
         std::string getDataDeDevolução();
 
         void setId(int _id);
@@ -33,7 +33,7 @@ class Emprestimo{
         void setDevolvido(bool _devolvido);
         void setOrigem(Estudante& _origem);
         void setLivro(Livro& _livro);
-        void setDataDeEmpréstimo(std::string _dataDeEmpréstimo);
+        void setDataDeEmprestimo(std::string _dataDeEmprestimo);
         void setDataDeDevolução(std::string _dataDeDevolução);
 
         double calculaValorMulta();
