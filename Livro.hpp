@@ -33,7 +33,7 @@ class Livro{
         void setNumExemplaresTotal(int _numExemplaresTotal);
         void setNumExemplaresDisponiveis(int _numExemplaresDisponiveis);
         
-        void exibirInformações();
+        void exibirInformacoes();
 };
 
 #endif

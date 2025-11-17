@@ -37,7 +37,7 @@ class Emprestimo{
         void setDataDeDevolução(std::string _dataDeDevolução);
 
         double calculaValorMulta();
-        void exibirInformações();
+        void exibirInformacoes();
 };
 
 #endif

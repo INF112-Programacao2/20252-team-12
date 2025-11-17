@@ -186,7 +186,7 @@ double Emprestimo::calculaValorMulta() {
     return this->multa * diasAtraso;
 }
 
-void Emprestimo::exibirInformações(){
+void Emprestimo::exibirInformacoes(){
     std::cout << this->origem->getNome() << " realizou um empréstimo do livro " << this->livro->getTitulo() << " com ID: " << this->livro->getId() << std::endl;
     std::cout << "STATUS: " << ((this->devolvido) ? "Devolvido" : "Não Devolvido") << std::endl;
     std::cout << "DATA DE EMPRÉSTIMO: " << getDataFormatada(this->dataDeEmprestimo) << std::endl;
