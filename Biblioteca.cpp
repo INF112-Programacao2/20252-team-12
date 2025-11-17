@@ -17,16 +17,16 @@ void Biblioteca::adicionarLivro(Livro& _livro){
     acervo.push_back(&_livro);
 }
 
-void Biblioteca::listarLivrosDisponíveis(){
+void Biblioteca::listarLivrosDisponiveis(){
     for (auto livro : acervo){
         if (livro->isDisponivel()){
-            livro->exibirInformações();
+            livro->exibirInformacoes();
         }
     }
 }
 
 void Biblioteca::listarLivros(){
     for (auto livro : acervo){
-        livro->exibirInformações();
+        livro->exibirInformacoes();
     }
 }
