@@ -35,6 +35,21 @@ void Estudante::exibirEmprestimos(){
     }
 }
 void Estudante::pegarLivro(const Biblioteca& biblioteca){
+    std::cout << "Digite o nome do livro que deseja pegar emprestado (sem acentos): ";
+    Livro* livro_desejado;
+    
+    std::string nome_do_livro;
+    std::getline(std::cin, nome_do_livro);
+
+    /* for (auto livro : biblioteca.acervo) {
+        if (caseInsensitiveComp(nome_do_livro, livro->getNome()) {
+            livro_desejado = livro;
+        }
+    }
+    
+    discutir organizacao da biblioteca **
+    */
+
     // Lógica para escolher livro e pegar
 
     // Livro* livro_escolhido = (livro_escolhido)
@@ -113,9 +128,8 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
     livro_devolvido->getLivro()->setNumExemplaresDisponiveis(livro_devolvido->getLivro()->getNumExemplaresDisponiveis()+1);
 }
 
-
 void Estudante::recarregarCarteirinha(){
-    this->consultarSaldo(); // Opcional
+    this->consultarSaldo(); // Opcional, mostrar o saldo antes
 
     double valor;
     
@@ -138,7 +152,7 @@ void Estudante::recarregarCarteirinha(){
             break;
         }
         catch (std::invalid_argument &e) {
-            std::cout << e.what() << std::endl;
+            std::cerr << e.what() << std::endl;
         }
     }
 
@@ -149,9 +163,6 @@ void Estudante::recarregarCarteirinha(){
 void Estudante::consultarSaldo(){
     std::cout << "Seu saldo é de " << this->carteirinha->getSaldo() << " reais\n";
 }
-
-void Estudante::comerRU(){}
-
 
 //getters (thales)
 
