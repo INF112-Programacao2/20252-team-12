@@ -172,6 +172,16 @@ void Emprestimo::setDataDeDevolução(std::string _dataDeDevolução) {
 }
 
 double Emprestimo::calculaValorMulta() {
+    int diasAtraso = this->getDiasDeAtraso();
+
+    if (diasAtraso <= 0) {
+        return 0.0;
+    }
+    
+    return this->multa * diasAtraso;
+}
+
+int Emprestimo::getDiasDeAtraso() {
     time_t dataAtual;
     time(&dataAtual);  // Obtém o tempo atual
     
@@ -179,11 +189,7 @@ double Emprestimo::calculaValorMulta() {
     
     int diasAtraso = static_cast<int>(diferenca / 86400);
     
-    if (diasAtraso <= 0) {
-        return 0.0;
-    }
-    
-    return this->multa * diasAtraso;
+    return diasAtraso;
 }
 
 void Emprestimo::exibirInformacoes(){

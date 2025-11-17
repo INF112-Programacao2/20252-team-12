@@ -21,6 +21,7 @@ class Emprestimo{
         ~Emprestimo();
 
         int getId();
+        int getDiasDeAtraso();
         double getMulta();
         bool isDevolvido();
         Estudante* getOrigem();
