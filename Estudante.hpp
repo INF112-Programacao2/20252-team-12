@@ -25,7 +25,7 @@ class Estudante : public Usuario{
         void devolverLivro(const Biblioteca& biblioteca);
         void consultarSaldo();
         void recarregarCarteirinha();
-        virtual void comerRU();
+        virtual void comerRU() = 0;
 
         //(thales) vou adicionar os getters e setters dos atributos de estudante
 

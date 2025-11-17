@@ -28,6 +28,6 @@ void EstudantePosGraduacao::set_linhaDePesquisa(std::string _linhaDePesquisa) {
     this -> linhaDePesquisa = _linhaDePesquisa;
 }
 
-void EstudantePosGraduacao::comerRU() override {
+void EstudantePosGraduacao::comerRU() {
 
 }

@@ -20,7 +20,7 @@ class EstudantePosGraduacao : public Estudante {
         void set_tipoPos(std::string _tipoPos);
         void set_linhaDePesquisa(std::string _linhaDePesquisa);
         
-        void comerRU override();
+        void comerRU() override;
 };
 
 #endif

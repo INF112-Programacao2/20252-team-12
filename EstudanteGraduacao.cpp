@@ -21,6 +21,6 @@ void EstudanteGraduacao::set_valorRU(int _valorRU){
     this->valorRU = _valorRU;
 }
 
-void EstudanteGraduacao::comerRU() override {
+void EstudanteGraduacao::comerRU() {
     
 }
