@@ -29,5 +29,5 @@ void EstudantePosGraduacao::set_linhaDePesquisa(std::string _linhaDePesquisa) {
 }
 
 void EstudantePosGraduacao::comerRU() {
-
+    this->get_carteirinha()->debitar(this->get_valorRU());
 }

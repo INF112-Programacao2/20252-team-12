@@ -22,5 +22,5 @@ void EstudanteGraduacao::set_valorRU(int _valorRU){
 }
 
 void EstudanteGraduacao::comerRU() {
-    
+    this->get_carteirinha()->debitar(this->get_valorRU());
 }
