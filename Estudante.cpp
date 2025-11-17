@@ -1,5 +1,6 @@
 #include "Estudante.hpp"
 #include "Usuario.hpp"
+#include <limits>
 #include <iostream>
 
 Estudante::Estudante(const std::string& _nome, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const std::string& _matricula, const std::string& _curso) : Usuario(_nome,_data_de_nascimento, _email, _senha), matricula(_matricula), curso(_curso), emprestimos(){
@@ -40,10 +41,34 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
 }
 
 void Estudante::recarregarCarteirinha(){
-    // Lógica para recarregar Carteirinha
+    this->consultarSaldo(); // Opcional
 
+    double valor;
+    
+    while(1) {
+        std::cout << "Digite o valor a ser depositado: ";
+        std::cin >> valor;
 
-    // this->carteirinha.depositar(valor)
+        try {
+            if (std::cin.fail()) {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                throw std::invalid_argument("O valor deve ser um número\n");
+            }
+            if (valor <= 0) {
+                throw std::invalid_argument("O valor deve ser maior que 0\n");
+            }
+
+            // Limite de deposito?
+
+            break;
+        }
+        catch (std::invalid_argument &e) {
+            std::cout << e.what() << std::endl;
+        }
+    }
+
+    this->carteirinha->depositar(valor);
 
 }
 
