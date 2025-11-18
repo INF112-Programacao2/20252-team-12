@@ -1,11 +1,11 @@
 #include "Administrador.hpp"
 
-Administrador::Administrador(const int &_id):
-    id(_id){}
+Administrador::Administrador(const std::string& _nome, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const int &_id):
+    id(_id), Usuario(_nome, _data_de_nascimento, _email, _senha){}
 
 Administrador::~Administrador(){}
 
-int Administador::get_id() const {
+int Administrador::get_id() const {
     return this->id;
 }
 
@@ -13,7 +13,7 @@ void Administrador::set_id(const int &_id){
     this->id = _id;
 }
 
-void Administrador::criarLivro() {
+void Administrador::criarLivro(Biblioteca &biblioteca) {
     std::string _titulo, _autor, _tipo;
     int _numExemplares;
 
@@ -30,15 +30,15 @@ void Administrador::criarLivro() {
     std::cin>>_numExemplares;
 
     Livro *novo_livro = new Livro(_titulo,_autor,_tipo,_numExemplares); //criamos um objeto do tipo livro
-    biblioteca->adicionarLivro(novo_livro);  //o adicionamos no acervo da biblioteca
+    biblioteca.adicionarLivro(*novo_livro);  //o adicionamos no acervo da biblioteca
 }
 
-void Administador::criarEstudante() { //vou implementar mas o objeto ainda não será alocado em nenhuma lista porque ainda não temos a classe sistema (thales)
+void Administrador::criarEstudante() { //vou implementar mas o objeto ainda não será alocado em nenhuma lista porque ainda não temos a classe sistema (thales)
     std::cout<<"Cadastrar: "<<std::endl;
     std::cout<<"1 - Aluno Graduacao"<<std::endl;
     std::cout<<"2 - Aluno Pos Graduacao"<<std::endl;
 
-    int opcao; std::cin>>opcao;
+    int opcao; std::cout<<"Opcao: ";std::cin>>opcao;
     if(opcao!=1 && opcao!=2) { //tratamento de erro provisório, quando criarmos as classes de erro, fazemos alterações (thales)
         std::cout<<"Erro: Digite uma opcao valida!"<<std::endl;
         while(opcao!=1 && opcao!=2) {
@@ -89,28 +89,28 @@ void Administrador::listarEstudante() {
 
 }
 
-void Administador::alterarSenhaEstudante(Usuario* _estudante, const std::string &_nova_senha) {
-    _estudante->set_senha(_nova_senha);
+void Administrador::alterarSenhaEstudante(Usuario& _estudante, const std::string &_nova_senha) {
+    _estudante.setSenha(_nova_senha);
 }
 
-void Administrador::alterarSenhaAdministrador(Usuario *_administrador, const std::string &_nova_senha) {
-    _administrador->set_senha(_nova_senha);
+void Administrador::alterarSenhaAdministrador(Usuario &_administrador, const std::string &_nova_senha) {
+    _administrador.setSenha(_nova_senha);
 }
 
-void Administador::consultarTransacoes() {
+void Administrador::consultarTransacoes() {
 
 }
 
-void Administrador::consultarEmprestimos(Estudante *_estudante) {
-    for(auto emprestimo : _estudante->emprestimos)
+void Administrador::consultarEmprestimos(Estudante &_estudante) {
+    for(auto emprestimo : _estudante.get_emprestimos())
         std::cout<<emprestimo<<std::endl;
 }
 
-void Administador::recarregarCarteirinha(Estudante *_estudante, double _valor_depositado) {
-    _estudante->carteirinha->depositar(_valor_depositado);
+void Administrador::recarregarCarteirinha(Estudante &_estudante, double _valor_depositado) {
+    _estudante.get_carteirinha()->depositar(_valor_depositado);
 }
 
-void Administrador::alterarValorRU(Estudante *_estudante, double _novo_valor) { //falta diferenciar aluno de PosGraduacao e de Graduacao (thales)
+void Administrador::alterarValorRU(Estudante &_estudante, double _novo_valor) { //falta diferenciar aluno de PosGraduacao e de Graduacao (thales)
 }
 
 void Administrador::alterarValorMulta() {

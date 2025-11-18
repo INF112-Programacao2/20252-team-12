@@ -13,7 +13,7 @@ class Transacao {
         Estudante* origem;
         std::time_t data;
     public:
-        Transacao(const int &_id, const std::string &_tipo, const double &_valor, const Estudante* &_origem, const std::time_t &_data);
+        Transacao(const int &_id, const std::string &_tipo, const double &_valor, Estudante &_origem, const std::time_t &_data);
         ~Transacao();
 
         int get_id() const;
@@ -25,7 +25,7 @@ class Transacao {
         void set_id(const int &_id);
         void set_tipo_transacao(const std::string &_tipo_transacao);
         void set_valor(const double &_valor);
-        void set_origem(Estudante* &_origem);
+        void set_origem(Estudante &_origem);
         void set_data(std::time_t &_data);
 
         void exibir_transacao();

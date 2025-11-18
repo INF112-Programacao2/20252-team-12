@@ -1,8 +1,8 @@
 #include "Transacao.hpp"
 #include <iostream>
 
-Transacao::Transacao(const int &_id, const std::string &_tipo, const double &_valor, const Estudante* _origem, const std::time_t _data):
-    id(_id), tipo(_tipo), valor(_valor), origem(_origem), data(_data){}
+Transacao::Transacao(const int &_id, const std::string &_tipo, const double &_valor, Estudante &_origem, const std::time_t &_data):
+    id(_id), tipo(_tipo), valor(_valor), origem(&_origem), data(_data){}
 
 Transacao::~Transacao(){}
 
@@ -38,11 +38,11 @@ void Transacao::set_valor(const double &_valor){
     this->valor = _valor;
 }
 
-void Transacao::set_origem(Estudante* _origem){
-    this->origem = _origem;
+void Transacao::set_origem(Estudante &_origem){
+    this->origem = &_origem;
 }
 
-void Transacao::set_data(std::time_t _data) {
+void Transacao::set_data(std::time_t &_data) {
     this->data= _data;
 }
 

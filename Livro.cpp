@@ -60,6 +60,6 @@ void Livro::setNumExemplaresDisponiveis(int _numExemplaresDisponiveis){
     this->numExemplaresDisponiveis = _numExemplaresDisponiveis;
 }
 
-void Livro::exibirInformações(){
+void Livro::exibirInformacoes(){
     std::cout << this->id << " -> " << this->titulo << " de " << this->autor << " - " << this->tipo << std::endl << "Atualmente com: " << this->numExemplaresDisponiveis << " exemplares disponíveis de " << this->numExemplaresTotal << " exemplares totais\n"; 
 }
