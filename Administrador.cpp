@@ -139,22 +139,100 @@ void Administrador::alterarSenhaAdministrador() {
 void Administrador::consultarTransacoes(std::vector<Estudante*> &estudantes) {
     // Perguntar se quer ver todas ou so algumas
     // for (auto estudante : estudantes){ for (auto transacao : estudante.get_carteirinha().get_extrato()) }
+
+    char resposta;
+    while (true){
+        std::cout << "Deseja visualizar todas as transações? (S/N)" << std::endl;
+        std::cin >> resposta;
+        if (resposta == 'S' || resposta == 's' || resposta == 'N' || resposta == 'n') break;
+    }
+    
+    if (resposta == 'S' || resposta == 's'){
+        for (auto estudante : estudantes){
+            estudante->get_carteirinha()->exibir_extrato();
+        }
+    } else if (resposta == 'N' || resposta == 'n'){
+        std::string matricula;
+        std::cout << "Matrícula do aluno: ";
+        std::cin >> matricula;
+        for (auto estudante : estudantes){
+            if (estudante->get_matricula() == matricula){
+                estudante->get_carteirinha()->exibir_extrato();
+                return;
+            }
+        }
+        throw std::invalid_argument("[ERRO] Não foi possível localizar o Estudante com matrícula " + matricula);
+    }
 }
 
 void Administrador::consultarEmprestimos(std::vector<Estudante*> &estudantes) {
     // Perguntar se quer ver todos ou so alguns
     // for (auto estudante : estudantes){ estudante.exibirEmprestimos() }
+    char resposta;
+    while (true){
+        std::cout << "Deseja visualizar todas os empréstimos? (S/N)" << std::endl;
+        std::cin >> resposta;
+        if (resposta == 'S' || resposta == 's' || resposta == 'N' || resposta == 'n') break;
+    }
+    
+    if (resposta == 'S' || resposta == 's'){
+        for (auto estudante : estudantes){
+            estudante->exibirEmprestimos();
+        }
+    } else if (resposta == 'N' || resposta == 'n'){
+        std::string matricula;
+        std::cout << "Matrícula do aluno: ";
+        std::cin >> matricula;
+        for (auto estudante : estudantes){
+            if (estudante->get_matricula() == matricula){
+                estudante->exibirEmprestimos();
+                return;
+            }
+        }
+        throw std::invalid_argument("[ERRO] Não foi possível localizar o Estudante com matrícula " + matricula);
+    }
 }
 
 void Administrador::recarregarCarteirinha(std::vector<Estudante*> &estudantes) {
     // Perguntar a matricula do aluno
     // for (auto estudante : estudantes){ if (estudante.get_matricula() == matricula) { estudante.recarregarCarteirinha() } }
+    std::string matricula;
+    std::cout << "Matriícula do aluno: ";
+    std::cin >> matricula;
+
+    for (auto estudante : estudantes){
+        if (estudante->get_matricula() == matricula){
+            estudante->recarregarCarteirinha();
+            return;
+        }
+    }
+
+    throw std::invalid_argument("[ERRO] Não foi possível localizar o Estudante com matrícula " + matricula);
 }
 
 void Administrador::alterarValorRU() {
     // Perguntar se é de Graduação ou de PósGraduação
     // if (Graduação){ EstudanteGraduacao::valorRU = novo_valor }
     // if (PosGraduação){ EstudantePosGraduacao::valorRU = novo_valor }
+
+    char resposta;
+    double novo_valor;
+    std::cout << "Escolha o estudante:\n";
+    std::cout << "1 - Graduação\n2 - Pós-Graduação\n";
+    std::cin >> resposta;
+    if (resposta != '1' && resposta != '2'){
+        throw std::invalid_argument("[ERRO] Opção inválida");
+    }
+    std::cout << "Novo valor: ";
+    std::cin >> novo_valor;
+    if (resposta == '1'){
+        EstudanteGraduacao::set_valorRU(novo_valor);
+    } else if (resposta == '2'){
+        EstudantePosGraduacao::set_valorRU(novo_valor);
+    }
+
+    std::cout << "Valor alterado com sucesso!" << std::endl;
+
 }
 
 void Administrador::alterarValorMulta() {
@@ -163,4 +241,5 @@ void Administrador::alterarValorMulta() {
     std::cout << "Valor da nova multa: ";
     std::cin >> novo_valor;
     Emprestimo::setMulta(novo_valor);
+    std::cout << "Valor da multa alterado!";
 }
