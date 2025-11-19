@@ -4,8 +4,8 @@
 #include <iomanip>
 
 int Administrador::nextID = 1;
-Administrador::Administrador(const std::string& _nome, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const int &_id):
-    id(nextID++), Usuario(_nome, _data_de_nascimento, _email, _senha){}
+Administrador::Administrador(const std::string& _nome, const std::string &_cpf,const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const int &_id):
+    id(nextID++), Usuario(_nome, _cpf,_data_de_nascimento, _email, _senha){}
 
 Administrador::~Administrador(){}
 
@@ -54,8 +54,9 @@ void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
     std::cout<<std::endl;
     std::cout<<"=== FAVOR PREENCHER AS INFORMACOES ABAIXO ==="<<std::endl<<std::endl;
 
-    std::string _nome, _data_de_nascimento, _email, _senha, _matricula, _curso;
+    std::string _nome, _cpf,_data_de_nascimento, _email, _senha, _matricula, _curso;
     std::cout<<"Nome: "; std::getline(std::cin,_nome);
+    std::cout<<"CPF: "; std::getline(std::cin, _cpf);
     std::cout<<"Data de nascimento: "; std::getline(std::cin,_data_de_nascimento); //falta tratamento de erro para a formatação de entrada da data
     std::cout<<"Email: "; std::cin>>_email;
     std::cout<<"Senha: "; std::cin>>_senha; 
@@ -67,7 +68,7 @@ void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
         std::cout<<"Modalidade de Graduação"; std::cin>> _modalidade; 
         
 
-        EstudanteGraduacao* _novoEstudante = new EstudanteGraduacao(_nome, _data_de_nascimento, _email, _senha, _matricula, _curso, _modalidade);
+        EstudanteGraduacao* _novoEstudante = new EstudanteGraduacao(_nome, _cpf,_data_de_nascimento, _email, _senha, _matricula, _curso, _modalidade);
         estudantes.push_back(_novoEstudante);
     }
 
@@ -78,7 +79,7 @@ void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
         std::cout<<"Tipo Pos Graduacao: "; std::getline(std::cin, _tipoPos); //esse e o abaixo precisam de tratamento contra numeros e caracteres especias
         std::cout<<"Linha de Pesquisa: "; std::getline(std::cin, _linhaDePesquisa);
 
-        EstudantePosGraduacao* _novoEstudante = new EstudantePosGraduacao(_nome, _data_de_nascimento, _email, _senha, _matricula, _curso, _tipoPos, _linhaDePesquisa);
+        EstudantePosGraduacao* _novoEstudante = new EstudantePosGraduacao(_nome, _cpf, _data_de_nascimento, _email, _senha, _matricula, _curso, _tipoPos, _linhaDePesquisa);
         estudantes.push_back(_novoEstudante);
     }
 }

@@ -72,7 +72,7 @@ static time_t converterStringParaData(const std::string& dataStr) {
     return t;
 }
 
-Usuario::Usuario(const std::string& _nome, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha) : nome(_nome), email(_email), senha(_senha) {
+Usuario::Usuario(const std::string& _nome, const std::string &_cpf,const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha) : nome(_nome), cpf(_cpf),email(_email), senha(_senha) {
     if (validaData(_data_de_nascimento)){
         this->data_de_nascimento = converterStringParaData(_data_de_nascimento);
     }
