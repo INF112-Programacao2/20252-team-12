@@ -15,7 +15,8 @@ class EstudanteGraduacao : public Estudante {
         int get_valorRU() const;
 
         void set_modalidade(std::string _modalidade);
-        
+        static void set_valorRU(double _valorRU);
+
         void comerRU() override;
 };
 

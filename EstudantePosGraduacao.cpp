@@ -23,6 +23,10 @@ void EstudantePosGraduacao::set_tipoPos(std::string _tipoPos) {
     this -> tipoPos = _tipoPos;
 }
 
+void EstudantePosGraduacao::set_valorRU(double _valorRU) {
+    EstudantePosGraduacao::valorRU = _valorRU;
+}
+
 void EstudantePosGraduacao::set_linhaDePesquisa(std::string _linhaDePesquisa) {
     this -> linhaDePesquisa = _linhaDePesquisa;
 }
