@@ -20,6 +20,7 @@ class Transacao;
 
 class Administrador : public Usuario{
     private:
+        static int nextID;
         int id;
     public:
         Administrador(const std::string& _nome, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const int &_id);
@@ -31,7 +32,6 @@ class Administrador : public Usuario{
         //outros metodos - vou deixar apenas declarado, podendo haver falta de parâmetros --- favor verificar (thales)
         void criarLivro(Biblioteca &biblioteca);
         void criarEstudante();
-        void criarAdministrador();
         void listarEstudante(std::vector<Estudante*>estudantes);
         void alterarSenhaEstudante(Usuario& _estudante, const std::string &_nova_senha);
         void alterarSenhaAdministrador(Usuario& _administrador, const std::string &_nova_senha);

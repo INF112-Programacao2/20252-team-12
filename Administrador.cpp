@@ -2,8 +2,10 @@
 #include <fstream>
 #include <exception>
 #include <iomanip>
+
+int Administrador::nextID = 1;
 Administrador::Administrador(const std::string& _nome, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const int &_id):
-    id(_id), Usuario(_nome, _data_de_nascimento, _email, _senha){}
+    id(nextID++), Usuario(_nome, _data_de_nascimento, _email, _senha){}
 
 Administrador::~Administrador(){}
 
@@ -20,7 +22,7 @@ void Administrador::criarLivro(Biblioteca &biblioteca) {
     int _numExemplares;
 
     std::cout<<"Titulo: ";
-    std::getline(std::cin,_titulo); //usando getline, então pode ser interessante colocar um cin.ignore(), o que acham? (thales)
+    std::getline(std::cin,_titulo); 
 
     std::cout<<"Autor: ";
     std::getline(std::cin, _autor);
@@ -35,13 +37,13 @@ void Administrador::criarLivro(Biblioteca &biblioteca) {
     biblioteca.adicionarLivro(*novo_livro);  //o adicionamos no acervo da biblioteca
 }
 
-void Administrador::criarEstudante() { //vou implementar mas o objeto ainda não será alocado em nenhuma lista porque ainda não temos a classe sistema (thales)
+void Administrador::criarEstudante() { 
     std::cout<<"Cadastrar: "<<std::endl;
     std::cout<<"1 - Aluno Graduacao"<<std::endl;
     std::cout<<"2 - Aluno Pos Graduacao"<<std::endl;
 
     int opcao; std::cout<<"Opcao: ";std::cin>>opcao;
-    if(opcao!=1 && opcao!=2) { //tratamento de erro provisório, quando criarmos as classes de erro, fazemos alterações (thales)
+    if(opcao!=1 && opcao!=2) { 
         std::cout<<"Erro: Digite uma opcao valida!"<<std::endl;
         while(opcao!=1 && opcao!=2) {
             std::cin>>opcao;
@@ -56,13 +58,13 @@ void Administrador::criarEstudante() { //vou implementar mas o objeto ainda não
     std::cout<<"Nome: "; std::getline(std::cin,_nome);
     std::cout<<"Data de nascimento: "; std::getline(std::cin,_data_de_nascimento); //falta tratamento de erro para a formatação de entrada da data
     std::cout<<"Email: "; std::cin>>_email;
-    std::cout<<"Senha: "; std::cin>>_senha; //eu acho quer seria legal colocarmos restrições de senha, ex: letra maiscula, numero, caractere especial, etc (thales)
+    std::cout<<"Senha: "; std::cin>>_senha; 
     std::cout<<"Matricula: "; std::cin>>_matricula;
     std::cout<<"Curso: "; std::cin>>_curso;
 
     if(opcao==1) {
         int _periodoAtual, _valorRU;
-        std::cout<<"Periodo atual (apenas números): "; std::cin>>_periodoAtual; //sugiro tratamento de erro para periodo atual <=0 e >=13, também tratamento contra letras ou outros caracteres (thales)
+        std::cout<<"Periodo atual (apenas números): "; std::cin>>_periodoAtual; 
         std::cout<<"Valor a ser pago no Restaurante Universitario: R$"; std::cin>>_valorRU; //tratamento de erro para apenas numeros
 
         EstudanteGraduacao* _novoEstudante = new EstudanteGraduacao(_nome, _data_de_nascimento, _email, _senha, _matricula, _curso, _periodoAtual, _valorRU);
@@ -129,7 +131,7 @@ void Administrador::recarregarCarteirinha(Estudante &_estudante, double _valor_d
     _estudante.get_carteirinha()->depositar(_valor_depositado);
 }
 
-void Administrador::alterarValorRU(Estudante &_estudante, double _novo_valor) { //falta diferenciar aluno de PosGraduacao e de Graduacao (thales)
+void Administrador::alterarValorRU(Estudante &_estudante, double _novo_valor) {
 }
 
 void Administrador::alterarValorMulta() {

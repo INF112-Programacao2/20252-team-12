@@ -7,13 +7,14 @@
 
 class Transacao {
     private:
+        static int nextID;
         int id;
         std::string tipo;
         double valor;
         Estudante* origem;
         std::string data;
     public:
-        Transacao(const int &_id, const std::string &_tipo, const double &_valor, Estudante &_origem, const std::string& _data);
+        Transacao(const std::string &_tipo, const double &_valor, Estudante &_origem, const std::string& _data);
         ~Transacao();
 
         int get_id() const;

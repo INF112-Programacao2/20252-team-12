@@ -1,5 +1,8 @@
 #include "Transacao.hpp"
 #include <iostream>
+
+int Transacao::nextID = 1;
+
 static std::vector<std::string> split(const std::string& s, char delim) {
     std::vector<std::string> elems;
     size_t start = 0;
@@ -53,8 +56,8 @@ static bool validaData(const std::string& data) {
     return true;
 }
 
-Transacao::Transacao(const int &_id, const std::string &_tipo, const double &_valor, Estudante &_origem, const std::string& _data):
-    id(_id), tipo(_tipo), valor(_valor), origem(&_origem){
+Transacao::Transacao(const std::string &_tipo, const double &_valor, Estudante &_origem, const std::string& _data):
+    id(nextID++), tipo(_tipo), valor(_valor), origem(&_origem){
         if (validaData(_data)){
             this->data = _data;
         }
