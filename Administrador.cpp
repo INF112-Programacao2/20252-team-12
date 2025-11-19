@@ -1,5 +1,7 @@
 #include "Administrador.hpp"
-
+#include <fstream>
+#include <exception>
+#include <iomanip>
 Administrador::Administrador(const std::string& _nome, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const int &_id):
     id(_id), Usuario(_nome, _data_de_nascimento, _email, _senha){}
 
@@ -81,12 +83,29 @@ void Administrador::criarEstudante() { //vou implementar mas o objeto ainda não
     }
 }
 
-void Administrador::criarAdministrador() {
-    
-}
+void Administrador::listarEstudante(std::vector<Estudante*>estudantes) {
 
-void Administrador::listarEstudante() {
+    std::ofstream fout;
+    fout.open("Lista Estudantes.txt");
+    if(!fout.is_open()){
+        throw std::runtime_error("[ERRO] Não foi possível abrir o arquvivo: Lista Estudantes ");
+    }
 
+    fout<<"LISTA DE ESTUDANTES CADASTRADOS: "<<std::endl<<std::endl;
+    fout << std::left
+    << std::setw(40) << "NOME"
+    << std::setw(25) << "DATA DE NASCIMENTO"
+    << std::setw(12) << "MATRICULA"
+    << std::setw(12) << "CURSO"
+    << "\n----------------------------------------------------------------------------------------------------------------\n";
+    for(auto estudante :estudantes ){
+        fout<<std::setw(40)<<estudante->getNome()<<std::setw(25)<<estudante->getDataDeNascimentoFormatada()<<std::setw(12)<<estudante->get_matricula()<<std::setw(12)<<estudante->get_curso()<<std::endl;
+    }
+    std::cout<<"Arquivo Lista Estudantes criado "<<std::endl;
+    fout.close();
+    if(fout.is_open()){
+        throw std::runtime_error("[ERRO] Não foi possível fechar o arquvivo: Lista Estudantes ");
+    }
 }
 
 void Administrador::alterarSenhaEstudante(Usuario& _estudante, const std::string &_nova_senha) {
