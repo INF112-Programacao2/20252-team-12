@@ -38,7 +38,6 @@ class Estudante : public Usuario{
         //setters
         void set_matricula(std::string _matricula);
         void set_curso (std::string _curso);
-        void set_carteirinha(Carteirinha *_carteirinha);
 };
 
 #endif

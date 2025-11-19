@@ -66,7 +66,7 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
     }
     
     for (auto emprestimo : this->get_emprestimos()) {
-        std::cout << emprestimo->getLivro()->getTitulo() << std::endl;
+        emprestimo->exibirInformacoes();
     }
     
     std::cout << "Escolha qual livro deseja devolver: \n";
@@ -89,8 +89,8 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
     }
     
     if (livro_devolvido->calculaValorMulta() > 0.0) {
-        std::cout << "O livro esta atrasado " << livro_devolvido->getDiasDeAtraso() << 
-        ".\nA multa pelo atraso e de " << livro_devolvido->calculaValorMulta() << "\n";
+        std::cout << "O livro esta atrasado por " << livro_devolvido->getDiasDeAtraso() << 
+        " dias.\nA multa pelo atraso e de R$" << livro_devolvido->calculaValorMulta() << "\n";
 
         if (this->get_carteirinha()->getSaldo() >= livro_devolvido->calculaValorMulta()) {
             char resposta;
@@ -122,6 +122,9 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
                 **/
             }
         }
+        else{
+            // Deseja recarregar (livro_devolvido->calculaValorMulta() - this->get_carteirinha()->getSaldo()) para pagar?
+        }
     }
 
     livro_devolvido->setDevolvido(true);
@@ -146,9 +149,6 @@ void Estudante::recarregarCarteirinha(){
             if (valor <= 0) {
                 throw std::invalid_argument("O valor deve ser maior que 0\n");
             }
-
-            // Limite de deposito?
-
             break;
         }
         catch (std::invalid_argument &e) {
@@ -161,17 +161,17 @@ void Estudante::recarregarCarteirinha(){
 }
 
 void Estudante::consultarSaldo(){
-    std::cout << "Seu saldo é de " << this->carteirinha->getSaldo() << " reais\n";
+    std::cout << "Seu saldo é de R$" << this->carteirinha->getSaldo() << "\n";
 }
 
 //getters (thales)
 
 std::string Estudante::get_matricula () const {
-    return this-> matricula;
+    return this->matricula;
 }
 
 std::string Estudante::get_curso() const {
-    return this->   curso;
+    return this->curso;
 }
 
 Carteirinha* Estudante::get_carteirinha() const {
@@ -190,8 +190,4 @@ void Estudante::set_matricula(std::string _matricula) {
 
 void Estudante::set_curso(std::string _curso) {
     this->curso = _curso;
-}
-
-void Estudante::set_carteirinha(Carteirinha *_carteirinha){
-    this->carteirinha = _carteirinha;
 }

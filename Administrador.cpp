@@ -37,7 +37,7 @@ void Administrador::criarLivro(Biblioteca &biblioteca) {
     biblioteca.adicionarLivro(*novo_livro);  //o adicionamos no acervo da biblioteca
 }
 
-void Administrador::criarEstudante() { 
+void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) { 
     std::cout<<"Cadastrar: "<<std::endl;
     std::cout<<"1 - Aluno Graduacao"<<std::endl;
     std::cout<<"2 - Aluno Pos Graduacao"<<std::endl;
@@ -63,29 +63,27 @@ void Administrador::criarEstudante() {
     std::cout<<"Curso: "; std::cin>>_curso;
 
     if(opcao==1) {
-        int _periodoAtual, _valorRU;
-        std::cout<<"Periodo atual (apenas números): "; std::cin>>_periodoAtual; 
-        std::cout<<"Valor a ser pago no Restaurante Universitario: R$"; std::cin>>_valorRU; //tratamento de erro para apenas numeros
+        std::string _modalidade;
+        std::cout<<"Modalidade de Graduação"; std::cin>> _modalidade; 
+        
 
-        EstudanteGraduacao* _novoEstudante = new EstudanteGraduacao(_nome, _data_de_nascimento, _email, _senha, _matricula, _curso, _periodoAtual, _valorRU);
-        //aqui o aluno precisa ser colocado na lista de alunos da classe Sistema
+        EstudanteGraduacao* _novoEstudante = new EstudanteGraduacao(_nome, _data_de_nascimento, _email, _senha, _matricula, _curso, _modalidade);
+        estudantes.push_back(_novoEstudante);
     }
 
     else if(opcao==2) {
         std::string _tipoPos, _linhaDePesquisa;
-        int _valorRU;
 
         std::cin.ignore(); //a ultima entrada foi cin
         std::cout<<"Tipo Pos Graduacao: "; std::getline(std::cin, _tipoPos); //esse e o abaixo precisam de tratamento contra numeros e caracteres especias
         std::cout<<"Linha de Pesquisa: "; std::getline(std::cin, _linhaDePesquisa);
-        std::cout<<"Valor a ser pago no Restaurante Universitario: R$"; std::cin>>_valorRU; //tratamento para apenas numeros
 
-        EstudantePosGraduacao* _novoEstudante = new EstudantePosGraduacao(_nome, _data_de_nascimento, _email, _senha, _matricula, _curso, _valorRU,_tipoPos, _linhaDePesquisa);
-        //aqui o aluno deve ser colocado na lista de alunos da classe Sistema
+        EstudantePosGraduacao* _novoEstudante = new EstudantePosGraduacao(_nome, _data_de_nascimento, _email, _senha, _matricula, _curso, _tipoPos, _linhaDePesquisa);
+        estudantes.push_back(_novoEstudante);
     }
 }
 
-void Administrador::listarEstudante(std::vector<Estudante*>estudantes) {
+void Administrador::listarEstudante(std::vector<Estudante*> &estudantes) {
 
     std::ofstream fout;
     fout.open("Lista Estudantes.txt");
@@ -103,37 +101,61 @@ void Administrador::listarEstudante(std::vector<Estudante*>estudantes) {
     for(auto estudante :estudantes ){
         fout<<std::setw(40)<<estudante->getNome()<<std::setw(25)<<estudante->getDataDeNascimentoFormatada()<<std::setw(12)<<estudante->get_matricula()<<std::setw(12)<<estudante->get_curso()<<std::endl;
     }
-    std::cout<<"Arquivo Lista Estudantes criado "<<std::endl;
+    std::cout<<"Arquivo Lista Estudantes criado"<<std::endl;
     fout.close();
     if(fout.is_open()){
         throw std::runtime_error("[ERRO] Não foi possível fechar o arquvivo: Lista Estudantes ");
     }
 }
 
-void Administrador::alterarSenhaEstudante(Usuario& _estudante, const std::string &_nova_senha) {
-    _estudante.setSenha(_nova_senha);
+void Administrador::alterarSenhaEstudante(std::vector<Estudante*> &estudantes) {
+    std::string matricula;
+    std::cout << "Digite a matrícula do estudante: ";
+    std::cin >> matricula;
+
+    for (auto estudante : estudantes){
+        if (estudante->get_matricula() == matricula){
+            std::string nova_senha;
+            std::cout << "Digite a nova senha de " << estudante->getNome() << ": ";
+            std::cin >> nova_senha;
+            estudante->setSenha(nova_senha);
+            std::cout << "Senha alterada com sucesso!" << std::endl;
+            return;
+        }
+    }
+    throw std::invalid_argument("[ERRO] Não foi possível localizar o Estudante com matrícula " + matricula);
+
 }
 
-void Administrador::alterarSenhaAdministrador(Usuario &_administrador, const std::string &_nova_senha) {
-    _administrador.setSenha(_nova_senha);
+void Administrador::alterarSenhaAdministrador() {
+    std::string nova_senha;
+    std::cout << "Digite sua nova senha: ";
+    std::cin >> nova_senha;
+    this->setSenha(nova_senha);
+    std::cout << "Senha alterada com sucesso!" << std::endl;
 }
 
-void Administrador::consultarTransacoes() {
-
+void Administrador::consultarTransacoes(std::vector<Estudante*> &estudantes) {
+    // Perguntar se quer ver todas ou so algumas
+    // for (auto estudante : estudantes){ for (auto transacao : estudante.get_carteirinha().get_extrato()) }
 }
 
-void Administrador::consultarEmprestimos(Estudante &_estudante) {
-    for(auto emprestimo : _estudante.get_emprestimos())
-        std::cout<<emprestimo<<std::endl;
+void Administrador::consultarEmprestimos(std::vector<Estudante*> &estudantes) {
+    // Perguntar se quer ver todos ou so alguns
+    // for (auto estudante : estudantes){ estudante.exibirEmprestimos() }
 }
 
-void Administrador::recarregarCarteirinha(Estudante &_estudante, double _valor_depositado) {
-    _estudante.get_carteirinha()->depositar(_valor_depositado);
+void Administrador::recarregarCarteirinha(std::vector<Estudante*> &estudantes) {
+    // Perguntar a matricula do aluno
+    // for (auto estudante : estudantes){ if (estudante.get_matricula() == matricula) { estudante.recarregarCarteirinha() } }
 }
 
-void Administrador::alterarValorRU(Estudante &_estudante, double _novo_valor) {
+void Administrador::alterarValorRU() {
+    // Perguntar se é de Graduação ou de PósGraduação
+    // if (Graduação){ EstudanteGraduacao::valorRU = novo_valor }
+    // if (PosGraduação){ EstudantePosGraduacao::valorRU = novo_valor }
 }
 
 void Administrador::alterarValorMulta() {
-    
+    // Emprestimo::multa = novo_valor
 }

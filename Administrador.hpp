@@ -29,16 +29,15 @@ class Administrador : public Usuario{
         int get_id() const;
         void set_id(const int &_id);
 
-        //outros metodos - vou deixar apenas declarado, podendo haver falta de parâmetros --- favor verificar (thales)
         void criarLivro(Biblioteca &biblioteca);
-        void criarEstudante();
-        void listarEstudante(std::vector<Estudante*>estudantes);
-        void alterarSenhaEstudante(Usuario& _estudante, const std::string &_nova_senha);
-        void alterarSenhaAdministrador(Usuario& _administrador, const std::string &_nova_senha);
-        void consultarTransacoes();
-        void consultarEmprestimos(Estudante &_estudante);
-        void recarregarCarteirinha(Estudante &_estudante, double _valor_depositado); //acredito que seja esse o parametro, mas também acho que precisaria receber alguma coisa relacionada a transacao(thales)
-        void alterarValorRU(Estudante &_estudante, double novo_valor); //coloquei esse como parâmetro também mas não tenho certeza porque pode ser tanto PosGraduacao quanto Graduacao (thales)
+        void criarEstudante(std::vector<Estudante*> &estudantes);
+        void listarEstudante(std::vector<Estudante*> &estudantes);
+        void alterarSenhaEstudante(std::vector<Estudante*> &estudantes);
+        void alterarSenhaAdministrador();
+        void consultarTransacoes(std::vector<Estudante*> &estudantes);
+        void consultarEmprestimos(std::vector<Estudante*> &estudantes);
+        void recarregarCarteirinha(std::vector<Estudante*> &estudantes);
+        void alterarValorRU();
         void alterarValorMulta();
 };
 

@@ -1,24 +1,22 @@
 #include "EstudanteGraduacao.hpp"
 
-EstudanteGraduacao::EstudanteGraduacao(const std::string& _nome, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const std::string &_matricula, const std::string &_curso, const int &_valorRU,const int &_periodoAtual):
-    Estudante(_nome, _data_de_nascimento, _email, _senha,_matricula, _curso), periodoAtual(_periodoAtual), valorRU(_valorRU){}
+double EstudanteGraduacao::valorRU = 5.40;
+
+EstudanteGraduacao::EstudanteGraduacao(const std::string& _nome, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const std::string &_matricula, const std::string &_curso,const std::string& _modalidade):
+    Estudante(_nome, _data_de_nascimento, _email, _senha,_matricula, _curso), modalidade(_modalidade){}
 
 EstudanteGraduacao::~EstudanteGraduacao(){}
 
-int EstudanteGraduacao::get_periodoAtual() const{
-    return this->periodoAtual;
+std::string EstudanteGraduacao::get_modalidade() const{
+    return this->modalidade;
 }
 
 int EstudanteGraduacao::get_valorRU() const {
     return this->valorRU;
 }
 
-void EstudanteGraduacao::set_periodoAtual(int _periodoAtual){
-    this->periodoAtual = _periodoAtual;
-}
-
-void EstudanteGraduacao::set_valorRU(int _valorRU){
-    this->valorRU = _valorRU;
+void EstudanteGraduacao::set_modalidade(std::string _modalidade){
+    this->modalidade = _modalidade;
 }
 
 void EstudanteGraduacao::comerRU() {
