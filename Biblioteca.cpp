@@ -9,6 +9,11 @@ Biblioteca::~Biblioteca(){
 std::string Biblioteca::getNome(){
     return this->nome;
 }
+
+std::vector<Livro*> Biblioteca::getAcervo() const {
+    return this->acervo;
+}
+
 void Biblioteca::setNome(std::string _nome){
     this->nome = _nome;
 }

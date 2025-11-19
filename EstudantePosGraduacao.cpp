@@ -1,6 +1,7 @@
 #include "EstudantePosGraduacao.hpp"
 
 double EstudantePosGraduacao::valorRU = 10.80;
+int EstudantePosGraduacao::prazoDeDevolucao = 14;
 
 EstudantePosGraduacao::EstudantePosGraduacao(const std::string& _nome, const std::string &_cpf,const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const std::string &_matricula, const std::string &_curso, const std::string &_tipoPos, const std::string &_linhaDePesquisa):
     Estudante(_nome, _cpf, _data_de_nascimento, _email, _senha, _matricula,_curso), tipoPos(_tipoPos), linhaDePesquisa(_linhaDePesquisa){} //usei o construtor da classe Estudante
@@ -17,6 +18,10 @@ std::string EstudantePosGraduacao::get_tipoPos() const {
 
 std::string EstudantePosGraduacao::get_linhaDePesquisa() const {
     return this->linhaDePesquisa;
+}
+
+int EstudantePosGraduacao::get_prazoDeDevolucao() const {
+    return this->prazoDeDevolucao;
 }
 
 void EstudantePosGraduacao::set_tipoPos(std::string _tipoPos) {
