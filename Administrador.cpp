@@ -100,7 +100,7 @@ void Administrador::listarEstudante(std::vector<Estudante*> &estudantes) {
     << std::setw(12) << "CURSO"
     << "\n----------------------------------------------------------------------------------------------------------------\n";
     for(auto estudante :estudantes ){
-        fout<<std::setw(40)<<estudante->getNome()<<std::setw(25)<<estudante->getDataDeNascimentoFormatada()<<std::setw(12)<<estudante->get_matricula()<<std::setw(12)<<estudante->get_curso()<<std::endl;
+        fout<<std::setw(40)<<estudante->getNome()<<std::setw(25)<<estudante->getDataDeNascimento()<<std::setw(12)<<estudante->get_matricula()<<std::setw(12)<<estudante->get_curso()<<std::endl;
     }
     std::cout<<"Arquivo Lista Estudantes criado"<<std::endl;
     fout.close();
@@ -137,9 +137,6 @@ void Administrador::alterarSenhaAdministrador() {
 }
 
 void Administrador::consultarTransacoes(std::vector<Estudante*> &estudantes) {
-    // Perguntar se quer ver todas ou so algumas
-    // for (auto estudante : estudantes){ for (auto transacao : estudante.get_carteirinha().get_extrato()) }
-
     char resposta;
     while (true){
         std::cout << "Deseja visualizar todas as transações? (S/N)" << std::endl;
@@ -166,8 +163,6 @@ void Administrador::consultarTransacoes(std::vector<Estudante*> &estudantes) {
 }
 
 void Administrador::consultarEmprestimos(std::vector<Estudante*> &estudantes) {
-    // Perguntar se quer ver todos ou so alguns
-    // for (auto estudante : estudantes){ estudante.exibirEmprestimos() }
     char resposta;
     while (true){
         std::cout << "Deseja visualizar todas os empréstimos? (S/N)" << std::endl;
@@ -194,8 +189,6 @@ void Administrador::consultarEmprestimos(std::vector<Estudante*> &estudantes) {
 }
 
 void Administrador::recarregarCarteirinha(std::vector<Estudante*> &estudantes) {
-    // Perguntar a matricula do aluno
-    // for (auto estudante : estudantes){ if (estudante.get_matricula() == matricula) { estudante.recarregarCarteirinha() } }
     std::string matricula;
     std::cout << "Matriícula do aluno: ";
     std::cin >> matricula;
@@ -211,10 +204,6 @@ void Administrador::recarregarCarteirinha(std::vector<Estudante*> &estudantes) {
 }
 
 void Administrador::alterarValorRU() {
-    // Perguntar se é de Graduação ou de PósGraduação
-    // if (Graduação){ EstudanteGraduacao::valorRU = novo_valor }
-    // if (PosGraduação){ EstudantePosGraduacao::valorRU = novo_valor }
-
     char resposta;
     double novo_valor;
     std::cout << "Escolha o estudante:\n";
@@ -236,7 +225,6 @@ void Administrador::alterarValorRU() {
 }
 
 void Administrador::alterarValorMulta() {
-    // Emprestimo::multa = novo_valor
     double novo_valor;
     std::cout << "Valor da nova multa: ";
     std::cin >> novo_valor;

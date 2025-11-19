@@ -11,7 +11,7 @@ class Usuario{
     private:
         std::string nome;                      // Lembrar de ler nome como uma linha inteira
         std::string cpf;
-        time_t data_de_nascimento;             // e dar cin.ignore() depois.
+        std::string data_de_nascimento;             // e dar cin.ignore() depois.
         std::string email;
         std::string senha;        
 
@@ -20,8 +20,7 @@ class Usuario{
         ~Usuario();
 
         std::string getNome();
-        time_t getDataDeNascimento();
-        std::string getDataDeNascimentoFormatada();
+        std::string getDataDeNascimento();
         std::string getEmail();
         std::string getSenha();  
         

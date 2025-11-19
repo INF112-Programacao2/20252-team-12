@@ -57,24 +57,9 @@ static bool validaData(const std::string& data) {
     return true;
 }
 
-static time_t converterStringParaData(const std::string& dataStr) {
-    struct tm tm = {0};
-    if (sscanf(dataStr.c_str(), "%d/%d/%d", &tm.tm_mday, &tm.tm_mon, &tm.tm_year) != 3) {
-        throw std::invalid_argument("Falha ao interpretar a data. Use D/M/YYYY ou DD/MM/YYYY");
-    }
-    tm.tm_mon -= 1;
-    tm.tm_year -= 1900;
-    tm.tm_isdst = -1;
-    time_t t = mktime(&tm);
-    if (t == (time_t)-1) {
-        throw std::runtime_error("Conversão de data inválida");
-    }
-    return t;
-}
-
 Usuario::Usuario(const std::string& _nome, const std::string &_cpf,const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha) : nome(_nome), cpf(_cpf),email(_email), senha(_senha) {
     if (validaData(_data_de_nascimento)){
-        this->data_de_nascimento = converterStringParaData(_data_de_nascimento);
+        this->data_de_nascimento = _data_de_nascimento;
     }
 }
 
@@ -84,26 +69,8 @@ std::string Usuario::getNome(){
     return this->nome;
 }
 
-time_t Usuario::getDataDeNascimento(){
+std::string Usuario::getDataDeNascimento(){
     return this->data_de_nascimento;
-}
-
-std::string Usuario::getDataDeNascimentoFormatada(){
-    char buffer[80];
-    std::tm timeinfo;
-
-    #if defined(_MSC_VER)
-        localtime_s(&timeinfo, &this->data_de_nascimento);
-    #elif defined(__unix__) || defined(__APPLE__) || defined(__MACH__)
-        localtime_r(&this->data_de_nascimento, &timeinfo);
-    #else
-        std::tm *tmp = std::localtime(&this->data_de_nascimento);
-        if (!tmp) return std::string();
-        timeinfo = *tmp;
-    #endif
-
-    strftime(buffer, sizeof(buffer), "%d/%m/%Y", &timeinfo);
-    return std::string(buffer);
 }
 
 std::string Usuario::getEmail(){
@@ -120,7 +87,7 @@ void Usuario::setNome(std::string _nome){
 
 void Usuario::setDataDeNascimento(std::string _data_de_nascimento){
     if (validaData(_data_de_nascimento)){
-        this->data_de_nascimento = converterStringParaData(_data_de_nascimento);
+        this->data_de_nascimento = _data_de_nascimento;
     }
 }
 
