@@ -19,6 +19,10 @@ void EstudanteGraduacao::set_modalidade(std::string _modalidade){
     this->modalidade = _modalidade;
 }
 
+void EstudanteGraduacao::set_valorRU(double _valorRU){
+    EstudanteGraduacao::valorRU = _valorRU;
+}
+
 void EstudanteGraduacao::comerRU() {
     this->get_carteirinha()->debitar(this->get_valorRU());
 }

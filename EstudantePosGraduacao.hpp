@@ -18,6 +18,7 @@ class EstudantePosGraduacao : public Estudante {
         //(thales) == o metodo set_valorRU é dessa classe ou de outra acima? -- vou deixar já implementado... tirem se não precisar
         void set_tipoPos(std::string _tipoPos);
         void set_linhaDePesquisa(std::string _linhaDePesquisa);
+        static void set_valorRU(double _valorRU);
         
         void comerRU() override;
 };

@@ -159,4 +159,8 @@ void Administrador::alterarValorRU() {
 
 void Administrador::alterarValorMulta() {
     // Emprestimo::multa = novo_valor
+    double novo_valor;
+    std::cout << "Valor da nova multa: ";
+    std::cin >> novo_valor;
+    Emprestimo::setMulta(novo_valor);
 }
