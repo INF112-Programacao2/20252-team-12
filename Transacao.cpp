@@ -107,6 +107,6 @@ void Transacao::set_data(std::string &_data) {
 }
 
 void Transacao::exibir_transacao(){
-    std::cout << this->origem->getNome()<<" realizou uma transação do tipo "<< this->get_tipo_transacao()<<" com o valor de "<<this->get_valor_transacao()<<" na data "<<this->get_data()<<" com o id: "<<this->get_id()<<std::endl;
+    std::cout << this->origem->getNome()<<" realizou uma transação do tipo : "<< this->get_tipo_transacao()<<" com o valor de "<<this->get_valor_transacao()<<" na data "<<this->get_data()<<" com o id: "<<this->get_id()<<std::endl;
 }
 

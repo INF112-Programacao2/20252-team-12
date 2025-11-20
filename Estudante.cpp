@@ -216,7 +216,7 @@ void Estudante::consultarSaldo(){
     std::cout << "Seu saldo é de R$" << this->carteirinha->getSaldo() << "\n";
 }
 
-//getters (thales)
+
 
 std::string Estudante::get_matricula () const {
     return this->matricula;
@@ -234,7 +234,7 @@ std::vector<Emprestimo*> Estudante::get_emprestimos() const {
     return this->emprestimos;
 }
 
-//setters (thales)
+
 
 void Estudante::set_matricula(std::string _matricula) {
     this->matricula = _matricula;
