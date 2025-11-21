@@ -1,8 +1,11 @@
 #include <iostream>
-#include <string>
-#include "Usuario.hpp"
+#include "Sistema.hpp"
 
 int main(){
+
+    Sistema sistema;
+
+    sistema.iniciarSistema();
 
     return 0;
 }

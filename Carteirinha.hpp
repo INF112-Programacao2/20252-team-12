@@ -4,6 +4,8 @@
 #include "Transacao.hpp"
 #include <vector>
 
+class Transacao;
+
 class Carteirinha{
     private:
         static int nextId;

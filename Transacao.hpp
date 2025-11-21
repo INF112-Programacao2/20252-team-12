@@ -5,6 +5,8 @@
 #include <string>
 #include "Estudante.hpp"
 
+class Estudante;
+
 class Transacao {
     private:
         static int nextID;

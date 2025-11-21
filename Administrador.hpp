@@ -23,7 +23,7 @@ class Administrador : public Usuario{
         static int nextID;
         int id;
     public:
-        Administrador(const std::string& _nome, const std::string &_cpf, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const int &_id);
+        Administrador(const std::string& _nome, const std::string &_cpf, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha);
         ~Administrador();
 
         int get_id() const;

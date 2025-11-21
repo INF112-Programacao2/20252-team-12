@@ -3,8 +3,61 @@
 #include <exception>
 #include <iomanip>
 
+static std::vector<std::string> split(const std::string& s, char delim) {
+    std::vector<std::string> elems;
+    size_t start = 0;
+    while (true) {
+        size_t pos = s.find(delim, start);
+        if (pos == std::string::npos) {
+            elems.push_back(s.substr(start));
+            break;
+        }
+        elems.push_back(s.substr(start, pos - start));
+        start = pos + 1;
+    }
+    return elems;
+}
+
+static bool validaData(const std::string& data) {
+    // aceita D/M/YYYY, DD/MM/YYYY, com '/' como separador
+    auto parts = split(data, '/');
+    if (parts.size() != 3) {
+        throw std::invalid_argument("[ERRO] Formato de data inválido. Use D/M/YYYY ou DD/MM/YYYY");
+    }
+
+    int dia, mes, ano;
+    try {
+        dia = std::stoi(parts[0]);
+        mes = std::stoi(parts[1]);
+        ano = std::stoi(parts[2]);
+    } catch (...) {
+        throw std::invalid_argument("[ERRO] Data contém caracteres inválidos");
+    }
+    time_t agora = time(nullptr);
+    struct tm *tnow = localtime(&agora);
+    int ano_atual = tnow->tm_year + 1900;
+
+    if (ano < 1900 || ano > ano_atual) {
+        throw std::invalid_argument("[ERRO] Ano fora do intervalo válido (1900 - ano atual)");
+    }
+    if (mes < 1 || mes > 12) {
+        throw std::invalid_argument("[ERRO] Mês inválido");
+    }
+
+    int diasPorMes[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    if ((ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0)) {
+        diasPorMes[1] = 29;
+    }
+
+    if (dia < 1 || dia > diasPorMes[mes - 1]) {
+        throw std::invalid_argument("[ERRO] Dia inválido para o mês especificado");
+    }
+
+    return true;
+}
+
 int Administrador::nextID = 1;
-Administrador::Administrador(const std::string& _nome, const std::string &_cpf,const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const int &_id):
+Administrador::Administrador(const std::string& _nome, const std::string &_cpf,const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha):
     id(nextID++), Usuario(_nome, _cpf,_data_de_nascimento, _email, _senha){}
 
 Administrador::~Administrador(){}
@@ -27,14 +80,14 @@ void Administrador::criarLivro(Biblioteca &biblioteca) {
     std::cout<<"Autor: ";
     std::getline(std::cin, _autor);
 
-    std::cout<<"Tipo: "; //ainda acho que seria melhor gênero (thales) -- se concordare, favor alterar
+    std::cout<<"Tipo: ";
     std::getline(std::cin, _tipo);
 
     std::cout<<"Numero de exemplares: ";
     std::cin>>_numExemplares;
 
-    Livro *novo_livro = new Livro(_titulo,_autor,_tipo,_numExemplares); //criamos um objeto do tipo livro
-    biblioteca.adicionarLivro(*novo_livro);  //o adicionamos no acervo da biblioteca
+    Livro *novo_livro = new Livro(_titulo,_autor,_tipo,_numExemplares);
+    biblioteca.adicionarLivro(*novo_livro);
 }
 
 void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) { 
@@ -50,14 +103,21 @@ void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
         }
     }
 
-    std::cin.ignore(); //usamos cin para verificar a opcao do tipo do aluno
+    std::cin.ignore();
     std::cout<<std::endl;
     std::cout<<"=== FAVOR PREENCHER AS INFORMACOES ABAIXO ==="<<std::endl<<std::endl;
 
     std::string _nome, _cpf,_data_de_nascimento, _email, _senha, _matricula, _curso;
     std::cout<<"Nome: "; std::getline(std::cin,_nome);
     std::cout<<"CPF: "; std::getline(std::cin, _cpf);
-    std::cout<<"Data de nascimento: "; std::getline(std::cin,_data_de_nascimento); //falta tratamento de erro para a formatação de entrada da data
+    while (1){
+        try{
+            std::cout<<"Data de nascimento: "; std::getline(std::cin,_data_de_nascimento);
+            break;
+        } catch (std::exception &e){
+            std::cerr << e.what() << std::endl;
+        }
+    }
     std::cout<<"Email: "; std::cin>>_email;
     std::cout<<"Senha: "; std::cin>>_senha; 
     std::cout<<"Matricula: "; std::cin>>_matricula;
@@ -66,8 +126,6 @@ void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
     if(opcao==1) {
         std::string _modalidade;
         std::cout<<"Modalidade de Graduação"; std::cin>> _modalidade; 
-        
-
         EstudanteGraduacao* _novoEstudante = new EstudanteGraduacao(_nome, _cpf,_data_de_nascimento, _email, _senha, _matricula, _curso, _modalidade);
         estudantes.push_back(_novoEstudante);
     }
@@ -75,8 +133,8 @@ void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
     else if(opcao==2) {
         std::string _tipoPos, _linhaDePesquisa;
 
-        std::cin.ignore(); //a ultima entrada foi cin
-        std::cout<<"Tipo Pos Graduacao: "; std::getline(std::cin, _tipoPos); //esse e o abaixo precisam de tratamento contra numeros e caracteres especias
+        std::cin.ignore();
+        std::cout<<"Tipo Pos Graduacao: "; std::getline(std::cin, _tipoPos);
         std::cout<<"Linha de Pesquisa: "; std::getline(std::cin, _linhaDePesquisa);
 
         EstudantePosGraduacao* _novoEstudante = new EstudantePosGraduacao(_nome, _cpf, _data_de_nascimento, _email, _senha, _matricula, _curso, _tipoPos, _linhaDePesquisa);
