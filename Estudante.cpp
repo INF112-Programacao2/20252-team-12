@@ -3,6 +3,51 @@
 #include <limits>
 #include <stdexcept>
 #include <iostream>
+#include <ctime>
+#include <sstream>
+#include <chrono>
+#include <iomanip>
+
+std::string getDataAtual() {
+    auto agora = std::chrono::system_clock::now();
+
+    std::time_t tt = std::chrono::system_clock::to_time_t(agora);
+
+    std::tm* data = std::localtime(&tt);
+
+    std::stringstream ss;
+    ss << std::setfill('0') << std::setw(2) << data->tm_mday << "/"
+       << std::setw(2) << data->tm_mon + 1 << "/"
+       << data->tm_year + 1900;
+
+    return ss.str();
+}
+
+std::string addDias(const std::string& data_str, int dias) {
+    int d, m, a;
+    char sep1, sep2;
+
+    std::stringstream ss(data_str);
+    ss >> d >> sep1 >> m >> sep2 >> a;
+
+    std::tm data_tm = {};
+    data_tm.tm_mday = d;
+    data_tm.tm_mon  = m - 1;
+    data_tm.tm_year = a - 1900;
+
+    std::time_t t = std::mktime(&data_tm);
+
+    t += dias * 24 * 60 * 60;
+
+    std::tm* nova_data = std::localtime(&t);
+
+    std::stringstream out;
+    out << std::setfill('0') << std::setw(2) << nova_data->tm_mday << "/"
+        << std::setw(2) << nova_data->tm_mon + 1 << "/"
+        << nova_data->tm_year + 1900;
+
+    return out.str();
+}
 
 // Funcao de comparacao case insensitive para conferir nomes de livros
 bool caseInsensitiveComp(const std::string a, const std::string b) {
@@ -34,30 +79,37 @@ void Estudante::exibirEmprestimos(){
         emprestimo->exibirInformacoes();
     }
 }
-void Estudante::pegarLivro(const Biblioteca& biblioteca){
+void Estudante::pegarLivro(const Biblioteca& biblioteca) {
     std::cout << "Digite o nome do livro que deseja pegar emprestado (sem acentos): ";
-    Livro* livro_desejado;
+    Livro* livro_desejado = nullptr;
     
     std::string nome_do_livro;
     std::getline(std::cin, nome_do_livro);
 
-    /* for (auto livro : biblioteca.acervo) {
-        if (caseInsensitiveComp(nome_do_livro, livro->getNome()) {
-            livro_desejado = livro;
+    try {
+        for (Livro* livro : biblioteca.getAcervo()) {
+            if (caseInsensitiveComp(nome_do_livro, livro->getTitulo())) {
+                livro_desejado = livro;
+            }
         }
+        if (livro_desejado == nullptr) {
+            throw std::invalid_argument("O livro escolhido nao foi encontrado");
+        }
+        if (livro_desejado->getNumExemplaresDisponiveis() == 0) {
+            throw std::invalid_argument("Nao ha exemplares disponiveis para o livro selecionado");
+        }
+    } catch (std::invalid_argument &e) {
+        std::cerr << e.what() << std::endl;
     }
-    
-    discutir organizacao da biblioteca **
-    */
 
-    // Lógica para escolher livro e pegar
+    livro_desejado->setNumExemplaresDisponiveis(livro_desejado->getNumExemplaresDisponiveis() - 1);
 
-    // Livro* livro_escolhido = (livro_escolhido)
-    // livro_escolhido->setNumExemplaresDisponíveis(empréstimo_do_livro->livro->getNumExemplaresDisponíveis()-1)
-    // dataDeEmpréstimo = (data atual)
-    // dataDeDevolução = dataDeEmpréstimo + (valor se Estudante é Graduação ou Pós)
-    // Empréstimo* empréstimo = new Empréstimo(*this, *livro, dataDeEmpréstimo, dataDeDevolução)
-    // this->empréstimos.push_back(empréstimo)
+    std::string dataDeEmprestimo = getDataAtual();
+
+    std::string dataDeDevolucao = addDias(dataDeEmprestimo, this->get_prazoDeDevolucao());
+
+    Emprestimo* novoEmprestimo = new Emprestimo(*this, *livro_desejado, dataDeEmprestimo, dataDeDevolucao);
+    this->emprestimos.push_back(novoEmprestimo);
 }
 void Estudante::devolverLivro(const Biblioteca& biblioteca){
     if (this->get_emprestimos().size() == 0) {
@@ -164,7 +216,7 @@ void Estudante::consultarSaldo(){
     std::cout << "Seu saldo é de R$" << this->carteirinha->getSaldo() << "\n";
 }
 
-//getters (thales)
+
 
 std::string Estudante::get_matricula () const {
     return this->matricula;
@@ -182,7 +234,7 @@ std::vector<Emprestimo*> Estudante::get_emprestimos() const {
     return this->emprestimos;
 }
 
-//setters (thales)
+
 
 void Estudante::set_matricula(std::string _matricula) {
     this->matricula = _matricula;

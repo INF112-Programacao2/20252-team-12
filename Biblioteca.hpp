@@ -14,6 +14,7 @@ class Biblioteca{
         ~Biblioteca();
 
         std::string getNome();
+        std::vector<Livro*> getAcervo() const;
         void setNome(std::string _nome);
 
         void adicionarLivro(Livro& _livro);
