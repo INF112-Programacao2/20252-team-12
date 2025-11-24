@@ -118,6 +118,7 @@ void Sistema::iniciarSistema(){
                     try{
                         if (this->admin->getEmail() == email && this->admin->getSenha() == senha) {
                             // (Thales) coloca pra escrever devagar
+                            // A fazer
                             std::cout << "\n✅ Bem-Vindo " << this->admin->getNome() << "!\n";
                             // Chamar menu admin
                             #if defined(_WIN32) || defined(_WIN64)  // Verifica o sistema operacional e limpa a tela
