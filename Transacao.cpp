@@ -1,5 +1,6 @@
 #include "Transacao.hpp"
 #include <iostream>
+#include <iomanip> // Para std::setprecision
 
 int Transacao::nextID = 1;
 
@@ -56,8 +57,8 @@ static bool validaData(const std::string& data) {
     return true;
 }
 
-Transacao::Transacao(const std::string &_tipo, const double &_valor, Estudante &_origem, const std::string& _data):
-    id(nextID++), tipo(_tipo), valor(_valor), origem(&_origem){
+Transacao::Transacao(const std::string &_tipo, const double &_valor, const std::string& _data):
+    id(nextID++), tipo(_tipo), valor(_valor){
         if (validaData(_data)){
             this->data = _data;
         }
@@ -106,7 +107,7 @@ void Transacao::set_data(std::string &_data) {
     this->data= _data;
 }
 
-void Transacao::exibir_transacao(){
-    std::cout << this->origem->getNome()<<" realizou uma transação do tipo : "<< this->get_tipo_transacao()<<" com o valor de "<<this->get_valor_transacao()<<" na data "<<this->get_data()<<" com o id: "<<this->get_id()<<std::endl;
+void Transacao::exibir_transacao() {
+    std::cout << "Tipo: " << this->tipo << " | Valor: R$ " << std::fixed << std::setprecision(2) << this->valor << " | Data: " << this->data << "\n";
 }
 

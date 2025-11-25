@@ -184,7 +184,9 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
 }
 
 void Estudante::recarregarCarteirinha(){
-    this->consultarSaldo(); // Opcional, mostrar o saldo antes
+    std::cout << "--------------------------------------------\n";
+    this->consultarSaldo();
+    std::cout << "--------------------------------------------\n";
 
     double valor;
     
@@ -207,15 +209,12 @@ void Estudante::recarregarCarteirinha(){
             std::cerr << e.what() << std::endl;
         }
     }
-
     this->carteirinha->depositar(valor);
-
 }
 
 void Estudante::consultarSaldo(){
     std::cout << "Seu saldo é de R$" << this->carteirinha->getSaldo() << "\n";
 }
-
 
 
 std::string Estudante::get_matricula () const {
@@ -233,7 +232,6 @@ Carteirinha* Estudante::get_carteirinha() const {
 std::vector<Emprestimo*> Estudante::get_emprestimos() const {
     return this->emprestimos;
 }
-
 
 
 void Estudante::set_matricula(std::string _matricula) {
