@@ -11,7 +11,14 @@
 
 using namespace cimg_library;
 
-void pausa(int seg){
+static void escreveDevagar(const std::string &texto, int ms){
+    for (char c : texto){
+        std::cout << c << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+    }
+}
+
+static void pausa(int seg){
     std::this_thread::sleep_for(std::chrono::seconds(seg));
 }
 
@@ -125,22 +132,22 @@ void Administrador::criarLivro(Biblioteca &biblioteca) {
     int _numExemplares;
 
     std::cout<<"-> Titulo: ";
-    std::getline(std::cin,_titulo); 
+    std::getline(std::cin,_titulo);             // TODO: Tratamento de erro titulo
 
     std::cout << "--------------------------------------------\n";
 
     std::cout<<"-> Autor: ";
-    std::getline(std::cin, _autor);
+    std::getline(std::cin, _autor);             // TODO: Tratamento de erro autor
 
     std::cout << "--------------------------------------------\n";
 
     std::cout<<"-> Tipo: ";
-    std::getline(std::cin, _tipo);
+    std::getline(std::cin, _tipo);              // TODO: Tratamento de erro tipo
 
     std::cout << "--------------------------------------------\n";
 
     std::cout<<"-> Numero de exemplares: ";
-    std::cin>>_numExemplares;
+    std::cin>>_numExemplares;                   // TODO: Tratamento de erro numero_exemplares
 
     std::cout << "--------------------------------------------\n";
 
@@ -148,7 +155,7 @@ void Administrador::criarLivro(Biblioteca &biblioteca) {
     biblioteca.adicionarLivro(*novo_livro);
 
     // (Escrever devagar)
-    std::cout << novo_livro->getTitulo() << " foi adicionado na Bibilioteca! ✅\n";
+    escreveDevagar(novo_livro->getTitulo() + " foi adicionado na Bibilioteca! ✅\n", 50);
 }
 
 void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
@@ -175,27 +182,27 @@ void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
     std::cout<<"=== FAVOR PREENCHER AS INFORMACOES ABAIXO ==="<<std::endl<<std::endl;
 
     std::string _nome, _cpf,_data_de_nascimento, _email, _senha, _matricula, _curso;
-    std::cout<<"-> Nome: "; std::getline(std::cin,_nome);
+    std::cout<<"-> Nome: "; std::getline(std::cin,_nome);               // TODO: Tratamento de erro nome
     std::cout << "--------------------------------------------\n";
-    std::cout<<"-> CPF: "; std::getline(std::cin, _cpf);
+    std::cout<<"-> CPF: "; std::getline(std::cin, _cpf);                // TODO: Tratamento de erro cpf
     std::cout << "--------------------------------------------\n";
-    std::cout<<"-> Data de nascimento: "; std::getline(std::cin,_data_de_nascimento);
+    std::cout<<"-> Data de nascimento: "; std::getline(std::cin,_data_de_nascimento);               // TODO: Tratamento de erro data
     std::cout << "--------------------------------------------\n";
-    std::cout<<"-> Email: "; std::cin>>_email;
+    std::cout<<"-> Email: "; std::cin>>_email;      // TODO: Tratamento de erro email
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "--------------------------------------------\n";
-    std::cout<<"-> Senha: "; std::cin>>_senha;
+    std::cout<<"-> Senha: "; std::cin>>_senha;      // TODO: Tratamento de erro senha
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "--------------------------------------------\n";
-    std::cout<<"-> Matricula: "; std::cin>>_matricula;
+    std::cout<<"-> Matricula: "; std::cin>>_matricula;          // TODO: Tratamento de erro matricula
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "--------------------------------------------\n";
-    std::cout<<"-> Curso: "; std::getline(std::cin, _curso);
+    std::cout<<"-> Curso: "; std::getline(std::cin, _curso);    // TODO: Tratamento de erro curso
     std::cout << "--------------------------------------------\n";
 
     if(opcao==1) {
         std::string _modalidade;
-        std::cout<<"-> Modalidade de Graduação: "; std::cin>> _modalidade;
+        std::cout<<"-> Modalidade de Graduação: "; std::cin>> _modalidade;      // TODO: Tratamento de erro modalidade
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         EstudanteGraduacao* _novoEstudante = new EstudanteGraduacao(_nome, _cpf,_data_de_nascimento, _email, _senha, _matricula, _curso, _modalidade);
         std::cout << "--------------------------------------------\n";
@@ -203,15 +210,15 @@ void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
     }
     else if(opcao==2) {
         std::string _tipoPos, _linhaDePesquisa;
-        std::cout<<"-> Tipo Pos Graduacao: "; std::getline(std::cin, _tipoPos);
+        std::cout<<"-> Tipo Pos Graduacao: "; std::getline(std::cin, _tipoPos);         // TODO: Tratamento de erro tipo pos graduação
         std::cout << "--------------------------------------------\n";
-        std::cout<<"-> Linha de Pesquisa: "; std::getline(std::cin, _linhaDePesquisa);
+        std::cout<<"-> Linha de Pesquisa: "; std::getline(std::cin, _linhaDePesquisa);          // TODO: Tratamento de erro linha de pesquisa
         std::cout << "--------------------------------------------\n";
 
         EstudantePosGraduacao* _novoEstudante = new EstudantePosGraduacao(_nome, _cpf, _data_de_nascimento, _email, _senha, _matricula, _curso, _tipoPos, _linhaDePesquisa);
         estudantes.push_back(_novoEstudante);
     }
-    std::cout << "Estudante de matrícula " << _matricula << " foi cadastrado com sucesso! ✅\n";
+    escreveDevagar("Estudante de matrícula " + _matricula + " foi cadastrado com sucesso! ✅\n", 50);
 }
 
 void Administrador::listarEstudante(std::vector<Estudante*> &estudantes) {
@@ -232,7 +239,7 @@ void Administrador::listarEstudante(std::vector<Estudante*> &estudantes) {
     for(auto estudante :estudantes){
         fout<<std::setw(40)<<estudante->getNome()<<std::setw(25)<<estudante->getDataDeNascimento()<<std::setw(12)<<estudante->get_matricula()<<std::setw(12)<<estudante->get_curso()<<std::endl;
     }
-    std::cout<<"\nArquivo Lista Estudantes criado com sucesso ✅"<<std::endl;
+    escreveDevagar("\nArquivo Lista Estudantes criado com sucesso ✅", 50);
     fout.close();
     if(fout.is_open()){
         throw std::runtime_error("❌ Não foi possível fechar o arquvivo: ListaEstudantes ");
@@ -246,8 +253,8 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante*> &estudantes) {
     std::cout << "============================================\n";
 
     std::string matricula;
-    std::cout << "-> Digite a matrícula do estudante: ";
-    std::cin >> matricula;
+    std::cout << "-> Digite a matrícula do estudante: ";            
+    std::cin >> matricula;          // TODO: Tratamento de erro matricula
 
     //acha o estudante alvo
     Estudante* estudanteAlvo = nullptr;
@@ -285,45 +292,42 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante*> &estudantes) {
     switch (opcao) {
         case 1:
             std::cout << "-> Novo Nome: ";
-            std::getline(std::cin, novoDado);
+            std::getline(std::cin, novoDado);           // TODO: Tratamento de erro nome
             estudanteAlvo->setNome(novoDado);
             break;
         case 2:
             std::cout << "-> Novo Email: ";
-            std::cin >> novoDado;
+            std::cin >> novoDado;                       // TODO: Tratamento de erro email
             estudanteAlvo->setEmail(novoDado);
             break;
         case 3:
             std::cout << "-> Novo Curso (Sigla ou Nome): ";
-            std::getline(std::cin, novoDado);
+            std::getline(std::cin, novoDado);           // TODO: Tratamento de erro curso
             estudanteAlvo->set_curso(novoDado);
             break;
         case 4:
-            std::cout << "-> Nova Senha: ";
-            std::cin >> novoDado;
+            std::cout << "-> Nova Senha: ";         
+            std::cin >> novoDado;                       // TODO: Tratamento de erro senha
             estudanteAlvo->setSenha(novoDado);
             break;
         case 5:
             std::cout << "Operação cancelada.\n";
-            return;
+            return 5;
         default:
             throw std::invalid_argument("Opção inválida!");
     }
 
-    std::cout << "\n✅ Dados atualizados com sucesso!\n";
-
-    pausa(2); 
-    std::cout << "Voltando para o Menu do Administrador...\n";
-    pausa(1);
+    escreveDevagar("\n✅ Dados atualizados com sucesso!\n", 50);
+    return opcao;
 }
 
 void Administrador::alterarSenhaAdministrador() {
     std::cout << "--------------------------------------------\n";
     std::string nova_senha;
-    std::cout << "-> Digite sua nova senha: "; std::getline(std::cin, nova_senha);
-    this->setSenha(nova_senha);
+    std::cout << "-> Digite sua nova senha: "; std::getline(std::cin, nova_senha);          // TODO: Tratamento de erro senha
+    this->setSenha(nova_senha);                         
     std::cout << "--------------------------------------------\n";
-    std::cout << "✅ Senha alterada com sucesso!" << std::endl;
+    escreveDevagar("✅ Senha alterada com sucesso!", 50);
 }
 
 void Administrador::consultarTransacoes(std::vector<Estudante*> &estudantes) {
@@ -338,20 +342,17 @@ void Administrador::consultarTransacoes(std::vector<Estudante*> &estudantes) {
         std::cin >> resposta;
         if (resposta == 'S' || resposta == 's' || resposta == 'N' || resposta == 'n') break;
     }
-    char lixo;
     if (resposta == 'S' || resposta == 's'){
         for (auto estudante : estudantes){
             std::cout << "--------------------------------------------\n";
             std::cout << estudante->getNome() << " - " << estudante->get_matricula() << std::endl;
             std::cout << "--------------------------------------------\n";
             estudante->get_carteirinha()->exibir_extrato();
-            std::cout << "Aperte ENTER para continuar...";
-            std::cin.ignore();
         }
     } else if (resposta == 'N' || resposta == 'n'){
         std::string matricula;
         std::cout << "-> Matrícula do aluno: ";
-        std::cin >> matricula;
+        std::cin >> matricula;                      // TODO: Tratamento de erro matricula
         apagarTerminal();
         for (auto estudante : estudantes){
             if (estudante->get_matricula() == matricula){
@@ -359,8 +360,6 @@ void Administrador::consultarTransacoes(std::vector<Estudante*> &estudantes) {
                 std::cout << estudante->getNome() << " - " << estudante->get_matricula() << std::endl;
                 std::cout << "--------------------------------------------\n";
                 estudante->get_carteirinha()->exibir_extrato();
-                std::cout << "Aperte ENTER para continuar...";
-                std::cin.ignore();
                 return;
             }
         }
@@ -384,19 +383,23 @@ void Administrador::consultarEmprestimos(std::vector<Estudante*> &estudantes) {
     
     if (resposta == 'S' || resposta == 's'){
         for (auto estudante : estudantes){
+            std::cout << "--------------------------------------------\n";
+            std::cout << estudante->getNome() << " - " << estudante->get_matricula() << std::endl;
+            std::cout << "--------------------------------------------\n";
             estudante->exibirEmprestimos();
         }
     } else if (resposta == 'N' || resposta == 'n'){
         std::string matricula;
         std::cout << "-> Matrícula do aluno: ";
-        std::cin >> matricula;
+        std::cin >> matricula;                  // TODO: Tratamento de erro matricula
         apagarTerminal();
         std::string lixo;
         for (auto estudante : estudantes){
             if (estudante->get_matricula() == matricula){
+                std::cout << "--------------------------------------------\n";
+                std::cout << estudante->getNome() << " - " << estudante->get_matricula() << std::endl;
+                std::cout << "--------------------------------------------\n";
                 estudante->exibirEmprestimos();
-                std::cout << "\nAperte qualquer botão para sair";
-                std::cin >> lixo;
                 return;
             }
         }
@@ -412,7 +415,7 @@ void Administrador::recarregarCarteirinha(std::vector<Estudante*> &estudantes) {
 
     std::string matricula;
     std::cout << "-> Matrícula do aluno: ";
-    std::cin >> matricula;
+    std::cin >> matricula;                      // TODO: Tratamento de erro matricula
 
     for (auto estudante : estudantes){
         if (estudante->get_matricula() == matricula){
@@ -436,13 +439,13 @@ std::string Administrador::alterarValorRU() {
     std::cout << "Escolha o estudante:\n";
     std::cout << "1 - Graduação\n2 - Pós-Graduação\n";
     std::cout << "Opção: ";
-    std::cin >> resposta;
+    std::cin >> resposta;                                   // TODO: Tratamento de erro resposta
     if (resposta != '1' && resposta != '2'){
         throw std::invalid_argument("❌ Opção inválida");
     }
     std::cout << "-> Novo valor: ";
-    std::cin >> novo_valor;
-    if (resposta == '1'){
+    std::cin >> novo_valor;                                 // TODO: Tratamento de erro novo_valor
+    if (resposta == '1'){   
         EstudanteGraduacao::set_valorRU(novo_valor);
         gradOuPos = "Graduação";
     } else if (resposta == '2'){
@@ -450,22 +453,21 @@ std::string Administrador::alterarValorRU() {
         gradOuPos = "Pós-Graduação";
     }
 
-    std::cout << "\nValor alterado com sucesso! ✅" << std::endl;
-
+    escreveDevagar("\nValor alterado com sucesso! ✅", 50);
     return gradOuPos;
 }
 
 void Administrador::alterarValorMulta() {
 
-    std::cout << "\n============================================\n";
+    std::cout << "\n=================================================================================\n";
     std::cout << "   📚 MENU DE ALTERAÇÃO DE VALOR NA MULTA DE EMPRÉSTIMO 📚\n";
-    std::cout << "============================================\n";
+    std::cout << "=================================================================================\n";
 
     double novo_valor;
-    std::cout << "Valor da nova multa: ";
-    std::cin >> novo_valor;
+    std::cout << "-> Valor da nova multa: ";
+    std::cin >> novo_valor;                                     // TODO: Tratamento de erro novo_valor
     Emprestimo::setMulta(novo_valor);
-    std::cout << "Valor da multa alterado!";
+    escreveDevagar("✅ Valor da multa alterado com sucesso!", 50);
 }
 
 static std::string deixar_maiusculo(std::string &palavra){

@@ -14,7 +14,7 @@ class EstudanteGraduacao : public Estudante {
         ~EstudanteGraduacao();
 
         std::string get_modalidade() const;
-        int get_valorRU() const;
+        double get_valorRU() const;
         int get_prazoDeDevolucao() const override;
 
         void set_modalidade(std::string _modalidade);

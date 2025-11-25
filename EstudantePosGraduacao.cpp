@@ -1,5 +1,15 @@
 #include "EstudantePosGraduacao.hpp"
 #include <stdexcept>
+#include <thread>
+#include <chrono>
+#include <iostream>
+
+static void escreveDevagar(const std::string &texto, int ms){
+    for (char c : texto){
+        std::cout << c << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+    }
+}
 
 double EstudantePosGraduacao::valorRU = 10.80;
 int EstudantePosGraduacao::prazoDeDevolucao = 14;
@@ -9,7 +19,7 @@ EstudantePosGraduacao::EstudantePosGraduacao(const std::string& _nome, const std
 
 EstudantePosGraduacao::~EstudantePosGraduacao(){}
 
-int EstudantePosGraduacao::get_valorRU() const {
+double EstudantePosGraduacao::get_valorRU() const {
     return this->valorRU;
 }
 
@@ -42,4 +52,5 @@ void EstudantePosGraduacao::comerRU() {
         throw std::invalid_argument("O seu saldo é inferior ao valor do RU");
     }
     this->get_carteirinha()->debitar(this->get_valorRU());
+    escreveDevagar("\n✅ Aproveite sua refeição!\n", 50);
 }

@@ -50,13 +50,13 @@ void Carteirinha::setSaldo(double _saldo){
 void Carteirinha::depositar(double _valor){
     Transacao* nova_transacao = new Transacao("Crédito", _valor, getDataAtual());
     this->extrato.push_back(nova_transacao);
-    this->saldo += _valor;
+    this->setSaldo(this->getSaldo() + _valor);
 }
 
 void Carteirinha::debitar(double _valor){
     Transacao* nova_transacao = new Transacao("Débito", _valor, getDataAtual());
     this->extrato.push_back(nova_transacao);
-    this->saldo -= _valor;
+    this->setSaldo(this->getSaldo() - _valor);
 }
 
 void Carteirinha::exibir_extrato(){
@@ -64,8 +64,6 @@ void Carteirinha::exibir_extrato(){
         std::cout << "[INFO] Nenhuma transação registrada.\n";
         return;
     }
-    std::cout << this->extrato.size();
-
     std::cout << "\n=== EXTRATO DA CARTEIRINHA ===\n";
     std::cout << "Total de transações: " << this->extrato.size() << "\n";
     std::cout << "------------------------------------\n";
