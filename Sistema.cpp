@@ -8,8 +8,16 @@
 #include <chrono>
 #include <thread>
 
+static void apagarTerminal(){
+    #if defined(_WIN32) || defined(_WIN64)
+        std::system("cls");
+    #elif defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
+        std::system("clear");
+    #endif
+}
+
 void escreveDevagar(const std::string &texto, int ms){
-    for (char c:texto){
+    for (char c : texto){
         std::cout << c << std::flush;
         std::this_thread::sleep_for(std::chrono::milliseconds(ms));
     }
@@ -43,14 +51,6 @@ std::vector<Estudante*> Sistema::get_estudantes(){
 
 Administrador* Sistema::get_admin(){
     return this->admin;
-}
-
-static void apagarTerminal(){
-    #if defined(_WIN32) || defined(_WIN64)
-        std::system("cls");
-    #elif defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
-        std::system("clear");
-    #endif
 }
 
 void Sistema::criarLivros(){
@@ -184,8 +184,6 @@ void Sistema::menuAdministrador(){
 
 void Sistema::iniciarSistema(){
     int opcao;
-    std::string email;
-    std::string senha;
 
     while (1) {
         std::cout << "\n============================================\n";
@@ -210,9 +208,9 @@ void Sistema::iniciarSistema(){
             }
             else if (opcao == 1) {
                 bool logado = false;
+                
                 while (!logado) {
-                    std::string email;
-                    std::string senha;
+                    std::string email, senha;
 
                     std::cout << "--------------------------------------------\n";
                     std::cout << "Email: ";
@@ -222,77 +220,40 @@ void Sistema::iniciarSistema(){
                     std::getline(std::cin, senha);
                     std::cout << "--------------------------------------------\n";
 
-                    // 1. Tenta Login como Administrador
-                    try{
-                        if (this->admin->getEmail() == email && this->admin->getSenha() == senha) {
-                            // (Thales) coloca pra escrever devagar
-                            // A fazer
-                            escreveDevagar("\n✅ Bem-Vindo " + this->admin->getNome(), 50);
-                            pausa(1);
-                            // Chamar menu admin
-                            #if defined(_WIN32) || defined(_WIN64)  // Verifica o sistema operacional e limpa a tela
-                                std::system("cls");
-                            #elif defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
-                                std::system("clear");
-                            #endif
-                            logado = true;
-                            break;
-                        }
-                        // 2. Se falhou como Admin, tenta Login como Estudante
-                        else {
-                            for (auto estudante : this->estudantes){
-                                if (estudante->getEmail() == email && estudante->getSenha() == senha){
-                                    this->estudante_logado = estudante;
-                                }
-                            }
-                            if (estudante_logado != nullptr) {
-                                // (Thales) coloca pra escrever devagar
-                                escreveDevagar( "\n✅ Bem-Vindo " + this->estudante_logado->getSenha(), 50);
-                                pausa(1);
-                                // Chama o menu do estudante
-                                logado = true;
-                                break;
-                            } else {
-                                throw std::invalid_argument("\n❌ Erro: Credenciais inválidas. Tente novamente.\n");
-                            }
-                        }
-                    } catch (const std::exception& e) {
-                        #if defined(_WIN32) || defined(_WIN64)       // Verifica o sistema operacional e limpa a tela
-                            std::system("cls");
-                        #elif defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
-                            std::system("clear");
-                        #endif
-                        std::cerr << "\n❌ Ocorreu um erro: " << e.what() << std::endl;
+                    // Tenta Login como Administrador
                     if (this->admin->getEmail() == email && this->admin->getSenha() == senha) {
-                        std::cout << "\n✅ Bem-Vindo " << this->admin->getNome() << "!\n";
+                        escreveDevagar("\n✅ Bem-Vindo " + this->admin->getNome(), 50);
+                        pausa(1);
                         apagarTerminal();
-                        this->menuAdministrador();
+                        this->menuAdministrador();  // <-- CHAMAR O MENU
                         logado = true;
                         break;
                     }
-                    else {
-                        bool encontrado = false;
-                        for (auto estudante : this->estudantes){
-                            if (estudante->getEmail() == email && estudante->getSenha() == senha){
-                                this->estudante_logado = estudante;
-                                encontrado = true;
-                                break;
-                            }
-                        }
-                        if (encontrado && this->estudante_logado != nullptr) {
-                            std::cout << "\n✅ Bem-Vindo " << this->estudante_logado->getNome() << "!\n"; // <-- getNome() em vez de getSenha()
-                            apagarTerminal();
-                            // Chama o menu do estudante aqui
-                            logado = true;
+                    
+                    // Tenta Login como Estudante
+                    bool encontrado = false;
+                    for (auto estudante : this->estudantes) {
+                        if (estudante->getEmail() == email && estudante->getSenha() == senha) {
+                            this->estudante_logado = estudante;
+                            encontrado = true;
                             break;
-                        } else {
-                            throw std::invalid_argument("Credenciais inválidas. Tente novamente.\n");
                         }
+                    }
+                    
+                    if (encontrado && this->estudante_logado != nullptr) {
+                        escreveDevagar("\n✅ Bem-Vindo " + this->estudante_logado->getNome(), 50);  // <-- getNome(), NÃO getSenha()
+                        pausa(1);
+                        apagarTerminal();
+                        // TODO: Chamar o menu do estudante aqui
+                        logado = true;
+                        break;
+                    } else {
+                        std::cout << "\n❌ Erro: Credenciais inválidas. Tente novamente.\n";
                     }
                 }
             }
             else {
-                throw std::invalid_argument("⚠️ Opção inválida. Por favor, escolha 1 ou 2.\n");
+                throw std::invalid_argument("⚠️ Opção inválida. Por favor, escolha 1 ou 2.");
             }
         } catch (const std::exception& e) {
             apagarTerminal();

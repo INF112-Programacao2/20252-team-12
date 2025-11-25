@@ -9,6 +9,29 @@
 
 using namespace cimg_library;
 
+static std::string getDataAtual() {
+    auto agora = std::chrono::system_clock::now();
+
+    std::time_t tt = std::chrono::system_clock::to_time_t(agora);
+
+    std::tm* data = std::localtime(&tt);
+
+    std::stringstream ss;
+    ss << std::setfill('0') << std::setw(2) << data->tm_mday << "/"
+       << std::setw(2) << data->tm_mon + 1 << "/"
+       << data->tm_year + 1900;
+
+    return ss.str();
+}
+
+static void apagarTerminal(){
+    #if defined(_WIN32) || defined(_WIN64)
+        std::system("cls");
+    #elif defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
+        std::system("clear");
+    #endif
+}
+
 static std::vector<std::string> split(const std::string& s, char delim) {
     std::vector<std::string> elems;
     size_t start = 0;
@@ -24,11 +47,21 @@ static std::vector<std::string> split(const std::string& s, char delim) {
     return elems;
 }
 
+static void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mask) {
+    cimg_forXY(img, x, y) {
+        if (mask(x, y, 0) > 0 || mask(x, y, 1) > 0 || mask(x, y, 2) > 0) {
+            img(x, y, 0) = 0; // vermelho
+            img(x, y, 1) = 0; // verde
+            img(x, y, 2) = 0; // azul
+        }
+    }
+}
+
 static bool validaData(const std::string& data) {
     // aceita D/M/YYYY, DD/MM/YYYY, com '/' como separador
     auto parts = split(data, '/');
     if (parts.size() != 3) {
-        throw std::invalid_argument("[ERRO] Formato de data inválido. Use D/M/YYYY ou DD/MM/YYYY");
+        throw std::invalid_argument("❌ Formato de data inválido. Use D/M/YYYY ou DD/MM/YYYY");
     }
 
     int dia, mes, ano;
@@ -37,17 +70,17 @@ static bool validaData(const std::string& data) {
         mes = std::stoi(parts[1]);
         ano = std::stoi(parts[2]);
     } catch (...) {
-        throw std::invalid_argument("[ERRO] Data contém caracteres inválidos");
+        throw std::invalid_argument("❌ Data contém caracteres inválidos");
     }
     time_t agora = time(nullptr);
     struct tm *tnow = localtime(&agora);
     int ano_atual = tnow->tm_year + 1900;
 
     if (ano < 1900 || ano > ano_atual) {
-        throw std::invalid_argument("[ERRO] Ano fora do intervalo válido (1900 - ano atual)");
+        throw std::invalid_argument("❌ Ano fora do intervalo válido (1900 - ano atual)");
     }
     if (mes < 1 || mes > 12) {
-        throw std::invalid_argument("[ERRO] Mês inválido");
+        throw std::invalid_argument("❌ Mês inválido");
     }
 
     int diasPorMes[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -56,25 +89,10 @@ static bool validaData(const std::string& data) {
     }
 
     if (dia < 1 || dia > diasPorMes[mes - 1]) {
-        throw std::invalid_argument("[ERRO] Dia inválido para o mês especificado");
+        throw std::invalid_argument("❌ Dia inválido para o mês especificado");
     }
 
     return true;
-}
-
-static std::string getDataAtual() {
-    auto agora = std::chrono::system_clock::now();
-
-    std::time_t tt = std::chrono::system_clock::to_time_t(agora);
-
-    std::tm* data = std::localtime(&tt);
-
-    std::stringstream ss;
-    ss << std::setfill('0') << std::setw(2) << data->tm_mday << "/"
-       << std::setw(2) << data->tm_mon + 1 << "/"
-       << data->tm_year + 1900;
-
-    return ss.str();
 }
 
 int Administrador::nextID = 1;
@@ -432,7 +450,6 @@ void Administrador::mobilidadeAcademica(EstudanteGraduacao *estudante, std::stri
         throw std::runtime_error("Nao foi possivel fechar o arquivo");
 }
 
-
 std::string Administrador::procurar_curso_por_codigo(std::string codigo){
     std::ifstream leitura;
     leitura.open("codigo_cursos.txt");
@@ -469,15 +486,6 @@ std::string Administrador::procurar_curso_por_codigo(std::string codigo){
 
 //funcao auxiliar para o metodo a gerar carteirinha:
 
-static void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mask) {
-    cimg_forXY(img, x, y) {
-        if (mask(x, y, 0) > 0 || mask(x, y, 1) > 0 || mask(x, y, 2) > 0) {
-            img(x, y, 0) = 0; // vermelho
-            img(x, y, 1) = 0; // verde
-            img(x, y, 2) = 0; // azul
-        }
-    }
-}
 
 void Administrador::gerarCarteirinha(Estudante *estudante) { //adicionar como parametro como o usuario quer salvar o arquivo final -- sugestao: nome_aluno + "_carteirinha"
     //carregar as imagens
