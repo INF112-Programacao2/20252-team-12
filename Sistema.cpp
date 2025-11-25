@@ -5,6 +5,19 @@
 #include <limits>
 #include <stdexcept>
 #include <cstdlib>
+#include <chrono>
+#include <thread>
+
+void escreveDevagar(const std::string &texto, int ms){
+    for (char c:texto){
+        std::cout << c << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+    }
+}
+
+void pausa(int seg){
+    std::this_thread::sleep_for(std::chrono::seconds(seg));
+}
 
 Sistema::Sistema() : estudantes(){
     this->arquivo_inicializador = std::ifstream("inicializador.txt");
@@ -119,7 +132,8 @@ void Sistema::iniciarSistema(){
                         if (this->admin->getEmail() == email && this->admin->getSenha() == senha) {
                             // (Thales) coloca pra escrever devagar
                             // A fazer
-                            std::cout << "\n✅ Bem-Vindo " << this->admin->getNome() << "!\n";
+                            escreveDevagar("\n✅ Bem-Vindo " + this->admin->getNome(), 50);
+                            pausa(1);
                             // Chamar menu admin
                             #if defined(_WIN32) || defined(_WIN64)  // Verifica o sistema operacional e limpa a tela
                                 std::system("cls");
@@ -138,7 +152,8 @@ void Sistema::iniciarSistema(){
                             }
                             if (estudante_logado != nullptr) {
                                 // (Thales) coloca pra escrever devagar
-                                std::cout << "\n✅ Bem-Vindo " << this->estudante_logado->getSenha() << "!\n";
+                                escreveDevagar( "\n✅ Bem-Vindo " + this->estudante_logado->getSenha(), 50);
+                                pausa(1);
                                 // Chama o menu do estudante
                                 logado = true;
                                 break;

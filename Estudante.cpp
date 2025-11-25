@@ -226,6 +226,7 @@ std::string Estudante::get_curso() const {
     return this->curso;
 }
 
+
 Carteirinha* Estudante::get_carteirinha() const {
     return this ->carteirinha;
 }

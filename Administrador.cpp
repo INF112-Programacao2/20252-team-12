@@ -1,7 +1,13 @@
+#define cimg_display 0
 #include "Administrador.hpp"
 #include <fstream>
 #include <exception>
 #include <iomanip>
+#include <thread>
+#include <chrono>
+#include "CImg.h"
+
+using namespace cimg_library;
 
 static std::vector<std::string> split(const std::string& s, char delim) {
     std::vector<std::string> elems;
@@ -54,6 +60,21 @@ static bool validaData(const std::string& data) {
     }
 
     return true;
+}
+
+static std::string getDataAtual() {
+    auto agora = std::chrono::system_clock::now();
+
+    std::time_t tt = std::chrono::system_clock::to_time_t(agora);
+
+    std::tm* data = std::localtime(&tt);
+
+    std::stringstream ss;
+    ss << std::setfill('0') << std::setw(2) << data->tm_mday << "/"
+       << std::setw(2) << data->tm_mon + 1 << "/"
+       << data->tm_year + 1900;
+
+    return ss.str();
 }
 
 int Administrador::nextID = 1;
@@ -288,4 +309,154 @@ void Administrador::alterarValorMulta() {
     std::cin >> novo_valor;
     Emprestimo::setMulta(novo_valor);
     std::cout << "Valor da multa alterado!";
+}
+
+static std::string deixar_maiusculo(std::string &palavra){
+    std::string resultado;
+
+    for(char c: palavra)
+        resultado += toupper(c);
+
+    return resultado;
+}
+
+void Administrador::mobilidadeAcademica(EstudanteGraduacao *estudante, std::string parametro){
+    std::ifstream leitura;
+    leitura.open("codigo_cursos.txt");
+
+    if(!leitura.is_open())
+        throw std::runtime_error("Nao foi possivel abrir o arquivo de leitura");
+
+    bool numerico = false; //supondo nome do curso
+    for(char c:parametro){
+        if(isdigit(c)){ //é codigo numerico
+            numerico = true;
+            break;
+        }
+    }
+
+    if(!numerico) //se o parametro for pelo nome do curso
+        parametro = deixar_maiusculo(parametro); //deixamos o parametro todo em maisculo para procurar no .txt
+
+    std::string linha;
+    bool aux = true;
+    std::string nome_curso, codigo_curso;
+    bool encontrou = false;
+
+    while(std::getline(leitura,linha)){
+        if(aux) { //ignorar a primeira linha (lixo)
+            aux = false;
+            continue;
+        }
+
+        auto pos = linha.find(' ');//acha o espaço -- antes do espaço (codigo numerico) e depois do espaço (nome do curso)
+        codigo_curso = linha.substr(0,pos);
+        nome_curso = linha.substr(pos+1);
+
+        if(numerico){ //se o parametro passado para mobilidade é o codigo da disciplina
+            if(codigo_curso == parametro){
+                encontrou = true;
+                break; //nao precisamos mais ler o arquivo
+            }
+        }
+        else { //se o parametro passado para mobilidade é o nome da disciplina
+            if(nome_curso == parametro){
+                encontrou = true;
+                break;
+            }
+        }
+    }
+
+    if(!encontrou)
+        throw std::invalid_argument("Parametro invalido para mobilidade academica");
+
+    estudante->set_curso(codigo_curso); //altera o curso que o aluno está fazendo
+    std::cout<<"Mobilidade academica realizada com sucesso!"<<std::endl;
+    leitura.close();
+
+    if(leitura.is_open())
+        throw std::runtime_error("Nao foi possivel fechar o arquivo");
+}
+
+
+std::string Administrador::procurar_curso_por_codigo(std::string codigo){
+    std::ifstream leitura;
+    leitura.open("codigo_cursos.txt");
+
+    if(!leitura.is_open())
+        throw std::runtime_error("Nao foi possivel abrir o arquivo de leitura");
+    
+    std::string linha;
+    bool aux= true, encontrou = false;
+    std::string nome_curso;
+
+    while(std::getline(leitura, linha)){
+        if(aux) {
+            aux = false;
+            continue;
+        }
+        auto pos = linha.find(' ');
+        std::string codigo_linha = linha.substr(0,pos);
+        if(codigo == codigo_linha){
+            encontrou = true;
+            nome_curso = linha.substr(pos+1);
+            break;
+        }
+    }
+    if(!encontrou)
+        throw std::invalid_argument("Parametro invalido");
+    
+    leitura.close();
+    if(leitura.is_open())
+        throw std::runtime_error("Nao foi possivel fechar o arquivo de leitura");
+
+    return nome_curso;
+}
+
+//funcao auxiliar para o metodo a gerar carteirinha:
+
+static void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mask) {
+    cimg_forXY(img, x, y) {
+        if (mask(x, y, 0) > 0 || mask(x, y, 1) > 0 || mask(x, y, 2) > 0) {
+            img(x, y, 0) = 0; // vermelho
+            img(x, y, 1) = 0; // verde
+            img(x, y, 2) = 0; // azul
+        }
+    }
+}
+
+void Administrador::gerarCarteirinha(Estudante *estudante) { //adicionar como parametro como o usuario quer salvar o arquivo final -- sugestao: nome_aluno + "_carteirinha"
+    //carregar as imagens
+    CImg<unsigned char> img ("images/template.bmp");
+    CImg<unsigned char> aluno("images/foto_aluno.bmp");
+
+    //colocar a imagem do aluno no local certo
+    aluno.resize(350,525);
+    img.draw_image(33,314,aluno);
+
+    //criar mascara RGB para por o texto
+    CImg <unsigned char> mask (img.width(),img.height(),1,3,0);
+    unsigned char branco[] = {255,255,255};
+
+    //desenha o texto na mascara 
+    mask.draw_text(520,321, estudante->getNome().c_str(), branco, 0, 255, 30, false); //.c_str() converte string para const char
+    mask.draw_text(523,404, Administrador::procurar_curso_por_codigo(estudante->get_curso()).c_str(), branco, 0, 255, 30, false);
+    mask.draw_text(577,488, estudante->get_matricula().c_str(), branco,0,255, 30, false);
+    mask.draw_text(475,572, estudante->getCpf().c_str(), branco, 0 , 255, 30, false);
+    mask.draw_text(564,655, "06/2026", branco, 0, 255, 30, false);
+    mask.draw_text(1173,720, getDataAtual().c_str(), branco, 0, 255, 30, false);
+
+    std::string aux = estudante->getNome();
+    auto pos = aux.find(" ");
+    std::string primeiroNome;
+    if(pos == std::string::npos)
+        primeiroNome = aux;
+    else
+        primeiroNome = aux.substr(0,pos);
+
+    primeiroNome = deixar_maiusculo(primeiroNome);
+    std::string nomeArquivo = "images/" + primeiroNome + "_" + estudante->get_matricula() + "_CARTEIRINHA.bmp"; //salvar a carteirinha com nome personalizado conforme o primeiro nome do aluno
+
+    aplicarTextoPreto(img,mask);
+    img.save(nomeArquivo.c_str());
 }

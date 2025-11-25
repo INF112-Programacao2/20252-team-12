@@ -39,6 +39,9 @@ class Administrador : public Usuario{
         void recarregarCarteirinha(std::vector<Estudante*> &estudantes);
         void alterarValorRU();
         void alterarValorMulta();
+        void mobilidadeAcademica(EstudanteGraduacao *estudante, std::string parametro);
+        std::string procurar_curso_por_codigo(std::string codigo);
+        void gerarCarteirinha(Estudante *estudante);
 };
 
 #endif

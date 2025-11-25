@@ -23,6 +23,7 @@ class Usuario{
         std::string getDataDeNascimento();
         std::string getEmail();
         std::string getSenha();  
+        std::string getCpf();
         
         void setNome(std::string _nome);
         void setDataDeNascimento(std::string _data_de_nascimento);

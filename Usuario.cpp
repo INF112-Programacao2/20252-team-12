@@ -81,6 +81,10 @@ std::string Usuario::getSenha(){
     return this->senha;
 }
 
+std::string Usuario::getCpf() {
+    return this->cpf;
+}
+
 void Usuario::setNome(std::string _nome){
     this->nome = _nome;
 }
