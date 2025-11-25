@@ -174,8 +174,36 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
                 **/
             }
         }
-        else{
-            // Deseja recarregar (livro_devolvido->calculaValorMulta() - this->get_carteirinha()->getSaldo()) para pagar?
+        else {
+            std::cout << "Deseja realizar uma recarga? (Valor necessário para o RU: " 
+            << (livro_devolvido->calculaValorMulta() - this->get_carteirinha()->getSaldo())
+            << ")" << std::endl;
+
+            while(1) {
+                std::cout << "0 - Não desejo recarregar minha carteirinha (Voltar para o Menu)\n";
+                std::cout << "1 - Sim, desejo recarregar minha carteirinha\n";
+                int opcao;
+
+                try {
+                    if (!(std::cin >> opcao)) {
+                        std::cin.clear();
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                        throw std::invalid_argument("Digite um número válido!");
+                    }
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+                    if (opcao == 0) {
+                        return;
+                    }
+                    else if (opcao == 1) {
+                        this->recarregarCarteirinha();
+                    } 
+                    else 
+                        throw std::invalid_argument("Digite uma opção válida!");
+                } catch (std::invalid_argument &e) {
+                    std::cerr << e.what() << std::endl;
+                }
+            }
         }
     }
 

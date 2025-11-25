@@ -32,12 +32,12 @@ class Administrador : public Usuario{
         void criarLivro(Biblioteca &biblioteca);
         void criarEstudante(std::vector<Estudante*> &estudantes);
         void listarEstudante(std::vector<Estudante*> &estudantes);
-        void alterarDadosEstudante(std::vector<Estudante*> &estudantes);
+        int alterarDadosEstudante(std::vector<Estudante*> &estudantes);
         void alterarSenhaAdministrador();
         void consultarTransacoes(std::vector<Estudante*> &estudantes);
         void consultarEmprestimos(std::vector<Estudante*> &estudantes);
         void recarregarCarteirinha(std::vector<Estudante*> &estudantes);
-        void alterarValorRU();
+        std::string alterarValorRU(); // Retorna qual valor foi alterado (Graduação ou Pós-Graduação)
         void alterarValorMulta();
         void mobilidadeAcademica(EstudanteGraduacao *estudante, std::string parametro);
         std::string procurar_curso_por_codigo(std::string codigo);

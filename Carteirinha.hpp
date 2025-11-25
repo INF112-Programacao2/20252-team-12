@@ -1,10 +1,10 @@
 #ifndef CARTEIRINHA_HPP
 #define CARTEIRINHA_HPP
-#include "Estudante.hpp"
 #include "Transacao.hpp"
 #include <vector>
 
 class Transacao;
+class Estudante; // Trocado para forward declaration pq tinha dependencia circular
 
 class Carteirinha{
     private:

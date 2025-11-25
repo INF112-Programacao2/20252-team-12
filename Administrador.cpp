@@ -5,9 +5,15 @@
 #include <iomanip>
 #include <thread>
 #include <chrono>
+#include <ctime>
+#include <sstream>
 #include "CImg.h"
 
 using namespace cimg_library;
+
+void pausa(int seg){
+    std::this_thread::sleep_for(std::chrono::seconds(seg));
+}
 
 static std::string getDataAtual() {
     auto agora = std::chrono::system_clock::now();
@@ -234,8 +240,81 @@ void Administrador::listarEstudante(std::vector<Estudante*> &estudantes) {
 }
 
 // Modificar a função para perguntar qual o dado quer alterar
-void Administrador::alterarDadosEstudante(std::vector<Estudante*> &estudantes) {
-    
+int Administrador::alterarDadosEstudante(std::vector<Estudante*> &estudantes) {
+    std::cout << "\n============================================\n";
+    std::cout << "   ✏️  MENU DE ALTERAÇÃO DE DADOS ✏️ \n";
+    std::cout << "============================================\n";
+
+    std::string matricula;
+    std::cout << "-> Digite a matrícula do estudante: ";
+    std::cin >> matricula;
+
+    //acha o estudante alvo
+    Estudante* estudanteAlvo = nullptr;
+    for (auto* est : estudantes) {
+        if (est->get_matricula() == matricula) {
+            estudanteAlvo = est;
+            break;
+        }
+    }
+
+    if (estudanteAlvo == nullptr) {
+        throw std::invalid_argument("❌ Estudante não encontrado com a matrícula: " + matricula);
+    }
+
+    int opcao;
+    std::cout << "\nEstudante encontrado: " << estudanteAlvo->getNome() << "\n";
+    std::cout << "--------------------------------------------\n";
+    std::cout << "1 - Alterar Nome\n";
+    std::cout << "2 - Alterar Email\n";
+    std::cout << "3 - Alterar Curso\n";
+    std::cout << "4 - Alterar Senha\n";
+    std::cout << "5 - Cancelar\n";
+    std::cout << "--------------------------------------------\n";
+    std::cout << "Opção: ";
+
+    if (!(std::cin >> opcao)) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        throw std::invalid_argument("Digite um número válido!");
+    }
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::string novoDado;
+
+    switch (opcao) {
+        case 1:
+            std::cout << "-> Novo Nome: ";
+            std::getline(std::cin, novoDado);
+            estudanteAlvo->setNome(novoDado);
+            break;
+        case 2:
+            std::cout << "-> Novo Email: ";
+            std::cin >> novoDado;
+            estudanteAlvo->setEmail(novoDado);
+            break;
+        case 3:
+            std::cout << "-> Novo Curso (Sigla ou Nome): ";
+            std::getline(std::cin, novoDado);
+            estudanteAlvo->set_curso(novoDado);
+            break;
+        case 4:
+            std::cout << "-> Nova Senha: ";
+            std::cin >> novoDado;
+            estudanteAlvo->setSenha(novoDado);
+            break;
+        case 5:
+            std::cout << "Operação cancelada.\n";
+            return;
+        default:
+            throw std::invalid_argument("Opção inválida!");
+    }
+
+    std::cout << "\n✅ Dados atualizados com sucesso!\n";
+
+    pausa(2); 
+    std::cout << "Voltando para o Menu do Administrador...\n";
+    pausa(1);
 }
 
 void Administrador::alterarSenhaAdministrador() {
@@ -345,12 +424,13 @@ void Administrador::recarregarCarteirinha(std::vector<Estudante*> &estudantes) {
     throw std::invalid_argument("❌ Não foi possível localizar o Estudante com matrícula " + matricula);
 }
 
-void Administrador::alterarValorRU() {
+std::string Administrador::alterarValorRU() {
 
     std::cout << "\n============================================\n";
     std::cout << "   📚 MENU DE ALTERAÇÃO DE VALOR RU 📚\n";
     std::cout << "============================================\n";
 
+    std::string gradOuPos;
     char resposta;
     double novo_valor;
     std::cout << "Escolha o estudante:\n";
@@ -364,11 +444,15 @@ void Administrador::alterarValorRU() {
     std::cin >> novo_valor;
     if (resposta == '1'){
         EstudanteGraduacao::set_valorRU(novo_valor);
+        gradOuPos = "Graduação";
     } else if (resposta == '2'){
         EstudantePosGraduacao::set_valorRU(novo_valor);
+        gradOuPos = "Pós-Graduação";
     }
 
     std::cout << "\nValor alterado com sucesso! ✅" << std::endl;
+
+    return gradOuPos;
 }
 
 void Administrador::alterarValorMulta() {

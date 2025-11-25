@@ -17,6 +17,7 @@ class Sistema{
 
         void criarLivros();
         void menuAdministrador();
+        void menuEstudante();
     public:
         Sistema();
         ~Sistema();

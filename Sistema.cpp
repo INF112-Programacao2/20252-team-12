@@ -2,11 +2,35 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <limits>
 #include <stdexcept>
 #include <cstdlib>
 #include <chrono>
 #include <thread>
+
+std::string obterDataHora() {
+    std::time_t t = std::time(nullptr);
+    std::tm* now = std::localtime(&t);
+    
+    char buffer[100];
+    // Formato: Dia/Mes/Ano Hora:Minuto:Segundo
+    std::strftime(buffer, sizeof(buffer), "%d/%m/%Y %H:%M:%S", now);
+    
+    return std::string(buffer);
+}
+
+static void escreveLog(std::string mensagem) {
+    std::ofstream fout("actionLog.txt", std::ios::app); 
+
+    if (!fout.is_open()) {
+        std::cerr << "Erro ao abrir o arquivo de log." << std::endl;
+    }
+
+    fout << "[" << obterDataHora() << "] " << mensagem << std::endl;
+
+    fout.close();
+}
 
 static void apagarTerminal(){
     #if defined(_WIN32) || defined(_WIN64)
@@ -124,6 +148,9 @@ void Sistema::menuAdministrador(){
             }
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             apagarTerminal();
+            
+            escreveLog("Administrador escolheu a opcao: " + opcao);
+
             switch (opcao) {
                 case 1:
                     this->admin->criarLivro(*this->biblioteca);
@@ -141,10 +168,12 @@ void Sistema::menuAdministrador(){
                     this->biblioteca->listarLivros();
                     apagarTerminal();
                     break;
-                case 5:
-                    this->admin->alterarDadosEstudante(this->estudantes);
+                case 5:{
+                    int menuAltetacao = this->admin->alterarDadosEstudante(this->estudantes);
+                    escreveLog("Opcao " + std::to_string(menuAltetacao) + " escolhida dentro do menu de alteração de dados do estudante");
                     apagarTerminal();
                     break;
+                    }
                 case 6:
                     this->admin->alterarSenhaAdministrador();
                     apagarTerminal();
@@ -160,10 +189,13 @@ void Sistema::menuAdministrador(){
                     this->admin->recarregarCarteirinha(this->estudantes);
                     apagarTerminal();
                     break;
-                case 10:
-                    this->admin->alterarValorRU();
+                case 10:{
+                    std::string gradOuPos;
+                    gradOuPos = this->admin->alterarValorRU(); //Altera e informa para quem houve alteração
+                    escreveLog("Valor do RU para a " + gradOuPos + " alterado");
                     apagarTerminal();
                     break;
+                    }
                 case 11:
                     this->admin->alterarValorMulta();
                     apagarTerminal();
@@ -182,7 +214,91 @@ void Sistema::menuAdministrador(){
     }
 }
 
+void Sistema::menuEstudante() {
+    int opcao;
+    while (true) {
+        std::cout << "\n============================================\n";
+        std::cout << "        🎓 PAINEL DO ESTUDANTE 🎓 \n";
+        std::cout << "    Bem-vindo, " << this->estudante_logado->getNome() << "\n";
+        std::cout << "--------------------------------------------\n";
+        std::cout << "1 - Consultar Saldo\n";
+        std::cout << "2 - Recarregar Carteirinha\n";
+        std::cout << "3 - Ver Extrato Financeiro\n";
+        std::cout << "4 - Ver Meus Empréstimos\n";
+        std::cout << "5 - Pegar Livro Emprestado\n";
+        std::cout << "6 - Devolver Livro\n";
+        std::cout << "7 - Comer no RU\n";
+        std::cout << "8 - Sair\n";
+        std::cout << "--------------------------------------------\n";
+        std::cout << "Opção: ";
+
+        try {
+            if (!(std::cin >> opcao)) {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                throw std::invalid_argument("Digite um número válido!");
+            }
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            apagarTerminal();
+
+            escreveLog("Estudante escolheu a opcao: " + opcao);
+
+            switch (opcao) {
+                case 1:
+                    this->estudante_logado->consultarSaldo();
+                    pausa(2); //pausa para o usuario ler antes de limpar
+                    apagarTerminal();
+                    break;
+                case 2:
+                    this->estudante_logado->recarregarCarteirinha();
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 3:
+                    this->estudante_logado->get_carteirinha()->exibir_extrato();
+                    std::cout << "\nPressione ENTER para voltar...";
+                    std::cin.ignore();
+                    apagarTerminal();
+                    break;
+                case 4:
+                    this->estudante_logado->exibirEmprestimos();
+                    std::cout << "\nPressione ENTER para voltar...";
+                    std::cin.ignore();
+                    apagarTerminal();
+                    break;
+                case 5:
+                    this->estudante_logado->pegarLivro(*this->biblioteca);
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 6:
+                    this->estudante_logado->devolverLivro(*this->biblioteca);
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 7:
+                    this->estudante_logado->comerRU();
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 8:
+                    std::cout << "Fazendo logout...\n";
+                    this->estudante_logado = nullptr;
+                    return;
+                default:
+                    throw std::invalid_argument("Digite um número válido!");
+            }
+        } catch (const std::exception& e) {
+            apagarTerminal();
+            std::cerr << "\n❌ Ocorreu um erro: " << e.what() << std::endl;
+            pausa(2);
+        }
+    }
+}
+
 void Sistema::iniciarSistema(){
+    escreveLog("Sistema aberto");
+    
     int opcao;
 
     while (1) {
@@ -227,6 +343,8 @@ void Sistema::iniciarSistema(){
                         apagarTerminal();
                         this->menuAdministrador();  // <-- CHAMAR O MENU
                         logado = true;
+                        escreveLog("Administrador logou no sistema");
+
                         break;
                     }
                     
@@ -236,6 +354,7 @@ void Sistema::iniciarSistema(){
                         if (estudante->getEmail() == email && estudante->getSenha() == senha) {
                             this->estudante_logado = estudante;
                             encontrado = true;
+                            escreveLog("Estudante " + estudante->get_matricula() + " logou no sistema");
                             break;
                         }
                     }
@@ -244,7 +363,7 @@ void Sistema::iniciarSistema(){
                         escreveDevagar("\n✅ Bem-Vindo " + this->estudante_logado->getNome(), 50);  // <-- getNome(), NÃO getSenha()
                         pausa(1);
                         apagarTerminal();
-                        // TODO: Chamar o menu do estudante aqui
+                        this->menuEstudante();
                         logado = true;
                         break;
                     } else {
@@ -263,4 +382,6 @@ void Sistema::iniciarSistema(){
             std::cerr << "\n❌ Ocorreu um erro desconhecido!\n";
         }
     }
+
+    escreveLog("Sistema Fechado");
 }

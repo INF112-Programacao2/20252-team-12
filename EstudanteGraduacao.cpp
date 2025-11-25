@@ -1,4 +1,5 @@
 #include "EstudanteGraduacao.hpp"
+#include <stdexcept>
 
 double EstudanteGraduacao::valorRU = 5.40;
 int EstudanteGraduacao::prazoDeDevolucao = 7;
@@ -29,5 +30,8 @@ void EstudanteGraduacao::set_valorRU(double _valorRU){
 }
 
 void EstudanteGraduacao::comerRU() {
+    if (this->get_carteirinha()->getSaldo() < this->get_valorRU()) {
+        throw std::invalid_argument("O seu saldo é inferior ao valor do RU");
+    }
     this->get_carteirinha()->debitar(this->get_valorRU());
 }
