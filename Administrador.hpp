@@ -32,7 +32,7 @@ class Administrador : public Usuario{
         void criarLivro(Biblioteca &biblioteca);
         void criarEstudante(std::vector<Estudante*> &estudantes);
         void listarEstudante(std::vector<Estudante*> &estudantes);
-        void alterarSenhaEstudante(std::vector<Estudante*> &estudantes);
+        void alterarDadosEstudante(std::vector<Estudante*> &estudantes);
         void alterarSenhaAdministrador();
         void consultarTransacoes(std::vector<Estudante*> &estudantes);
         void consultarEmprestimos(std::vector<Estudante*> &estudantes);

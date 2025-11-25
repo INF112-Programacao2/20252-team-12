@@ -30,6 +30,7 @@ void Biblioteca::listarLivrosDisponiveis(){
     }
 }
 
+// Fazer para listar em um txt
 void Biblioteca::listarLivros(){
     for (auto livro : acervo){
         livro->exibirInformacoes();

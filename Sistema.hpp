@@ -14,7 +14,9 @@ class Sistema{
         Estudante* estudante_logado;
         Administrador* admin;
         Biblioteca* biblioteca;
+
         void criarLivros();
+        void menuAdministrador();
     public:
         Sistema();
         ~Sistema();
