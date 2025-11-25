@@ -20,6 +20,7 @@ void Biblioteca::setNome(std::string _nome){
 
 void Biblioteca::adicionarLivro(Livro& _livro){
     acervo.push_back(&_livro);
+    // TODO: Adicionar no txt também para não perder depois
 }
 
 void Biblioteca::listarLivrosDisponiveis(){
