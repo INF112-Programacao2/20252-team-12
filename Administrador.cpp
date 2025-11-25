@@ -355,6 +355,7 @@ void Administrador::alterarValorRU() {
     double novo_valor;
     std::cout << "Escolha o estudante:\n";
     std::cout << "1 - Graduação\n2 - Pós-Graduação\n";
+    std::cout << "Opção: ";
     std::cin >> resposta;
     if (resposta != '1' && resposta != '2'){
         throw std::invalid_argument("❌ Opção inválida");
@@ -485,7 +486,6 @@ std::string Administrador::procurar_curso_por_codigo(std::string codigo){
 }
 
 //funcao auxiliar para o metodo a gerar carteirinha:
-
 
 void Administrador::gerarCarteirinha(Estudante *estudante) { //adicionar como parametro como o usuario quer salvar o arquivo final -- sugestao: nome_aluno + "_carteirinha"
     //carregar as imagens
