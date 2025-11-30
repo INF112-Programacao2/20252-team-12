@@ -40,8 +40,8 @@ class Administrador : public Usuario{
         void visualizarCarteirinhas(std::vector<Estudante*> &estudantes);
         std::string alterarValorRU(); // Retorna qual valor foi alterado (Graduação ou Pós-Graduação)
         void alterarValorMulta();
-        void mobilidadeAcademica(EstudanteGraduacao *estudante, std::string parametro);
-        std::string procurar_curso_por_codigo(std::string codigo);
+        void mobilidadeAcademica(std::vector<Estudante*> &estudantes);
+        static std::string procurar_curso_por_codigo(std::string codigo);
         void gerarCarteirinha(Estudante *estudante);
 };
 

@@ -6,6 +6,7 @@
 #include <thread>
 #include <chrono>
 #include <ctime>
+#include <cctype>
 #include <sstream>
 #include "CImg.h"
 
@@ -241,7 +242,7 @@ void Administrador::listarEstudante(std::vector<Estudante*> &estudantes) {
     }
     escreveDevagar("\nArquivo Lista Estudantes criado com sucesso ✅", 50);
     fout.close();
-    if(fout.is_open()){
+    if(fout.fail()){
         throw std::runtime_error("❌ Não foi possível fechar o arquvivo: ListaEstudantes ");
     }
 }
@@ -487,14 +488,60 @@ static std::string deixar_maiusculo(std::string &palavra){
     return resultado;
 }
 
-void Administrador::mobilidadeAcademica(EstudanteGraduacao *estudante, std::string parametro){
+void Administrador::mobilidadeAcademica(std::vector<Estudante*> &estudantes){
+    
     std::ifstream leitura;
     leitura.open("codigo_cursos.txt");
+    
+    std::string matricula_aluno, parametro;
+
+    while(true){
+        std::cout<<"Matricula do Aluno: ";
+        std::getline(std::cin,matricula_aluno);
+
+        if(matricula_aluno.empty()) {
+            std::cout<<"Entrada vazia. Digite novamente."<<std::endl;
+            continue;
+        }
+
+        bool numero=true;
+
+        for(char c:matricula_aluno) {
+            if(!isdigit(c)){
+                numero=false;
+                break;
+            }
+        }
+
+        if(!numero) {
+            std::cout<<"A matricula deve conter apenas numeros."<<std::endl;
+            continue;
+        }
+        
+        break;
+    }
+
+    std::cout<<"Novo curso(codigo ou nome): ";
+    std::getline(std::cin,parametro);
+
+    Estudante* estudante = nullptr;
+
+    for (auto aluno:estudantes){
+        if(aluno->get_matricula() == matricula_aluno){
+            estudante = aluno;
+            break;
+        }
+    }
+
+    if (estudante==nullptr)
+        throw std::invalid_argument("Aluno não foi encontrado!");
+
 
     if(!leitura.is_open())
         throw std::runtime_error("Nao foi possivel abrir o arquivo de leitura");
 
-    bool numerico = false; //supondo nome do curso
+
+    bool numerico = false; //supondo nome do curso -- TODO: verificar se essas verificações bastam para validar o tipo de parametro
     for(char c:parametro){
         if(isdigit(c)){ //é codigo numerico
             numerico = true;
@@ -538,10 +585,9 @@ void Administrador::mobilidadeAcademica(EstudanteGraduacao *estudante, std::stri
         throw std::invalid_argument("Parametro invalido para mobilidade academica");
 
     estudante->set_curso(codigo_curso); //altera o curso que o aluno está fazendo
-    std::cout<<"Mobilidade academica realizada com sucesso!"<<std::endl;
     leitura.close();
 
-    if(leitura.is_open())
+    if(leitura.fail())
         throw std::runtime_error("Nao foi possivel fechar o arquivo");
 }
 
@@ -573,7 +619,7 @@ std::string Administrador::procurar_curso_por_codigo(std::string codigo){
         throw std::invalid_argument("Parametro invalido");
     
     leitura.close();
-    if(leitura.is_open())
+    if(leitura.fail())
         throw std::runtime_error("Nao foi possivel fechar o arquivo de leitura");
 
     return nome_curso;

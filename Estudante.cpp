@@ -1,5 +1,7 @@
+#define cimg_display 0
 #include "Estudante.hpp"
 #include "Usuario.hpp"
+#include "Administrador.hpp"
 #include <limits>
 #include <stdexcept>
 #include <iostream>
@@ -7,6 +9,12 @@
 #include <sstream>
 #include <chrono>
 #include <iomanip>
+#include "CImg.h"
+#include <chrono>
+#include <thread>
+#include <filesystem>
+
+using namespace cimg_library;
 
 std::string getDataAtual() {
     auto agora = std::chrono::system_clock::now();
@@ -62,6 +70,32 @@ bool caseInsensitiveComp(const std::string a, const std::string b) {
     return true;
 }
 
+//funcoes auxiliares para o metodo visualizarCarteirinha
+static void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mask) {
+    cimg_forXY(img, x, y) {
+        if (mask(x, y, 0) > 0 || mask(x, y, 1) > 0 || mask(x, y, 2) > 0) {
+            img(x, y, 0) = 0; // vermelho
+            img(x, y, 1) = 0; // verde
+            img(x, y, 2) = 0; // azul
+        }
+    }
+}
+
+static std::string deixar_maiusculo(std::string &palavra){
+    std::string resultado;
+
+    for(char c: palavra)
+        resultado += toupper(c);
+
+    return resultado;
+}
+
+void EscreveDevagar(const std::string &texto, int ms){
+    for (char c : texto){
+        std::cout << c << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+    }
+}
 
 Estudante::Estudante(const std::string& _nome, const std::string &_cpf, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const std::string& _matricula, const std::string& _curso) : Usuario(_nome,_cpf,_data_de_nascimento, _email, _senha), matricula(_matricula), curso(_curso), emprestimos(){
     this->carteirinha = new Carteirinha();
@@ -245,7 +279,118 @@ void Estudante::recarregarCarteirinha(){
 // Verificar se existe e trata os erros
 // Gera a carteirinha e coloca em uma pasta separada. Ex: 'Carteirinhas'
 // Tenta seguir o padrão das funções quando for pedir algum dado escrito e no UI
-void Estudante::visualizarCarteirinha(){}
+void Estudante::visualizarCarteirinha(){
+    EscreveDevagar("Antes de visualizar a carteirinha, adicione a imagem do estudante na pasta imagens (PRIMEIRONOMEALUNO_MATRICULA_(formato da imagem))",30);
+    std::cout<<std::endl;
+    EscreveDevagar("Selecione qual e a extensao do arquivo adicionado:" ,30);
+    std::cout<<std::endl;
+    EscreveDevagar("1 - .PNG",20);
+    std::cout<<std::endl;
+    EscreveDevagar("2 - .JPG/JPEG",20);
+    std::cout<<std::endl;
+    EscreveDevagar("3 - .BMP",20);
+    std::cout<<std::endl;
+
+    int opcao;
+    
+    while (true) {
+        try {
+            std::cout<<"Opcao: ";
+
+            if(!(std::cin>>opcao)){ //erro cin -- usuario digitou letra,simbolo,etc
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                throw std::invalid_argument("Entrada invalida! Digite um numero 1,2 ou 3.");
+            }
+
+            if(opcao < 1 || opcao > 3) {
+                throw std::invalid_argument("Opcao invalida! Digite 1, 2 ou 3.");
+            }
+
+            break; //caso a entrada e a opcao seja valida
+        }
+        catch (const std::exception &e) {
+            std::cout<<e.what()<<std::endl<<std::endl;
+        }
+    }
+
+    //carregar as imagens de template base
+    CImg<unsigned char> img;
+    CImg<unsigned char> barcode;
+    
+    try {
+        img.assign("images/template.bmp");
+    }   catch (const cimg_library::CImgIOException &erro){
+        throw std::runtime_error("❌ Não foi possível carregar template.bmp");
+    }
+
+    try {
+        barcode.assign("images/codigo_barra.bmp");
+    } catch (const cimg_library::CImgIOException &erro) {
+        throw std::runtime_error("❌ Não foi possível carregar barcode.bmp");
+    }
+
+    //capturar o primeiro nome do estudante
+    std::string aux = getNome();
+    auto pos = aux.find(" ");
+    std::string primeiroNome;
+    if(pos == std::string::npos)
+        primeiroNome = aux;
+    else
+        primeiroNome = aux.substr(0,pos);
+
+    primeiroNome = deixar_maiusculo(primeiroNome);
+
+    //procurar uma foto que é salva no formato "PRIMEIRONOMEALUNO_MATRICULA_foto.bmp" - ex: para Julio Soares dos Reis "JULIO_3213131_foto.bmp"
+    std::string nome_foto_aluno = "images/";
+    nome_foto_aluno += primeiroNome;
+    nome_foto_aluno += "_";
+    nome_foto_aluno += get_matricula();
+    nome_foto_aluno += "_foto";
+    
+    if(opcao==1)
+        nome_foto_aluno+=".png";
+    else if(opcao==2)
+        nome_foto_aluno+=".jpg";
+    else if (opcao==3)
+        nome_foto_aluno+=".bmp";
+
+    CImg<unsigned char> aluno;
+
+    try {
+        aluno.assign(nome_foto_aluno.c_str());  //verificar se existe o arquivo da foto do aluno
+    } catch (const cimg_library::CImgIOException &erro) {
+        throw std::runtime_error("❌ Não foi possivel carregar o arquivo da foto do aluno: " + nome_foto_aluno);
+    }
+
+    //colocar a imagem do aluno e do codigo de barra no local certo
+    aluno.resize(350,525);
+    img.draw_image(33,314,aluno);
+
+    barcode.resize(998,192);
+    img.draw_image(397,749,barcode);
+
+    //criar mascara RGB para por o texto
+    CImg <unsigned char> mask (img.width(),img.height(),1,3,0);
+    unsigned char branco[] = {255,255,255};
+
+    //desenha o texto na mascara 
+    mask.draw_text(520,321, getNome().c_str(), branco, 0, 255, 30, false); //.c_str() converte string para const char
+    mask.draw_text(523,404, Administrador::procurar_curso_por_codigo(get_curso()).c_str(), branco, 0, 255, 30, false);
+    mask.draw_text(577,488, get_matricula().c_str(), branco,0,255, 30, false);
+    mask.draw_text(475,572, getCpf().c_str(), branco, 0 , 255, 30, false);
+    mask.draw_text(564,655, "06/2026", branco, 0, 255, 30, false);
+    mask.draw_text(1173,720, getDataAtual().c_str(), branco, 0, 255, 30, false);
+
+    if(!std::filesystem::exists("carteirinhas")) //caso nao haja uma pasta chamada 'carteirinhas' -- segurança extra
+        std::filesystem::create_directory("carteirinhas"); //cria a pasta 
+
+    std::string nomeArquivo = "carteirinhas/" + primeiroNome + "_" + get_matricula() + "_CARTEIRINHA.bmp"; //salvar a carteirinha com nome personalizado conforme o primeiro nome  e a matricula do aluno
+
+    aplicarTextoPreto(img,mask);
+    img.save(nomeArquivo.c_str());
+    EscreveDevagar("Carteirinha criada com sucesso! Verifique a pasta 'Carteirinhas' para visualizar",30);
+}
 
 void Estudante::consultarSaldo(){
     std::cout << "Seu saldo é de R$" << this->carteirinha->getSaldo() << "\n";

@@ -137,7 +137,8 @@ void Sistema::menuAdministrador(){
         std::cout << "10 - Recarregar Uma Carteirinha\n";
         std::cout << "11 - Alterar o Valor do RU\n";
         std::cout << "12 - Alterar o Valor da Multa do Empréstimo\n";
-        std::cout << "13 - Sair\n";
+        std::cout << "13 - Realizar Reopção de Curso\n";
+        std::cout << "14 - Sair\n";
         std::cout << "--------------------------------------------\n";
         std::cout << "Opção: ";
 
@@ -177,7 +178,7 @@ void Sistema::menuAdministrador(){
                     break;
                 case 5:
                     escreveLog("Administrador escolheu a opcao: 5 - Visualizar Carteirinha de um Estudante");
-                    // this->admin->visualizarCarteirinhas(this->estudantes);
+                    this->admin->visualizarCarteirinhas(this->estudantes);
                     pausa(2);
                     apagarTerminal();
                     break;
@@ -234,7 +235,16 @@ void Sistema::menuAdministrador(){
                     apagarTerminal();
                     break;
                 case 13:
-                    escreveLog("Administrador escolheu a opcao: 13 - Sair");
+                    escreveLog("Administrador escolheu a opcao: 13 - Realizar reopção de curso");
+                    escreveDevagar("Preencha os seguintes campos: ",30); std::cout<<std::endl;
+                    pausa(1);
+                    this->admin->mobilidadeAcademica(this->estudantes);
+                    escreveDevagar("Reopção realizada com sucesso!",30);
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 14:
+                    escreveLog("Administrador escolheu a opcao: 14 - Sair");
                     escreveLog("Logout realizado");
                     escreveDevagar("📤 Fazendo logout...\n", 50);
                     pausa(2);
@@ -294,7 +304,7 @@ void Sistema::menuEstudante() {
                     break;
                 case 3:
                     escreveLog("Estudante Escolheu a Opcao: 3 - Visualizar Carteirinha");
-                    // this->estudante_logado->visualizarCarteirinha();
+                    this->estudante_logado->visualizarCarteirinha();
                     pausa(2);
                     apagarTerminal();
                     break;

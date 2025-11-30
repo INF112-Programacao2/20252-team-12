@@ -76,6 +76,6 @@ void Biblioteca::listarLivros(){
     } 
 
     listaLivros.close();
-    if(listaLivros.is_open())
+    if(listaLivros.fail())
         throw std::runtime_error("❌ Não foi possível fechar o arquvivo: Lista Livros");
 }

@@ -1,0 +1,43 @@
+[30/11/2025 19:35:39] Sistema aberto
+[30/11/2025 19:35:55] Administrador Logou no Sistema
+[30/11/2025 19:36:02] Administrador escolheu a opcao: 2 - Cadastrar Estudantes
+[30/11/2025 19:36:45] Administrador escolheu a opcao: 3 - Listar Estudantes
+[30/11/2025 19:36:59] Administrador escolheu a opcao: 13 - Sair
+[30/11/2025 19:36:59] Logout realizado
+[30/11/2025 19:37:03] Administrador logou no sistema
+[30/11/2025 19:37:14] Estudante 120558 logou no sistema
+[30/11/2025 19:37:30] Estudante Escolheu a Opcao: 3 - Visualizar Carteirinha
+[30/11/2025 19:39:27] Sistema aberto
+[30/11/2025 19:39:40] Administrador Logou no Sistema
+[30/11/2025 19:39:46] Administrador escolheu a opcao: 2 - Cadastrar Estudantes
+[30/11/2025 19:40:30] Administrador escolheu a opcao: 13 - Sair
+[30/11/2025 19:40:30] Logout realizado
+[30/11/2025 19:40:34] Administrador logou no sistema
+[30/11/2025 19:40:47] Estudante 120558 logou no sistema
+[30/11/2025 19:41:01] Estudante Escolheu a Opcao: 3 - Visualizar Carteirinha
+[30/11/2025 19:43:26] Sistema aberto
+[30/11/2025 19:43:47] Administrador Logou no Sistema
+[30/11/2025 19:43:55] Administrador escolheu a opcao: 2 - Cadastrar Estudantes
+[30/11/2025 19:44:57] Administrador escolheu a opcao: 13 - Sair
+[30/11/2025 19:44:57] Logout realizado
+[30/11/2025 19:45:00] Administrador logou no sistema
+[30/11/2025 19:45:25] Estudante 120558 logou no sistema
+[30/11/2025 19:46:29] Estudante Escolheu a Opcao: 3 - Visualizar Carteirinha
+[30/11/2025 19:47:04] Estudante Escolheu a Opcao: 3 - Visualizar Carteirinha
+[30/11/2025 20:19:52] Sistema aberto
+[30/11/2025 20:20:06] Administrador Logou no Sistema
+[30/11/2025 20:20:19] Administrador escolheu a opcao: 3 - Listar Estudantes
+[30/11/2025 20:20:34] Administrador escolheu a opcao: 2 - Cadastrar Estudantes
+[30/11/2025 20:21:18] Administrador escolheu a opcao: 3 - Listar Estudantes
+[30/11/2025 20:21:32] Administrador escolheu a opcao: 13 - Realizar reopção de curso
+[30/11/2025 20:21:52] Administrador escolheu a opcao: 3 - Listar Estudantes
+[30/11/2025 20:22:53] Sistema aberto
+[30/11/2025 20:23:06] Administrador Logou no Sistema
+[30/11/2025 20:23:14] Administrador escolheu a opcao: 2 - Cadastrar Estudantes
+[30/11/2025 20:24:02] Administrador escolheu a opcao: 3 - Listar Estudantes
+[30/11/2025 20:24:16] Administrador escolheu a opcao: 13 - Realizar reopção de curso
+[30/11/2025 20:24:52] Administrador escolheu a opcao: 13 - Realizar reopção de curso
+[30/11/2025 20:25:16] Administrador escolheu a opcao: 3 - Listar Estudantes
+[30/11/2025 20:26:08] Administrador escolheu a opcao: 14 - Sair
+[30/11/2025 20:26:08] Logout realizado
+[30/11/2025 20:26:12] Administrador logou no sistema
