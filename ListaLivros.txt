@@ -1,0 +1,17 @@
+TITULO                                                                          AUTOR                                             TIPO                               TOTALDISPONIVEL
+------------------------------------------------------------------------------------------------------------------------------
+Estruturas de Dados e Algoritmos em C++                                         João Silva                                       Ciência da Computação               8         8
+Princípios de Economia                                                         N. Gregory Mankiw                                 Economia                              15        15
+Cálculo - Volume 1                                                             James Stewart                                     Matemática                           12        12
+Introdução à Química Geral                                                  Linus Pauling                                     Química                               7         7
+Mecânica Quântica Não-Relativística                                         Leonard Schiff                                    Física                                5         5
+Teoria dos Grafos                                                               Claude Berge                                      Matemática Aplicada                   6         6
+O Pensamento Político de Maquiavel a Nossos Dias                               Norberto Bobbio                                   Ciência Política                    10        10
+Fundamentos da Engenharia de Software                                           Roger S. Pressman                                 Engenharia de Software                 9         9
+História da Filosofia Ocidental                                                Bertrand Russell                                  Filosofia                             11        11
+Introdução à Análise de Circuitos Elétricos                                Charles K. Alexander                              Engenharia Elétrica                  14        14
+Anatomia Humana Básica                                                         Dangelo e Fattini                                 Medicina/Biologia                     13        13
+Psicologia do Desenvolvimento                                                   Jean Piaget                                       Psicologia                             8         8
+Métodos de Pesquisa em Ciências Sociais                                       Earl Babbie                                       Metodologia                            7         7
+Processos Químicos Industriais                                                 George T. Austin                                  Engenharia Química                    4         4
+Direito Constitucional Esquematizado                                            Pedro Lenza                                       Direito                               20        20

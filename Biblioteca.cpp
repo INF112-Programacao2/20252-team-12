@@ -1,4 +1,7 @@
 #include "Biblioteca.hpp"
+#include <fstream>
+#include <iomanip>
+#include <string>
 
 Biblioteca::Biblioteca(const std::string& _nome) : nome(_nome), acervo() {}
 
@@ -31,9 +34,50 @@ void Biblioteca::listarLivrosDisponiveis(){
     }
 }
 
+std::string corta(std::string palavra, int n) {
+    std::string saida = palavra;
+
+    if(saida.size() > n)
+        saida = saida.substr(0, n-3) + "...";
+    
+    if(saida.size() < n)
+        saida += std::string(n-saida.size(), ' ');
+
+    return saida;
+}
+
 // TODO: Fazer para listar em um txt
 void Biblioteca::listarLivros(){
-    for (auto livro : acervo){
+    /*for (auto livro : acervo){
         livro->exibirInformacoes();
-    }
+    } */
+   std::ofstream listaLivros;
+    listaLivros.open("ListaLivros.txt");
+
+    if(!listaLivros.is_open())
+        throw std::runtime_error("❌ Não foi possível abrir o arquvivo: Lista Livros");
+
+    listaLivros<<"LISTA DE LIVROS CADASTRADOS: "<<std::endl<<std::endl;
+    listaLivros
+    <<std::left
+    <<std::setw(80)<< "TITULO"
+    <<std::setw(50)<< "AUTOR"
+    <<std::setw(30)<< "TIPO"
+    <<std::right
+    <<std::setw(10)<< "TOTAL"
+    <<std::setw(10)<< "DISPONIVEL"
+    << "\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+
+    for(auto livro: acervo){
+        listaLivros
+        <<std::left<<std::setw(80)<<corta(livro->getTitulo(),80)<<
+        std::left<<std::setw(50)<<corta(livro->getAutor(),50)<<
+        std::left<<std::setw(30)<<corta(livro->getTipo(),30)<<
+        std::right<<std::setw(10)<<livro->getNumExemplaresTotal()<<
+        std::right<<std::setw(10)<<livro->getNumExemplaresDisponiveis()<<std::endl;
+    } 
+
+    listaLivros.close();
+    if(listaLivros.is_open())
+        throw std::runtime_error("❌ Não foi possível fechar o arquvivo: Lista Livros");
 }
