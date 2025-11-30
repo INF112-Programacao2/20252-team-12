@@ -108,7 +108,6 @@ void Sistema::criarLivros(){
                 continue;
             }
 
-            // Cria um novo objeto Livro e adiciona ao vetor
             Livro* novoLivro = new Livro(titulo, autor, tipo, numExemplaresTotal);
             this->biblioteca->adicionarLivro(*novoLivro);
 
@@ -123,24 +122,22 @@ void Sistema::menuAdministrador(){
     escreveLog("Administrador Logou no Sistema");
     int opcao;
     while (1){
-        //std::cout << "\n============================================\n";
         escreveDevagar("\n============================================\n",10);
-        //std::cout << "👨 BEM-VINDO AO PAINEL DE ADMINISTRADOR 👨 \n";
         escreveDevagar("👨 BEM-VINDO AO PAINEL DE ADMINISTRADOR 👨 \n",50);
-        //std::cout << "--------------------------------------------\n";
         escreveDevagar("--------------------------------------------\n",10);
         std::cout << "1 - Criar Livro\n";
         std::cout << "2 - Cadastrar Estudante\n";
         std::cout << "3 - Listar Estudantes\n";
         std::cout << "4 - Listar Livros\n";
-        std::cout << "5 - Alterar Dados de um Estudante\n";
-        std::cout << "6 - Alterar Sua Senha\n";
-        std::cout << "7 - Consultar Transações\n";
-        std::cout << "8 - Consultar Empréstimos\n";
-        std::cout << "9 - Recarregar Uma Carteirinha\n";
-        std::cout << "10 - Alterar o Valor do RU\n";
-        std::cout << "11 - Alterar o Valor da Multa do Empréstimo\n";
-        std::cout << "12 - Sair\n";
+        std::cout << "5 - Visualizar Carteirinha de um Estudante\n";
+        std::cout << "6 - Alterar Dados de um Estudante\n";
+        std::cout << "7 - Alterar Sua Senha\n";
+        std::cout << "8 - Consultar Transações\n";
+        std::cout << "9 - Consultar Empréstimos\n";
+        std::cout << "10 - Recarregar Uma Carteirinha\n";
+        std::cout << "11 - Alterar o Valor do RU\n";
+        std::cout << "12 - Alterar o Valor da Multa do Empréstimo\n";
+        std::cout << "13 - Sair\n";
         std::cout << "--------------------------------------------\n";
         std::cout << "Opção: ";
 
@@ -152,78 +149,92 @@ void Sistema::menuAdministrador(){
             }
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             apagarTerminal();
-            
-            //escreveLog("Administrador escolheu a opcao: " + std::to_string(opcao));
 
             switch (opcao) {
                 case 1:
                     escreveLog("Administrador escolheu a opcao: 1 - Criar Livro");
                     this->admin->criarLivro(*this->biblioteca);
+                    pausa(2);
                     apagarTerminal();
                     break;
                 case 2:
                     escreveLog("Administrador escolheu a opcao: 2 - Cadastrar Estudantes");                
                     this->admin->criarEstudante(this->estudantes);
+                    pausa(2);
                     apagarTerminal();
                     break;
                 case 3:
                     escreveLog("Administrador escolheu a opcao: 3 - Listar Estudantes");
                     this->admin->listarEstudante(this->estudantes);
+                    pausa(2);
                     apagarTerminal();
                     break;
                 case 4:
                     escreveLog("Administrador escolheu a opcao: 4 - Listar Livros");
                     this->biblioteca->listarLivros();
+                    pausa(2);
                     apagarTerminal();
                     break;
-                case 5:{
-                    escreveLog("Administrador escolheu a opcao: 5 - Alterar Dados de Estudante");
+                case 5:
+                    escreveLog("Administrador escolheu a opcao: 5 - Visualizar Carteirinha de um Estudante");
+                    // this->admin->visualizarCarteirinhas(this->estudantes);
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 6:{
+                    escreveLog("Administrador escolheu a opcao: 6 - Alterar Dados de Estudante");
                     int menuAltetacao = this->admin->alterarDadosEstudante(this->estudantes);
                     escreveLog("Opcao " + std::to_string(menuAltetacao) + " escolhida dentro do menu de alteração de dados do estudante");
+                    pausa(2);
                     apagarTerminal();
                     break;
                     }
-                case 6:
-                    escreveLog("Administrador escolheu a opcao: 6 - Alterar sua Senha");
+                case 7:
+                    escreveLog("Administrador escolheu a opcao: 7 - Alterar sua Senha");
                     this->admin->alterarSenhaAdministrador();
+                    pausa(2);
                     apagarTerminal();
                     break;
-                case 7:
-                    escreveLog("Administrador escolheu a opcao: 7 - Consultar Transações");
+                case 8:
+                    escreveLog("Administrador escolheu a opcao: 8 - Consultar Transações");
                     this->admin->consultarTransacoes(this->estudantes);
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     std::cout << "\nAperte ENTER para continuar...";
                     std::cin.ignore();
+                    pausa(2);
                     apagarTerminal();
                     break;
-                case 8:
-                    escreveLog("Administrador escolheu a opcao: 8 - Consultar Empréstimos");
+                case 9:
+                    escreveLog("Administrador escolheu a opcao: 9 - Consultar Empréstimos");
                     this->admin->consultarEmprestimos(this->estudantes);
                     std::cout << "\nAperte ENTER para continuar...";
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     std::cin.ignore();
+                    pausa(2);
                     apagarTerminal();
                     break;
-                case 9:
-                    escreveLog("Administrador escolheu a opcao: 9 - Recarregar uma Carteirinha");
+                case 10:
+                    escreveLog("Administrador escolheu a opcao: 10 - Recarregar uma Carteirinha");
                     this->admin->recarregarCarteirinha(this->estudantes);
+                    pausa(2);
                     apagarTerminal();
                     break;
-                case 10:{
-                    escreveLog("Administrador escolheu a opcao: 10 - Alterar Valor do RU");
+                case 11:{
+                    escreveLog("Administrador escolheu a opcao: 11 - Alterar Valor do RU");
                     std::string gradOuPos;
                     gradOuPos = this->admin->alterarValorRU();
                     escreveLog("Valor do RU para a " + gradOuPos + " alterado");
+                    pausa(2);
                     apagarTerminal();
                     break;
                     }
-                case 11:
-                    escreveLog("Administrador escolheu a opcao: 11 - Alterar o valor da Multa do Empréstimo");
+                case 12:
+                    escreveLog("Administrador escolheu a opcao: 12 - Alterar o valor da Multa do Empréstimo");
                     this->admin->alterarValorMulta();
                     apagarTerminal();
                     break;
-                case 12:
-                    escreveLog("Administrador escolheu a opcao: 12 - Sair");
+                case 13:
+                    escreveLog("Administrador escolheu a opcao: 13 - Sair");
                     escreveLog("Logout realizado");
                     escreveDevagar("📤 Fazendo logout...\n", 50);
                     pausa(2);
@@ -243,18 +254,20 @@ void Sistema::menuAdministrador(){
 void Sistema::menuEstudante() {
     int opcao;
     while (true) {
-        std::cout << "\n============================================\n";
-        std::cout << "    🎓 BEM-VINDO AO PAINEL DO ESTUDANTE 🎓 \n";
-        std::cout << "    Bem-vindo, " << this->estudante_logado->getNome() << "\n";
+        escreveDevagar("\n============================================\n",10);
+        escreveDevagar("🎓 BEM-VINDO AO PAINEL DO ESTUDANTE 🎓 \n",50);
+        escreveDevagar("============================================\n",10);
+        escreveDevagar("    Bem-vindo, " + this->estudante_logado->getNome() + "\n", 50);
         std::cout << "--------------------------------------------\n";
         std::cout << "1 - Consultar Saldo\n";
         std::cout << "2 - Recarregar Carteirinha\n";
-        std::cout << "3 - Ver Extrato Financeiro\n";
-        std::cout << "4 - Ver Meus Empréstimos\n";
-        std::cout << "5 - Pegar Livro Emprestado\n";
-        std::cout << "6 - Devolver Livro\n";
-        std::cout << "7 - Comer no RU\n";
-        std::cout << "8 - Sair\n";
+        std::cout << "3 - Visualizar Carteirinha\n";
+        std::cout << "4 - Ver Extrato Financeiro\n";
+        std::cout << "5 - Ver Meus Empréstimos\n";
+        std::cout << "6 - Pegar Livro Emprestado\n";
+        std::cout << "7 - Devolver Livro\n";
+        std::cout << "8 - Comer no RU\n";
+        std::cout << "9 - Sair\n";
         std::cout << "--------------------------------------------\n";
         std::cout << "Opção: ";
         
@@ -265,8 +278,6 @@ void Sistema::menuEstudante() {
                 throw std::invalid_argument("Digite um número válido!");
             }
             apagarTerminal();
-
-            //escreveLog("Estudante escolheu a opção: " + std::to_string(opcao));
             
             switch (opcao) {
                 case 1:
@@ -282,39 +293,45 @@ void Sistema::menuEstudante() {
                     apagarTerminal();
                     break;
                 case 3:
-                    escreveLog("Estudante Escolheu a Opcao: 3 - Ver Extrato Financeiro");
+                    escreveLog("Estudante Escolheu a Opcao: 3 - Visualizar Carteirinha");
+                    // this->estudante_logado->visualizarCarteirinha();
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 4:
+                    escreveLog("Estudante Escolheu a Opcao: 4 - Ver Extrato Financeiro");
                     this->estudante_logado->get_carteirinha()->exibir_extrato();
                     std::cout << "\nPressione ENTER para continuar...";
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     std::cin.ignore();
                     apagarTerminal();
                     break;
-                case 4:
-                    escreveLog("Estudante Escolheu a Opcao: 4 - Ver Meus Empréstimos");
+                case 5:
+                    escreveLog("Estudante Escolheu a Opcao: 5 - Ver Meus Empréstimos");
                     this->estudante_logado->exibirEmprestimos();
                     std::cout << "\nPressione ENTER para continuar...";
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     std::cin.ignore();
                     apagarTerminal();
                     break;
-                case 5:
-                    escreveLog("Estudante Escolheu a Opcao: 5 - Pegar Livro Emprestado");
+                case 6:
+                    escreveLog("Estudante Escolheu a Opcao: 6 - Pegar Livro Emprestado");
                     this->estudante_logado->pegarLivro(*this->biblioteca);
                     pausa(2);
                     apagarTerminal();
                     break;
-                case 6:
-                    escreveLog("Estudante Escolheu a Opcao: 7 - Comer no RU");
+                case 7:
+                    escreveLog("Estudante Escolheu a Opcao: 7 - Devolver Livro");
                     this->estudante_logado->devolverLivro(*this->biblioteca);
                     pausa(2);
                     apagarTerminal();
                     break;
-                case 7:
-                    escreveLog("Estudante Escolheu a Opcao: 8 - Sair");
+                case 8:
+                    escreveLog("Estudante Escolheu a Opcao: 8 - ComerRU");
                     this->estudante_logado->comerRU();
                     apagarTerminal();
                     break;
-                case 8:
+                case 9:
                     escreveLog("Logout realizado");
                     escreveDevagar("📤 Fazendo logout...\n", 50);
                     pausa(2);
@@ -337,11 +354,8 @@ void Sistema::iniciarSistema(){
     int opcao;
 
     while (1) {
-        //std::cout << "\n============================================\n";
         escreveDevagar("\n============================================\n",10);
-        //std::cout << "      📚 BEM-VINDO AO SISTEMA-UFV 📚\n";
         escreveDevagar("      📚 BEM-VINDO AO SISTEMA-UFV 📚\n",50);
-        //std::cout << "--------------------------------------------\n";
         escreveDevagar("--------------------------------------------\n",10);
         std::cout << "1 - Fazer Login\n";
         std::cout << "2 - Sair\n";

@@ -427,6 +427,14 @@ void Administrador::recarregarCarteirinha(std::vector<Estudante*> &estudantes) {
     throw std::invalid_argument("❌ Não foi possível localizar o Estudante com matrícula " + matricula);
 }
 
+// TODO: (Thales) Implementar a função de gerar carteirinha
+// Perguntar se deseja ver de todos ou de algum, perguntar matricula dele
+// Pede para colocar a foto na pasta images com algum formato
+// Verificar se existe e trata os erros, exibir erro se algum estudante não colocou a foto na pasta, mas gerar do resto se conseguiu ter
+// Gera a carteirinha e coloca em uma pasta separada. Ex: 'Carteirinhas'
+// Tenta seguir o padrão das funções quando for pedir algum dado escrito e no UI
+void Administrador::visualizarCarteirinhas(std::vector<Estudante*> &estudantes){}
+
 std::string Administrador::alterarValorRU() {
 
     std::cout << "\n============================================\n";

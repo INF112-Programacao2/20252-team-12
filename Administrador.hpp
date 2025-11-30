@@ -37,6 +37,7 @@ class Administrador : public Usuario{
         void consultarTransacoes(std::vector<Estudante*> &estudantes);
         void consultarEmprestimos(std::vector<Estudante*> &estudantes);
         void recarregarCarteirinha(std::vector<Estudante*> &estudantes);
+        void visualizarCarteirinhas(std::vector<Estudante*> &estudantes);
         std::string alterarValorRU(); // Retorna qual valor foi alterado (Graduação ou Pós-Graduação)
         void alterarValorMulta();
         void mobilidadeAcademica(EstudanteGraduacao *estudante, std::string parametro);

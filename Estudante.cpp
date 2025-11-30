@@ -240,6 +240,13 @@ void Estudante::recarregarCarteirinha(){
     this->carteirinha->depositar(valor);
 }
 
+// TODO: (Thales) Implementar a função de gerar carteirinha
+// Pede para colocar a foto na pasta images com algum formato
+// Verificar se existe e trata os erros
+// Gera a carteirinha e coloca em uma pasta separada. Ex: 'Carteirinhas'
+// Tenta seguir o padrão das funções quando for pedir algum dado escrito e no UI
+void Estudante::visualizarCarteirinha(){}
+
 void Estudante::consultarSaldo(){
     std::cout << "Seu saldo é de R$" << this->carteirinha->getSaldo() << "\n";
 }

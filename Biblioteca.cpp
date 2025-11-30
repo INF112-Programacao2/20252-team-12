@@ -23,7 +23,7 @@ void Biblioteca::setNome(std::string _nome){
 
 void Biblioteca::adicionarLivro(Livro& _livro){
     acervo.push_back(&_livro);
-    // TODO: Adicionar o livro txt também para não perder depois
+    // TODO: Adicionar o livro no txt (inicializador.txt) também para não perder depois
 }
 
 void Biblioteca::listarLivrosDisponiveis(){
@@ -46,12 +46,10 @@ std::string corta(std::string palavra, int n) {
     return saida;
 }
 
-// TODO: Fazer para listar em um txt
+// TODO: Organizar os livros no txt
 void Biblioteca::listarLivros(){
-    /*for (auto livro : acervo){
-        livro->exibirInformacoes();
-    } */
-   std::ofstream listaLivros;
+
+    std::ofstream listaLivros;
     listaLivros.open("ListaLivros.txt");
 
     if(!listaLivros.is_open())
