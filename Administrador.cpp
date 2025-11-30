@@ -60,7 +60,7 @@ static std::vector<std::string> split(const std::string& s, char delim) {
     }
     return elems;
 }
-
+/*
 static void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mask) {
     cimg_forXY(img, x, y) {
         if (mask(x, y, 0) > 0 || mask(x, y, 1) > 0 || mask(x, y, 2) > 0) {
@@ -69,7 +69,7 @@ static void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mas
             img(x, y, 2) = 0; // azul
         }
     }
-}
+}*/
 
 static bool validaData(const std::string& data) {
     // aceita D/M/YYYY, DD/MM/YYYY, com '/' como separador
@@ -626,7 +626,7 @@ std::string Administrador::procurar_curso_por_codigo(std::string codigo){
 }
 
 //funcao auxiliar para o metodo a gerar carteirinha:
-
+/*
 void Administrador::gerarCarteirinha(Estudante *estudante) { //adicionar como parametro como o usuario quer salvar o arquivo final -- sugestao: nome_aluno + "_carteirinha"
     //carregar as imagens
     CImg<unsigned char> img ("images/template.bmp");
@@ -661,4 +661,4 @@ void Administrador::gerarCarteirinha(Estudante *estudante) { //adicionar como pa
 
     aplicarTextoPreto(img,mask);
     img.save(nomeArquivo.c_str());
-}
+} */
