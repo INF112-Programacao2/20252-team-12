@@ -111,7 +111,7 @@ static bool validaData(const std::string& data) {
 
 int Administrador::nextID = 1;
 Administrador::Administrador(const std::string& _nome, const std::string &_cpf,const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha):
-    id(nextID++), Usuario(_nome, _cpf,_data_de_nascimento, _email, _senha){}
+    Usuario(_nome, _cpf,_data_de_nascimento, _email, _senha), id(nextID++) {}
 
 Administrador::~Administrador(){}
 
