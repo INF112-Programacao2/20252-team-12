@@ -20,7 +20,7 @@ class Biblioteca{
         void adicionarLivro(Livro& _livro);
         void criarLivro(Livro& _livro);
         void listarLivrosDisponiveis();
-        void listarLivros();
+        void listarLivros() const;
 };
 
 #endif

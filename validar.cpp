@@ -1,12 +1,23 @@
 #include"validar.hpp"
-#include<iostream>
-#include <cctype>
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <cctype> // Para std::isspace
 //tratamentos de erro
+
+void limparString(std::string &string){
+    auto it_reverso = std::find_if(string.rbegin(), string.rend(), [](int ch) {
+        return !std::isspace(ch);
+    });
+    auto it_normal = it_reverso.base();
+    string.erase(it_normal, string.end());
+}
+
 bool validarNOME(const std::string &nome)
 {
     if ((int)nome.size() < 2)
     {
-        std::cout << "[ERRO]: nome muito curto.\n";
+        throw std::invalid_argument("❌ Nome muito curto.\n");
         return false;
     }
 
@@ -18,7 +29,7 @@ bool validarNOME(const std::string &nome)
         // Qualquer coisa que não seja letra nem espaço é inválida
         if (!letraOuNumero && !espaco)
         {
-            std::cout << "[ERRO]: nome contém caracteres inválidos.\n";
+            throw std::invalid_argument("❌ Nome contém caracteres inválidos.\n");
             return false;
         }
     }
@@ -33,25 +44,25 @@ bool validarEMAIL(const std::string &email)
 
     if (arroba < 1)
     {
-        std::cout << "[ERRO]: email deve conter '@' e algo antes dele.\n";
+        throw std::invalid_argument("❌ Email deve conter '@' e algo antes dele.\n");
         return false;
     }
 
     if (ponto < arroba + 2)
     {
-        std::cout << "[ERRO]: domínio do email inválido.\n";
+        throw std::invalid_argument("❌ Domínio do email inválido.\n");
         return false;
     }
 
     if (ponto == (int)email.size() - 1)
     {
-        std::cout << "[ERRO]: email deve terminar com um domínio válido (.com, .br).\n";
+        throw std::invalid_argument("❌ Email deve terminar com um domínio válido (.com, .br).\n");
         return false;
     }
 
     if (email.find('@', arroba + 1) != std::string::npos)
     {
-        std::cout << "[ERRO]: email não pode ter dois '@'.\n";
+        throw std::invalid_argument("❌ Email não pode ter dois '@'.\n");
         return false;
     }
 
@@ -64,14 +75,14 @@ bool validarCPF(const std::string &cpf)
     {
         if (!isdigit((unsigned char)c))
         {
-            std::cout << "[ERRO]: CPF deve conter somente números.\n";
+            throw std::invalid_argument("❌ CPF deve conter somente números.\n");
             return false;
         }
     }
 
     if ((int)cpf.size() != 11)
     {
-        std::cout << "[ERRO]: CPF deve ter exatamente 11 dígitos.\n";
+        throw std::invalid_argument("❌ CPF deve ter exatamente 11 dígitos.\n");
         return false;
     }
 
@@ -87,7 +98,7 @@ bool validarCPF(const std::string &cpf)
 
     if (todosIguais)
     {
-        std::cout << "[ERRO]: CPF inválido — todos os dígitos são iguais.\n";
+        throw std::invalid_argument("❌ CPF inválido — todos os dígitos são iguais.\n");
         return false;
     }
 
@@ -98,7 +109,7 @@ bool validarSENHA(const std::string &senha)
 {
     if ((int)senha.size() < 6)
     {
-        std::cout << "[ERRO]: a senha deve ter pelo menos 6 caracteres.\n";
+        throw std::invalid_argument("❌ a senha deve ter pelo menos 6 caracteres.\n");
         return false;
     }
 
@@ -114,13 +125,13 @@ bool validarSENHA(const std::string &senha)
 
     if (!letra)
     {
-        std::cout << "[ERRO]: a senha deve conter pelo menos uma letra.\n";
+        throw std::invalid_argument("❌ a senha deve conter pelo menos uma letra.\n");
         return false;
     }
 
     if (!numero)
     {
-        std::cout << "[ERRO]: a senha deve conter pelo menos um número.\n";
+        throw std::invalid_argument("❌ a senha deve conter pelo menos um número.\n");
         return false;
     }
 

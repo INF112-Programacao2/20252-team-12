@@ -204,17 +204,29 @@ Administrador *Sistema::get_admin()
     return this->admin;
 }
 
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <iostream> // Apenas para debug, remover depois
+
+// Supondo que você tenha esta função definida e acessível (e sem o 'const'):
+void limparString(std::string &s); 
+// Inclua o código dela no seu arquivo .cpp ou .h
+
 void Sistema::carregarAdmin() {
     std::ifstream file("admin_dados.txt");
     
     if (file.is_open()) {
         std::string linha;
+
         if (std::getline(file, linha)) {
             std::stringstream ss(linha);
             std::string segmento;
             std::vector<std::string> dados;
 
             while (std::getline(ss, segmento, ';')) {
+                limparString(segmento); 
                 dados.push_back(segmento);
             }
 
@@ -227,9 +239,9 @@ void Sistema::carregarAdmin() {
         file.close();
     }
 
-    // Se o arquivo não existir ou falhar a leitura, cria o Admin Padrão
     escreveLog("Arquivo de admin não encontrado ou inválido. Criando admin padrão.");
-    this->admin = new Administrador("Julio Cesar Soares dos Reis", "49588826691", "23/04/1988", "jreis@ufv.br", "admin");
+
+    this->admin = new Administrador("Julio Cesar Soares dos Reis", "49588826691", "23/04/1988", "jreis@ufv.br", "admin10");
     
     this->salvarAdmin();
 }
@@ -475,7 +487,7 @@ void Sistema::menuEstudante()
         std::cout << "7 - Pegar Livro Emprestado\n";
         std::cout << "8 - Devolver Livro\n";
         std::cout << "9 - Comer no RU\n";
-        std::cout << "0 - Sair\n";
+        std::cout << "10 - Sair\n";
         std::cout << "--------------------------------------------\n";
         std::cout << "Opção: ";
 
@@ -518,7 +530,7 @@ void Sistema::menuEstudante()
                 apagarTerminal();
                 break;
             case 5:
-                escreveLog("Estuddante Escolheu a Opção: 5 - Buscar Livro no Acervo");
+                escreveLog("Estudante Escolheu a Opção: 5 - Buscar Livro no Acervo");
                 this->biblioteca->listarLivros();
                 apagarTerminal();
                 break;
@@ -547,7 +559,7 @@ void Sistema::menuEstudante()
                 this->estudante_logado->comerRU();
                 apagarTerminal();
                 break;
-            case 0:
+            case 10:
                 escreveLog("Logout realizado");
                 escreveDevagar("📤 Fazendo logout...\n", 50);
                 pausa(2);
@@ -606,28 +618,23 @@ void Sistema::iniciarSistema()
                 {
                     std::string email, senha;
 
-                    // ====== LEITURA E VALIDAÇÃO DO EMAIL ======
-                    do
-                    {
-                        std::cout << "--------------------------------------------\n";
-                        std::cout << "Email: ";
-                        std::getline(std::cin, email);
-                        // validarEmail já imprime a mensagem se for inválido
-                    } while (!validarEMAIL(email));
+                    // ====== LEITURA DO EMAIL ======
+                    std::cout << "--------------------------------------------\n";
+                    std::cout << "Email: ";
+                    std::getline(std::cin, email);
 
-                    // ====== LEITURA E VALIDAÇÃO DA SENHA ======
-                    do
-                    {
-                        std::cout << "--------------------------------------------\n";
-                        std::cout << "Senha: ";
-                        std::getline(std::cin, senha);
-                        // validarSenha já imprime a mensagem se for inválida
-                    } while (!validarSENHA(senha));
+                    // ====== LEITURA DA SENHA ======
+                    std::cout << "--------------------------------------------\n";
+                    std::cout << "Senha: ";
+                    std::getline(std::cin, senha);
 
                     std::cout << "--------------------------------------------\n";
 
+                    limparString(senha);
+                    limparString(email);
+
                     // Tenta Login como Administrador
-                    if (this->admin->getEmail() == email && this->admin->getSenha() == senha)
+                    if (this->admin->getSenha() == senha && this->admin->getEmail() == email)
                     {
                         escreveDevagar("✅ Bem-Vindo " + this->admin->getNome(), 50);
                         pausa(1);
@@ -662,24 +669,24 @@ void Sistema::iniciarSistema()
                     }
                     else
                     {
-                        std::cout << "\n[ERRO]: Credenciais inválidas. Tente novamente.\n";
+                        throw std::invalid_argument("\n❌ Credenciais inválidas. Tente novamente.\n");
                     }
                 }
             }
             else
             {
-                throw std::invalid_argument("Opção inválida. Por favor, escolha 1 ou 2.");
+                throw std::invalid_argument("❌ Opção inválida. Por favor, escolha 1 ou 2.");
             }
         }
         catch (const std::exception &e)
         {
             apagarTerminal();
-            std::cerr << "\n[ERRO]: " << e.what() << std::endl;
+            std::cerr << e.what() << std::endl;
         }
         catch (...)
         {
             apagarTerminal();
-            std::cerr << "\n[ERRO]: Ocorreu um erro desconhecido!\n";
+            std::cerr << "\n❌ Ocorreu um erro desconhecido!\n";
         }
     }
 

@@ -17,6 +17,17 @@
 
 using namespace cimg_library;
 
+
+static std::string deixar_maiusculo(std::string &palavra)
+{
+    std::string resultado;
+
+    for (char c : palavra)
+        resultado += toupper(c);
+
+    return resultado;
+}
+
 static void escreveDevagar(const std::string &texto, int ms)
 {
     for (char c : texto)
@@ -136,6 +147,8 @@ void Administrador::set_id(const int &_id)
     this->id = _id;
 }
 
+// TODO: Consertar a função, não está utilizando os métodos de validação
+// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::criarLivro(Biblioteca &biblioteca)
 {
 
@@ -212,6 +225,8 @@ void Administrador::criarLivro(Biblioteca &biblioteca)
     escreveDevagar(novo_livro->getTitulo() + " foi adicionado na Bibilioteca! ✅\n", 50);
 }
 
+// TODO: Consertar a função, não está utilizando os métodos de validação
+// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
 {
 
@@ -440,6 +455,8 @@ void Administrador::listarEstudante(std::vector<Estudante *> &estudantes)
     }
 }
 
+// TODO: Consertar a função, não está utilizando os métodos de validação
+// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
 {
     std::cout << "\n============================================\n";
@@ -464,7 +481,7 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
         }
         else
         {
-            std::cout << "[ERRO]: A matrícula deve conter APENAS números (sem letras ou símbolos).\n";
+            std::cout << "❌ A matrícula deve conter APENAS números (sem letras ou símbolos).\n";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
@@ -484,7 +501,7 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
 
     if (estudanteAlvo == nullptr)
     {
-        throw std::invalid_argument("[ERRO]: Estudante não encontrado com a matrícula: " + matricula);
+        throw std::invalid_argument("❌ Estudante não encontrado com a matrícula: " + matricula);
     }
 
     int opcao;
@@ -507,7 +524,7 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
         }
         else
         {
-            std::cout << "[ERRO]: Digite apenas números.\n";
+            std::cout << "❌ Digite apenas números.\n";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
@@ -548,7 +565,7 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
                                                 [](char c)
                                                 { return std::isspace((unsigned char)c); }))
             {
-                std::cout << "[ERRO]: O curso não pode estar vazio.\n";
+                std::cout << "❌ O curso não pode estar vazio.\n";
             }
 
         } while (novoDado.empty() || std::all_of(novoDado.begin(), novoDado.end(),
@@ -573,7 +590,7 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
         return 5;
 
     default:
-        std::cout << "[ERRO]: Opção inválida selecionada.\n";
+        std::cout << "❌ Opção inválida selecionada.\n";
         return 0;
     }
 
@@ -581,6 +598,8 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
     return opcao;
 }
 
+// TODO: Consertar a função, não está utilizando os métodos de validação
+// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::alterarSenhaAdministrador()
 {
     std::cout << "--------------------------------------------\n";
@@ -614,6 +633,8 @@ void Administrador::alterarSenhaAdministrador()
     escreveDevagar("✅ Senha alterada com sucesso!", 50);
 }
 
+// TODO: Consertar a função, não está utilizando os métodos de validação
+// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::consultarTransacoes(std::vector<Estudante *> &estudantes)
 {
 
@@ -721,6 +742,8 @@ void Administrador::consultarTransacoes(std::vector<Estudante *> &estudantes)
     }
 }
 
+// TODO: Consertar a função, não está utilizando os métodos de validação
+// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::consultarEmprestimos(std::vector<Estudante *> &estudantes)
 {
 
@@ -792,6 +815,8 @@ void Administrador::consultarEmprestimos(std::vector<Estudante *> &estudantes)
     }
 }
 
+// TODO: Consertar a função, não está utilizando os métodos de validação
+// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::recarregarCarteirinha(std::vector<Estudante *> &estudantes)
 {
 
@@ -841,6 +866,10 @@ void Administrador::recarregarCarteirinha(std::vector<Estudante *> &estudantes)
 // Verificar se existe e trata os erros, exibir erro se algum estudante não colocou a foto na pasta, mas gerar do resto se conseguiu ter
 // Gera a carteirinha e coloca em uma pasta separada. Ex: 'Carteirinhas'
 // Tenta seguir o padrão das funções quando for pedir algum dado escrito e no UI
+
+
+// TODO: Consertar a função, não está utilizando os métodos de validação
+// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
 {
     int opcao;
@@ -930,6 +959,8 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
     }
 }
 
+// TODO: Consertar a função, não está utilizando os métodos de validação
+// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 std::string Administrador::alterarValorRU()
 {
 
@@ -990,6 +1021,8 @@ std::string Administrador::alterarValorRU()
     return gradOuPos;
 }
 
+// TODO: Consertar a função, não está utilizando os métodos de validação
+// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::alterarValorMulta()
 {
 
@@ -1021,16 +1054,8 @@ void Administrador::alterarValorMulta()
     escreveDevagar("✅ Valor da multa alterado com sucesso!", 50);
 }
 
-static std::string deixar_maiusculo(std::string &palavra)
-{
-    std::string resultado;
-
-    for (char c : palavra)
-        resultado += toupper(c);
-
-    return resultado;
-}
-
+// TODO: Consertar a função, não está utilizando os métodos de validação
+// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::mobilidadeAcademica(std::vector<Estudante *> &estudantes)
 {
 
