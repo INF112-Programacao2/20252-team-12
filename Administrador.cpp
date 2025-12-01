@@ -476,53 +476,58 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
     switch (opcao)
     {
     case 1: // ====== ALTERAR NOME ======
-        do
-        {
-            std::cout << "-> Novo Nome: ";
-            std::getline(std::cin, novoDado);
-        } while (!validarNOME(novoDado)); // a função já imprime o motivo do erro
-
-        estudanteAlvo->setNome(novoDado);
+        do {
+            try {
+                std::cout << "-> Novo Nome: ";
+                std::getline(std::cin, novoDado);
+                validarNOME(novoDado);
+                estudanteAlvo->setNome(novoDado);
+                break;
+            } catch (const std::exception &e) {
+                std::cout << e.what() << std::endl;
+            }
+        } while (true);
         break;
 
     case 2: // ====== ALTERAR EMAIL ======
-        do
-        {
-            std::cout << "-> Novo Email: ";
-            std::getline(std::cin, novoDado);
-        } while (!validarEMAIL(novoDado)); // validarEmail já trata erro
-
-        estudanteAlvo->setEmail(novoDado);
+        do {
+            try {
+                std::cout << "-> Novo Email: ";
+                std::getline(std::cin, novoDado);
+                validarEMAIL(novoDado);
+                estudanteAlvo->setEmail(novoDado);
+                break;
+            } catch (const std::exception &e) {
+                std::cout << e.what() << std::endl;
+            }
+        } while (true);
         break;
 
     case 3: // ====== ALTERAR CURSO ======
-        do
-        {
+        do {
             std::cout << "-> Novo Curso (Sigla ou Nome): ";
             std::getline(std::cin, novoDado);
-
-            if (novoDado.empty() || std::all_of(novoDado.begin(), novoDado.end(),
-                                                [](char c)
-                                                { return std::isspace((unsigned char)c); }))
-            {
-                std::cout << "❌ O curso não pode estar vazio.\n";
+            //TODO: validar curso
+            if (novoDado.empty()) std::cout << "❌ O curso não pode estar vazio.\n";
+            else {
+                estudanteAlvo->set_curso(novoDado);
+                break;
             }
-
-        } while (novoDado.empty() || std::all_of(novoDado.begin(), novoDado.end(),
-                                                 [](char c)
-                                                 { return std::isspace((unsigned char)c); }));
-
-        estudanteAlvo->set_curso(novoDado);
+        } while (true);
         break;
 
     case 4: // ====== ALTERAR SENHA ======
-        do
-        {
-            std::cout << "-> Nova Senha (min 6 caracteres, com letra e número): ";
-            std::getline(std::cin, novoDado);
-        } while (!validarSENHA(novoDado)); // validarSenha já imprime o erro
-
-        estudanteAlvo->setSenha(novoDado);
+        do {
+            try {
+                std::cout << "-> Nova Senha: ";
+                std::getline(std::cin, novoDado);
+                validarSENHA(novoDado);
+                estudanteAlvo->setSenha(novoDado);
+                break;
+            } catch (const std::exception &e) {
+                std::cout << e.what() << std::endl;
+            }
+        } while (true);
         break;
 
     case 5:
