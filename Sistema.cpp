@@ -52,21 +52,121 @@ void pausa(int seg){
 }
 
 Sistema::Sistema() : estudantes(){
-    this->arquivo_inicializador = std::ifstream("inicializador.txt");
+    this->arquivo_livros = std::ifstream("livros.txt");
     this->biblioteca = new Biblioteca("Biblioteca UFV");
     this->admin = new Administrador("Julio Cesar Soares dos Reis", "49588826691", "23/04/1988", "jreis@ufv.br", "admin");
     this->estudante_logado = nullptr;
-    EstudanteGraduacao* estudante = new EstudanteGraduacao("Luiz Filipe Santos Oliveira", "14422059629", "22/09/2006", "luiz.s.oliveira@ufv.br", "luiz", "120553", "CCP", "SISU");
-    this->estudantes.push_back(estudante);
+    this->carregarDados();     //Carrega os estudantes existentes
+    if (estudantes.empty()) {  //Se não houver, cria um padrão (para testes)
+        EstudanteGraduacao* estudante = new EstudanteGraduacao("Luiz Filipe Santos Oliveira", "14422059629", "22/09/2006", "luiz.s.oliveira@ufv.br", "luiz", "120553", "CCP", "SISU");
+        this->estudantes.push_back(estudante);
+    }
     this->criarLivros();
 }
 
 Sistema::~Sistema(){
+    this->salvarDados();
     for (auto estudante : this->estudantes){
         delete estudante;
     }
     delete this->admin;
     delete this->biblioteca;
+}
+
+void Sistema::salvarDados() {
+    std::ofstream file("banco_estudantes.txt");
+    if (!file.is_open()) {
+        std::cerr << "Erro ao abrir ficheiro para salvar!\n";
+        return;
+    }
+
+    for (Estudante* est : this->estudantes) {
+        EstudanteGraduacao* grad = dynamic_cast<EstudanteGraduacao*>(est);
+        EstudantePosGraduacao* pos = dynamic_cast<EstudantePosGraduacao*>(est);
+
+        // Formato: TIPO;NOME;CPF;DATA;EMAIL;SENHA;MATRICULA;CURSO;[ESPECIFICO];SALDO
+        if (grad) {
+            file << "GRAD;"
+                 << grad->getNome() << ";"
+                 << grad->getCpf() << ";" 
+                 << grad->getDataDeNascimento() << ";"
+                 << grad->getEmail() << ";"
+                 << grad->getSenha() << ";"
+                 << grad->get_matricula() << ";"
+                 << grad->get_curso() << ";"
+                 << grad->get_modalidade() << ";"
+                 << grad->get_carteirinha()->getSaldo() << "\n";
+        } 
+        else if (pos) {
+            file << "POS;"
+                 << pos->getNome() << ";"
+                 << pos->getCpf() << ";"
+                 << pos->getDataDeNascimento() << ";"
+                 << pos->getEmail() << ";"
+                 << pos->getSenha() << ";"
+                 << pos->get_matricula() << ";"
+                 << pos->get_curso() << ";"
+                 << pos->get_tipoPos() << ";"
+                 << pos->get_linhaDePesquisa() << ";"
+                 << pos->get_carteirinha()->getSaldo() << "\n";
+        }
+    }
+    file.close();
+    
+    escreveLog("Dados salvos com sucesso!");
+}
+
+void Sistema::carregarDados() {
+    std::ifstream file("banco_estudantes.txt");
+    if (!file.is_open()) {
+        escreveLog("banco_estudantes.txt ainda não existe, sem dados para carregar."); //Pode ser a primeira execução do sistema
+        return;
+    }
+
+    std::string linha;
+    while (std::getline(file, linha)) {
+        std::stringstream ss(linha);
+        std::string segmento;
+        std::vector<std::string> dados;
+
+        while (std::getline(ss, segmento, ';')) {
+            dados.push_back(segmento);
+        }
+
+        if (dados.size() >= 9) {
+            std::string tipo = dados[0];
+            std::string nome = dados[1];
+            std::string cpf = dados[2];
+            std::string data = dados[3];
+            std::string email = dados[4];
+            std::string senha = dados[5];
+            std::string matricula = dados[6];
+            std::string curso = dados[7];
+
+            Estudante* novoEstudante = nullptr;
+
+            if (tipo == "GRAD") {
+                std::string modalidade = dados[8];
+                double saldo = std::stod(dados[9]);
+                
+                novoEstudante = new EstudanteGraduacao(nome, cpf, data, email, senha, matricula, curso, modalidade);
+                novoEstudante->get_carteirinha()->setSaldo(saldo);
+            } 
+            else if (tipo == "POS") {
+                std::string tipoPos = dados[8];
+                std::string linhaPesquisa = dados[9];
+                double saldo = std::stod(dados[10]);
+
+                novoEstudante = new EstudantePosGraduacao(nome, cpf, data, email, senha, matricula, curso, tipoPos, linhaPesquisa);
+                novoEstudante->get_carteirinha()->setSaldo(saldo);
+            }
+
+            if (novoEstudante != nullptr) {
+                this->estudantes.push_back(novoEstudante);
+            }
+        }
+    }
+    file.close();
 }
 
 std::vector<Estudante*> Sistema::get_estudantes(){
@@ -78,13 +178,13 @@ Administrador* Sistema::get_admin(){
 }
 
 void Sistema::criarLivros(){
-    if (!this->arquivo_inicializador.is_open()){
+    if (!this->arquivo_livros.is_open()){
         throw std::invalid_argument("Arquivo não encontrado!");
         return;
     }
 
     std::string linha;
-    while (std::getline(this->arquivo_inicializador, linha)) {
+    while (std::getline(this->arquivo_livros, linha)) {
         std::stringstream ss(linha);
         std::string campo;
 
@@ -115,7 +215,7 @@ void Sistema::criarLivros(){
             throw std::runtime_error("Aviso: Linha mal formatada ou incompleta pulada: " + linha);
         }
     }
-    this->arquivo_inicializador.close();
+    this->arquivo_livros.close();
 }
 
 void Sistema::menuAdministrador(){

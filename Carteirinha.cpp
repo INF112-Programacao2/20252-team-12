@@ -2,6 +2,7 @@
 #include <chrono>
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 
 static std::string getDataAtual() {
     auto agora = std::chrono::system_clock::now();
