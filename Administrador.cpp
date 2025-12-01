@@ -369,7 +369,7 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
 
             if (matricula == "0") return 0;
 
-            validarMATRICULA(matricula);
+            // TODO: validarMATRICULA(matricula);
 
             bool encontrado = false;
             for (auto *est : estudantes)
@@ -467,7 +467,7 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
                 std::cout << "-> Novo Curso (Sigla ou Nome): ";
                 std::getline(std::cin, novoDado);
                 
-                validarCURSO(novoDado); 
+                // TODO validarCURSO(novoDado);
                 
                 estudanteAlvo->set_curso(novoDado);
                 break;
@@ -595,7 +595,7 @@ void Administrador::consultarTransacoes(std::vector<Estudante *> &estudantes)
 
                 if (matricula == "0") return;
 
-                validarMATRICULA(matricula);
+                //TODO: validarMATRICULA(matricula);
 
                 bool achou = false;
                 for (auto estudante : estudantes)
@@ -691,7 +691,7 @@ void Administrador::consultarEmprestimos(std::vector<Estudante *> &estudantes)
 
                 if (matricula == "0") return;
 
-                validarMATRICULA(matricula);
+                //TODO: validarMATRICULA(matricula);
 
                 bool achou = false;
                 for (auto estudante : estudantes)
@@ -744,7 +744,7 @@ void Administrador::recarregarCarteirinha(std::vector<Estudante *> &estudantes)
 
             if (matricula == "0") return;
 
-            validarMATRICULA(matricula);
+            //TODO: validarMATRICULA(matricula);
 
             bool encontrado = false;
             for (auto *est : estudantes)
@@ -844,7 +844,7 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
 
                 if (matricula_aluno == "0") return;
 
-                validarMATRICULA(matricula_aluno);
+                //TODO: validarMATRICULA(matricula_aluno);
 
                 bool encontrado = false;
                 for (auto estudante : estudantes)
@@ -1047,7 +1047,7 @@ void Administrador::mobilidadeAcademica(std::vector<Estudante *> &estudantes)
 
             if (matricula_aluno == "0") return;
 
-            validarMATRICULA(matricula_aluno);
+            //TODO: validarMATRICULA(matricula_aluno);
 
             bool encontrado = false;
             for (auto *est : estudantes)
@@ -1089,7 +1089,7 @@ void Administrador::mobilidadeAcademica(std::vector<Estudante *> &estudantes)
             std::cout << "-> Novo curso (Código ou Nome): ";
             std::getline(std::cin, novoCurso);
 
-            validarCURSO(novoCurso); 
+            //TODO: validarCURSO(novoCurso); 
 
             if (novoCurso == estudanteAlvo->get_curso()) {
                  throw std::invalid_argument("⚠️  O aluno já está matriculado neste curso.");

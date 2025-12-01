@@ -9,6 +9,7 @@
 #include <thread>
 #include <vector>
 #include <fstream>
+#include <sstream>
 #include "CImg.h"
 
 using namespace cimg_library;
