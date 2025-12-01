@@ -73,16 +73,6 @@ static std::vector<std::string> split(const std::string &s, char delim)
     }
     return elems;
 }
-/*
-static void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mask) {
-    cimg_forXY(img, x, y) {
-        if (mask(x, y, 0) > 0 || mask(x, y, 1) > 0 || mask(x, y, 2) > 0) {
-            img(x, y, 0) = 0; // vermelho
-            img(x, y, 1) = 0; // verde
-            img(x, y, 2) = 0; // azul
-        }
-    }
-}*/
 
 static bool validaData(const std::string &data)
 {
@@ -1206,41 +1196,3 @@ std::string Administrador::procurar_curso_por_codigo(std::string codigo)
 
     return nome_curso;
 }
-
-// funcao auxiliar para o metodo a gerar carteirinha:
-/*
-void Administrador::gerarCarteirinha(Estudante *estudante) { //adicionar como parametro como o usuario quer salvar o arquivo final -- sugestao: nome_aluno + "_carteirinha"
-    //carregar as imagens
-    CImg<unsigned char> img ("images/template.bmp");
-    CImg<unsigned char> aluno("images/foto_aluno.bmp");
-
-    //colocar a imagem do aluno no local certo
-    aluno.resize(350,525);
-    img.draw_image(33,314,aluno);
-
-    //criar mascara RGB para por o texto
-    CImg <unsigned char> mask (img.width(),img.height(),1,3,0);
-    unsigned char branco[] = {255,255,255};
-
-    //desenha o texto na mascara
-    mask.draw_text(520,321, estudante->getNome().c_str(), branco, 0, 255, 30, false); //.c_str() converte string para const char
-    mask.draw_text(523,404, Administrador::procurar_curso_por_codigo(estudante->get_curso()).c_str(), branco, 0, 255, 30, false);
-    mask.draw_text(577,488, estudante->get_matricula().c_str(), branco,0,255, 30, false);
-    mask.draw_text(475,572, estudante->getCpf().c_str(), branco, 0 , 255, 30, false);
-    mask.draw_text(564,655, "06/2026", branco, 0, 255, 30, false);
-    mask.draw_text(1173,720, getDataAtual().c_str(), branco, 0, 255, 30, false);
-
-    std::string aux = estudante->getNome();
-    auto pos = aux.find(" ");
-    std::string primeiroNome;
-    if(pos == std::string::npos)
-        primeiroNome = aux;
-    else
-        primeiroNome = aux.substr(0,pos);
-
-    primeiroNome = deixar_maiusculo(primeiroNome);
-    std::string nomeArquivo = "images/" + primeiroNome + "_" + estudante->get_matricula() + "_CARTEIRINHA.bmp"; //salvar a carteirinha com nome personalizado conforme o primeiro nome do aluno
-
-    aplicarTextoPreto(img,mask);
-    img.save(nomeArquivo.c_str());
-} */

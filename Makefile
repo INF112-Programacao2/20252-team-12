@@ -19,7 +19,8 @@ SRCS = main.cpp \
        Biblioteca.cpp \
        Livro.cpp \
        Transacao.cpp \
-       Emprestimo.cpp
+       Emprestimo.cpp \
+       validar.cpp 
 
 OBJS = $(SRCS:.cpp=.o)
 
