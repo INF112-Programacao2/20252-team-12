@@ -220,7 +220,7 @@ bool validarNOME(const std::string &nome)
 {
     if ((int)nome.size() < 2)
     {
-        throw std::invalid_argument("❌ Nome muito curto.\n");
+        throw std::invalid_argument("❌ Nome muito curto.");
     }
 
     for (unsigned char c : nome)
@@ -231,7 +231,7 @@ bool validarNOME(const std::string &nome)
         // Qualquer coisa que não seja letra nem espaço é inválida
         if (!letraOuNumero && !espaco)
         {
-            throw std::invalid_argument("❌ Nome contém caracteres inválidos.\n");
+            throw std::invalid_argument("❌ Nome contém caracteres inválidos.");
         }
     }
 
@@ -245,22 +245,22 @@ bool validarEMAIL(const std::string &email)
 
     if (arroba < 1)
     {
-        throw std::invalid_argument("❌ Email deve conter '@' e algo antes dele.\n");
+        throw std::invalid_argument("❌ Email deve conter '@' e algo antes dele.");
     }
 
     if (ponto < arroba + 2)
     {
-        throw std::invalid_argument("❌ Domínio do email inválido.\n");
+        throw std::invalid_argument("❌ Domínio do email inválido.");
     }
 
     if (ponto == (int)email.size() - 1)
     {
-        throw std::invalid_argument("❌ Email deve terminar com um domínio válido (.com, .br).\n");
+        throw std::invalid_argument("❌ Email deve terminar com um domínio válido (.com, .br).");
     }
 
     if (email.find('@', arroba + 1) != std::string::npos)
     {
-        throw std::invalid_argument("❌ Email não pode ter dois '@'.\n");
+        throw std::invalid_argument("❌ Email não pode ter dois '@'.");
     }
 
     return true;
@@ -272,13 +272,13 @@ bool validarCPF(const std::string &cpf)
     {
         if (!isdigit((unsigned char)c))
         {
-            throw std::invalid_argument("❌ CPF deve conter somente números.\n");
+            throw std::invalid_argument("❌ CPF deve conter somente números.");
         }
     }
 
     if ((int)cpf.size() != 11)
     {
-        throw std::invalid_argument("❌ CPF deve ter exatamente 11 dígitos.\n");
+        throw std::invalid_argument("❌ CPF deve ter exatamente 11 dígitos.");
     }
 
     bool todosIguais = true;
@@ -293,7 +293,7 @@ bool validarCPF(const std::string &cpf)
 
     if (todosIguais)
     {
-        throw std::invalid_argument("❌ CPF inválido — todos os dígitos são iguais.\n");
+        throw std::invalid_argument("❌ CPF inválido — todos os dígitos são iguais.");
     }
 
     return true;
@@ -303,7 +303,7 @@ bool validarSENHA(const std::string &senha)
 {
     if ((int)senha.size() < 6)
     {
-        throw std::invalid_argument("❌ a senha deve ter pelo menos 6 caracteres.\n");
+        throw std::invalid_argument("❌ a senha deve ter pelo menos 6 caracteres.");
     }
 
     bool letra = false, numero = false;
@@ -318,12 +318,12 @@ bool validarSENHA(const std::string &senha)
 
     if (!letra)
     {
-        throw std::invalid_argument("❌ a senha deve conter pelo menos uma letra.\n");
+        throw std::invalid_argument("❌ a senha deve conter pelo menos uma letra.");
     }
 
     if (!numero)
     {
-        throw std::invalid_argument("❌ a senha deve conter pelo menos um número.\n");
+        throw std::invalid_argument("❌ a senha deve conter pelo menos um número.");
     }
 
     return true;
@@ -381,7 +381,7 @@ bool validarMATRICULA(const std::string &matricula)
     // Deve ter exatamente 6 caracteres
     if (matricula.size() != 6)
     {
-        throw std::invalid_argument("❌ Matrícula deve conter exatamente 6 dígitos.\n");
+        throw std::invalid_argument("❌ Matrícula deve conter exatamente 6 dígitos.");
     }
 
     // Verifica se todos são números
@@ -389,7 +389,7 @@ bool validarMATRICULA(const std::string &matricula)
     {
         if (!isdigit((unsigned char)c))
         {
-            throw std::invalid_argument("❌ Matrícula deve conter APENAS números.\n");
+            throw std::invalid_argument("❌ Matrícula deve conter APENAS números.");
         }
     }
 
