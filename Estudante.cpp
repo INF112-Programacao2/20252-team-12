@@ -376,6 +376,8 @@ void Estudante::visualizarCarteirinha(){
 
     primeiroNome = deixar_maiusculo(primeiroNome);
 
+    std::cout << primeiroNome;
+
     //procurar uma foto que é salva no formato "PRIMEIRONOMEALUNO_MATRICULA_foto.bmp" - ex: para Julio Soares dos Reis "JULIO_3213131_foto.bmp"
     std::string nome_foto_aluno = "images/";
     nome_foto_aluno += primeiroNome;

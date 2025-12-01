@@ -97,7 +97,7 @@ static time_t converterStringParaData(const std::string& dataStr) {
 int Emprestimo::nextId = 1;
 double Emprestimo::multa = 10.0;            // Pode ser modificado em todos os objetos
 
-Emprestimo::Emprestimo(Estudante& _origem, Livro& _livro, const std::string& _dataDeEmprestimo, const std::string& _dataDeDevolução){
+Emprestimo::Emprestimo(Estudante& _origem, Livro& _livro, const std::string& _dataDeEmprestimo, const std::string& _dataDeDevolucao){
     this->id = nextId++;
     this->origem = &_origem;
     this->livro = &_livro;
@@ -105,8 +105,8 @@ Emprestimo::Emprestimo(Estudante& _origem, Livro& _livro, const std::string& _da
     if (validaData(_dataDeEmprestimo)){
         this->dataDeEmprestimo = converterStringParaData(_dataDeEmprestimo);
     }
-    if (validaData(_dataDeDevolução)){
-        this->dataDeDevolução = converterStringParaData(_dataDeDevolução);
+    if (validaData(_dataDeDevolucao)){
+        this->dataDeDevolucao = converterStringParaData(_dataDeDevolucao);
     }
 }
 
@@ -136,8 +136,8 @@ std::string Emprestimo::getDataDeEmprestimo() {
     return getDataFormatada(this->dataDeEmprestimo);
 }
 
-std::string Emprestimo::getDataDeDevolução() {
-    return getDataFormatada(this->dataDeDevolução);
+std::string Emprestimo::getDataDeDevolucao() {
+    return getDataFormatada(this->dataDeDevolucao);
 }
 void Emprestimo::setId(int _id) {
     this->id = _id;
@@ -165,9 +165,9 @@ void Emprestimo::setDataDeEmprestimo(std::string _dataDeEmprestimo) {
     }
 }
 
-void Emprestimo::setDataDeDevolução(std::string _dataDeDevolução) {
-    if (validaData(_dataDeDevolução)){
-        this->dataDeDevolução = converterStringParaData(_dataDeDevolução);
+void Emprestimo::setDataDeDevolucao(std::string _dataDeDevolucao) {
+    if (validaData(_dataDeDevolucao)){
+        this->dataDeDevolucao = converterStringParaData(_dataDeDevolucao);
     }
 }
 
@@ -185,7 +185,7 @@ int Emprestimo::getDiasDeAtraso() {
     time_t dataAtual;
     time(&dataAtual);  // Obtém o tempo atual
     
-    double diferenca = difftime(dataAtual, dataDeDevolução);
+    double diferenca = difftime(dataAtual, dataDeDevolucao);
     
     int diasAtraso = static_cast<int>(diferenca / 86400);
     
@@ -197,5 +197,5 @@ void Emprestimo::exibirInformacoes(){
     std::cout << "TITULO: " << this->livro->getTitulo() << std::endl;
     std::cout << "STATUS: " << ((this->devolvido) ? "Devolvido" : "Não Devolvido") << std::endl;
     std::cout << "DATA DE EMPRÉSTIMO: " << getDataFormatada(this->dataDeEmprestimo) << std::endl;
-    std::cout << "DATA DE MÁXIMA DE DEVOLUÇÃO: " << getDataFormatada(this->dataDeDevolução) << std::endl;
+    std::cout << "DATA DE MÁXIMA DE DEVOLUÇÃO: " << getDataFormatada(this->dataDeDevolucao) << std::endl;
 }
