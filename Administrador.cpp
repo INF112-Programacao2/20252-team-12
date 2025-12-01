@@ -21,25 +21,6 @@ static void escreveDevagar(const std::string &texto, int ms){
     }
 }
 
-static void pausa(int seg){
-    std::this_thread::sleep_for(std::chrono::seconds(seg));
-}
-
-static std::string getDataAtual() {
-    auto agora = std::chrono::system_clock::now();
-
-    std::time_t tt = std::chrono::system_clock::to_time_t(agora);
-
-    std::tm* data = std::localtime(&tt);
-
-    std::stringstream ss;
-    ss << std::setfill('0') << std::setw(2) << data->tm_mday << "/"
-       << std::setw(2) << data->tm_mon + 1 << "/"
-       << data->tm_year + 1900;
-
-    return ss.str();
-}
-
 static void apagarTerminal(){
     #if defined(_WIN32) || defined(_WIN64)
         std::system("cls");
@@ -72,44 +53,6 @@ static void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mas
         }
     }
 }*/
-
-static bool validaData(const std::string& data) {
-    // aceita D/M/YYYY, DD/MM/YYYY, com '/' como separador
-    auto parts = split(data, '/');
-    if (parts.size() != 3) {
-        throw std::invalid_argument("❌ Formato de data inválido. Use D/M/YYYY ou DD/MM/YYYY");
-    }
-
-    int dia, mes, ano;
-    try {
-        dia = std::stoi(parts[0]);
-        mes = std::stoi(parts[1]);
-        ano = std::stoi(parts[2]);
-    } catch (...) {
-        throw std::invalid_argument("❌ Data contém caracteres inválidos");
-    }
-    time_t agora = time(nullptr);
-    struct tm *tnow = localtime(&agora);
-    int ano_atual = tnow->tm_year + 1900;
-
-    if (ano < 1900 || ano > ano_atual) {
-        throw std::invalid_argument("❌ Ano fora do intervalo válido (1900 - ano atual)");
-    }
-    if (mes < 1 || mes > 12) {
-        throw std::invalid_argument("❌ Mês inválido");
-    }
-
-    int diasPorMes[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    if ((ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0)) {
-        diasPorMes[1] = 29;
-    }
-
-    if (dia < 1 || dia > diasPorMes[mes - 1]) {
-        throw std::invalid_argument("❌ Dia inválido para o mês especificado");
-    }
-
-    return true;
-}
 
 int Administrador::nextID = 1;
 Administrador::Administrador(const std::string& _nome, const std::string &_cpf,const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha):

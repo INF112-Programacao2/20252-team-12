@@ -1,0 +1,2 @@
+GRAD;Luiz Filipe Santos Oliveira;14422059629;22/09/2006;luiz.s.oliveira@ufv.br;luiz;120553;CCP;SISU;0
+POS;Joao;11122233300;28/01/2007;joao@ufv.br;joaovmc;120574;CCP;Mestrado;IA;0

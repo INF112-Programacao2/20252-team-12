@@ -4,3 +4,22 @@
 [01/12/2025 08:52:25] Sistema aberto
 [01/12/2025 08:53:53] Administrador Logou no Sistema
 [01/12/2025 08:54:12] Administrador escolheu a opcao: 1 - Criar Livro
+[01/12/2025 09:04:12] banco_estudantes.txt ainda não existe, sem dados para carregar.
+[01/12/2025 09:04:12] Sistema aberto
+[01/12/2025 09:04:30] Administrador Logou no Sistema
+[01/12/2025 09:04:39] Administrador escolheu a opcao: 1 - Criar Livro
+[01/12/2025 09:07:37] Administrador escolheu a opcao: 4 - Listar Livros
+[01/12/2025 09:07:59] Administrador escolheu a opcao: 10 - Recarregar uma Carteirinha
+[01/12/2025 09:08:17] Administrador escolheu a opcao: 8 - Consultar Transações
+[01/12/2025 09:08:40] Administrador escolheu a opcao: 5 - Visualizar Carteirinha de um Estudante
+[01/12/2025 09:08:49] Administrador escolheu a opcao: 5 - Visualizar Carteirinha de um Estudante
+[01/12/2025 09:09:02] Administrador escolheu a opcao: 6 - Alterar Dados de Estudante
+[01/12/2025 09:09:20] Administrador escolheu a opcao: 3 - Listar Estudantes
+[01/12/2025 09:09:35] Administrador escolheu a opcao: 3 - Listar Estudantes
+[01/12/2025 09:09:54] Administrador escolheu a opcao: 6 - Alterar Dados de Estudante
+[01/12/2025 09:10:12] Opcao 3 escolhida dentro do menu de alteração de dados do estudante
+[01/12/2025 09:10:12] Dados salvos com sucesso!
+[01/12/2025 09:10:22] Administrador escolheu a opcao: 3 - Listar Estudantes
+[01/12/2025 09:10:37] Administrador escolheu a opcao: 2 - Cadastrar Estudantes
+[01/12/2025 09:12:12] Dados salvos com sucesso!
+[01/12/2025 09:12:20] Administrador escolheu a opcao: 3 - Listar Estudantes
