@@ -44,3 +44,4 @@
 [01/12/2025 18:30:47] Estudante Escolheu a Opcao: 6 - Ver Meus Empréstimos
 [01/12/2025 18:32:21] Estudante Escolheu a Opcao: 8 - Devolver Livro
 [01/12/2025 18:34:15] Logout realizado
+[01/12/2025 18:50:14] Sistema aberto

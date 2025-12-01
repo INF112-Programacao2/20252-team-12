@@ -28,7 +28,7 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	@echo "Linkando o executável: $(TARGET)..."
-	@$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) -lX11 -lpthread
+	@$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) -lpthread
 	@echo "Compilação concluída com sucesso!"
 
 %.o: %.cpp

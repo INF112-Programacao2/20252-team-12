@@ -43,61 +43,66 @@ void Administrador::criarLivro(Biblioteca &biblioteca)
     std::string _titulo, _autor, _tipo;
     int _numExemplares;
 
-    do
+    while (1)
     {
-        std::cout << "-> Titulo: ";
-        std::getline(std::cin, _titulo);
+        try{  
+            std::cout << "-> Titulo: ";
+            std::getline(std::cin, _titulo);
 
-        if (_titulo.empty())
-        {
-            std::cout << "⚠️  Erro: O titulo nao pode estar vazio. Tente novamente.\n";
+            // if (!validaTITULO(_titulo)){ throw std::invalid_argument("❌ Título inválido") }
+            break;
+        } catch (std::exception &e){
+            std::cerr << e.what() << std::endl;
         }
-    } while (_titulo.empty());
+    }
 
     std::cout << "--------------------------------------------\n";
 
-    do
+    while (1)
     {
-        std::cout << "-> Autor: ";
-        std::getline(std::cin, _autor);
+        try{  
+            std::cout << "-> Autor: ";
+            std::getline(std::cin, _autor);
 
-        if (_autor.empty())
-        {
-            std::cout << "⚠️  Erro: O nome do autor e obrigatorio.\n";
+            // if (!validaAUTOR(_autor)){ throw std::invalid_argument("❌ Autor inválido") }
+            break;
+        } catch (std::exception &e){
+            std::cerr << e.what() << std::endl;
         }
-    } while (_autor.empty());
+    }
 
     std::cout << "--------------------------------------------\n";
 
-    do
-    {
-        std::cout << "-> Tipo: ";
-        std::getline(std::cin, _tipo);
+    while (1){
+        try{  
+            std::cout << "-> Tipo: ";
+            std::getline(std::cin, _tipo);
 
-        if (_tipo.empty())
-        {
-            std::cout << "⚠️  Erro: O tipo do livro e obrigatorio.\n";
+            // if (!validaTITULO(_tipo)){ throw std::invalid_argument("❌ Tipo inválido") }
+            break;
+        } catch (std::exception &e){
+            std::cerr << e.what() << std::endl;
         }
-    } while (_tipo.empty());
+    }
 
     std::cout << "--------------------------------------------\n";
 
-    while (true)
+    while (1)
     {
-        std::cout << "-> Numero de exemplares: ";
-        std::cin >> _numExemplares;
+        try{
+            std::cout << "-> Numero de exemplares: ";
+            std::cin >> _numExemplares;
 
-        if (std::cin.fail() || _numExemplares <= 0)
-        {
-            std::cout << "⚠️  Erro: Digite um numero inteiro valido e maior que zero.\n";
+            if (std::cin.fail() || _numExemplares <= 0)
+            {
+                throw std::invalid_argument("❌ Digite um numero inteiro valido e maior que zero.");
 
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        }
-        else
-        {
+                std::cin.clear();
+            }
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             break;
+        } catch (std::exception &e){
+            std::cerr << e.what() << std::endl;
         }
     }
 
@@ -126,6 +131,9 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
     while (true)
     {
         std::cout << "Opção: ";
+        if (!std::cin >> opcao){
+            throw std::invalid_argument("❌ ");
+        }
         if (std::cin >> opcao && (opcao == 1 || opcao == 2))
         {
             break;
