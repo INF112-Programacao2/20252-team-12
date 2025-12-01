@@ -10,37 +10,39 @@
 class Carteirinha;
 class Emprestimo;
 
-class Estudante : public Usuario{
-    protected: //alterei private para protected --- atributor passados por herança para as subclasses (thales)
-        std::string matricula;
-        std::string curso;
-        Carteirinha* carteirinha;
-        std::vector<Emprestimo*> emprestimos; //recomendo remover o acento (thales)
-        int prazoDeDevolucao;
-    public:
-        Estudante(const std::string& _nome, const std::string &_cpf,const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const std::string& _matricula, const std::string& _curso);
-        virtual ~Estudante(); //override porque irá chamar o destrutor das subclasses (thales)
+class Estudante : public Usuario
+{
+protected: // alterei private para protected --- atributor passados por herança para as subclasses (thales)
+    std::string matricula;
+    std::string curso;
+    Carteirinha *carteirinha;
+    std::vector<Emprestimo *> emprestimos; // recomendo remover o acento (thales)
+    int prazoDeDevolucao;
 
-        void exibirEmprestimos();
-        void pegarLivro(const Biblioteca& biblioteca);
-        void devolverLivro(const Biblioteca& biblioteca);
-        void consultarSaldo();
-        void recarregarCarteirinha();
-        void visualizarCarteirinha();
-        virtual void comerRU() = 0;
+public:
+    Estudante(const std::string &_nome, const std::string &_cpf, const std::string &_data_de_nascimento, const std::string &_email, const std::string &_senha, const std::string &_matricula, const std::string &_curso);
+    virtual ~Estudante(); // override porque irá chamar o destrutor das subclasses (thales)
 
-        //(thales) vou adicionar os getters e setters dos atributos de estudante
+    void exibirEmprestimos();
+    void pegarLivro(const Biblioteca &biblioteca);
+    void devolverLivro(const Biblioteca &biblioteca);
+    void consultarSaldo();
+    void recarregarCarteirinha();
+    void visualizarCarteirinha();
+    virtual void comerRU() = 0;
 
-        //getters
-        std::string get_matricula() const;
-        std::string get_curso() const;
-        Carteirinha* get_carteirinha() const;
-        std::vector<Emprestimo*> get_emprestimos() const;
-        virtual int get_prazoDeDevolucao() const = 0;
+    //(thales) vou adicionar os getters e setters dos atributos de estudante
 
-        //setters
-        void set_matricula(std::string _matricula);
-        void set_curso (std::string _curso);
+    // getters
+    std::string get_matricula() const;
+    std::string get_curso() const;
+    Carteirinha *get_carteirinha() const;
+    std::vector<Emprestimo *> get_emprestimos() const;
+    virtual int get_prazoDeDevolucao() const = 0;
+
+    // setters
+    void set_matricula(std::string _matricula);
+    void set_curso(std::string _curso);
 };
 
 #endif

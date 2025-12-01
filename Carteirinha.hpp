@@ -6,23 +6,25 @@
 class Transacao;
 class Estudante; // Trocado para forward declaration pq tinha dependencia circular
 
-class Carteirinha{
-    private:
-        static int nextId;
-        int id;
-        double saldo;
-        std::vector<Transacao*> extrato;
-    public:
-        Carteirinha();
-        ~Carteirinha();
+class Carteirinha
+{
+private:
+    static int nextId;
+    int id;
+    double saldo;
+    std::vector<Transacao *> extrato;
 
-        double getSaldo();
-        std::vector<Transacao*> getExtrato();
-        void setSaldo(double _saldo);
+public:
+    Carteirinha();
+    ~Carteirinha();
 
-        void depositar(double _valor);
-        void debitar(double _valor);
-        void exibir_extrato();
+    double getSaldo();
+    std::vector<Transacao *> getExtrato();
+    void setSaldo(double _saldo);
+
+    void depositar(double _valor);
+    void debitar(double _valor);
+    void exibir_extrato();
 };
 
 #endif
