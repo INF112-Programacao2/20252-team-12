@@ -118,7 +118,11 @@ void Estudante::pegarLivro(const Biblioteca& biblioteca) {
     Livro* livro_desejado = nullptr;
     
     std::string nome_do_livro;
+    
     std::getline(std::cin, nome_do_livro);
+    if (nome_do_livro.empty()) {
+        std::getline(std::cin, nome_do_livro);
+    }
 
     try {
         for (Livro* livro : biblioteca.getAcervo()) {
@@ -134,6 +138,7 @@ void Estudante::pegarLivro(const Biblioteca& biblioteca) {
         }
     } catch (std::invalid_argument &e) {
         std::cerr << e.what() << std::endl;
+        return;
     }
 
     livro_desejado->setNumExemplaresDisponiveis(livro_desejado->getNumExemplaresDisponiveis() - 1);
