@@ -233,7 +233,6 @@ bool validarNOME(const std::string &nome)
         if (!letraOuNumero && !espaco)
         {
             throw std::invalid_argument("❌ Nome contém caracteres inválidos.\n");
-            return false;
         }
     }
 
@@ -248,25 +247,21 @@ bool validarEMAIL(const std::string &email)
     if (arroba < 1)
     {
         throw std::invalid_argument("❌ Email deve conter '@' e algo antes dele.\n");
-        return false;
     }
 
     if (ponto < arroba + 2)
     {
         throw std::invalid_argument("❌ Domínio do email inválido.\n");
-        return false;
     }
 
     if (ponto == (int)email.size() - 1)
     {
         throw std::invalid_argument("❌ Email deve terminar com um domínio válido (.com, .br).\n");
-        return false;
     }
 
     if (email.find('@', arroba + 1) != std::string::npos)
     {
         throw std::invalid_argument("❌ Email não pode ter dois '@'.\n");
-        return false;
     }
 
     return true;
@@ -279,14 +274,12 @@ bool validarCPF(const std::string &cpf)
         if (!isdigit((unsigned char)c))
         {
             throw std::invalid_argument("❌ CPF deve conter somente números.\n");
-            return false;
         }
     }
 
     if ((int)cpf.size() != 11)
     {
         throw std::invalid_argument("❌ CPF deve ter exatamente 11 dígitos.\n");
-        return false;
     }
 
     bool todosIguais = true;
@@ -302,7 +295,6 @@ bool validarCPF(const std::string &cpf)
     if (todosIguais)
     {
         throw std::invalid_argument("❌ CPF inválido — todos os dígitos são iguais.\n");
-        return false;
     }
 
     return true;
@@ -313,7 +305,6 @@ bool validarSENHA(const std::string &senha)
     if ((int)senha.size() < 6)
     {
         throw std::invalid_argument("❌ a senha deve ter pelo menos 6 caracteres.\n");
-        return false;
     }
 
     bool letra = false, numero = false;
@@ -329,13 +320,11 @@ bool validarSENHA(const std::string &senha)
     if (!letra)
     {
         throw std::invalid_argument("❌ a senha deve conter pelo menos uma letra.\n");
-        return false;
     }
 
     if (!numero)
     {
         throw std::invalid_argument("❌ a senha deve conter pelo menos um número.\n");
-        return false;
     }
 
     return true;
@@ -428,7 +417,6 @@ bool validarCURSO(std::string &cursoInput)
     std::string linha;
     std::string inputUpper = stringMaiuscula(cursoInput);
     bool header = true;
-    bool encontrado = false;
 
     while (std::getline(arquivo, linha))
     {
@@ -453,17 +441,16 @@ bool validarCURSO(std::string &cursoInput)
         if (inputUpper == codigoArquivo)
         {
             cursoInput = codigoArquivo;
-            encontrado = true;
             break;
         }
 
         if (inputUpper == stringMaiuscula(nomeArquivo))
         {
             cursoInput = codigoArquivo; // Salva o código no lugar do nome
-            encontrado = true;
             break;
         }
     }
+    return true;
 }
 bool validarMODALIDADE(const std::string &modalidade)
 {
@@ -474,9 +461,7 @@ bool validarMODALIDADE(const std::string &modalidade)
         return true;
     }
 
-    throw std::invalid_argument("❌ Tipo de ingresso inválido. As opções permitidas são: SISU ou TRANSF.\n");
-
-    return false;
+    throw std::invalid_argument("❌ Tipo de ingresso inválido. As opções permitidas são: SISU ou TRANSF.");
 }
 bool validarTIPOPOS(const std::string &tipopos)
 {
@@ -487,16 +472,13 @@ bool validarTIPOPOS(const std::string &tipopos)
         return true;
     }
 
-    throw std::invalid_argument("❌ Tipo de ingresso inválido. As opções permitidas são: MEST ou DOUT.\n");
-
-    return false;
+    throw std::invalid_argument("❌ Tipo de ingresso inválido. As opções permitidas são: MEST ou DOUT.");
 }
 bool validarLINHAPESQUISA(const std::string &linhapesquisa)
 {
     if (linhapesquisa.size() < 5)
     {
-        std::cout << "❌ A linha de pesquisa deve conter pelo menos 5 caracteres.\n";
-        return false;
+        throw std::invalid_argument("❌ A linha de pesquisa deve conter pelo menos 5 caracteres.");
     }
 
     for (unsigned char c : linhapesquisa)
@@ -506,11 +488,8 @@ bool validarLINHAPESQUISA(const std::string &linhapesquisa)
 
         if (!letra && !espaco)
         {
-            std::cout << "❌ A linha de pesquisa deve conter apenas letras e espaços.\n";
-            return false;
+            throw std::invalid_argument("❌ A linha de pesquisa deve conter apenas letras e espaços.");
         }
     }
-
     return true;
-
 }
