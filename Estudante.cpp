@@ -122,24 +122,39 @@ void Estudante::exibirEmprestimos(){
 }
 
 //TODO: aceitar digitar com/sem acentos (ou mudar para emprestimo por ID)
+
 void Estudante::pegarLivro(const Biblioteca& biblioteca) {
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    
     escreveDevagar("\n============================================\n",10);
-    escreveDevagar("       📕 BEM-VINDO À BIBLIOTECA 📕 ",50);
+    escreveDevagar("      📕 BEM-VINDO À BIBLIOTECA 📕 ",50);
     escreveDevagar("\n============================================\n",10);
     Livro* livro_desejado = nullptr;
-    while(1){
-        std::cout << "Digite o nome do livro que deseja pegar emprestado: ";
+
+    biblioteca.listarLivros();
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+
+    while(true){
+        std::cout << "-> Digite o ID do livro: ";
         
-        std::string nome_do_livro;
-        std::getline(std::cin, nome_do_livro);
+        int id_do_livro;
 
         try {
+            if (!(std::cin >> id_do_livro)){
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                throw std::invalid_argument("❌ ID inválido \n");
+            }
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+            
             for (Livro* livro : biblioteca.getAcervo()) {
-                if (caseInsensitiveComp(nome_do_livro, livro->getTitulo())) {
+                if (id_do_livro == livro->getId()) { 
                     livro_desejado = livro;
+                    break; 
                 }
             }
+
             if (livro_desejado == nullptr) {
                 throw std::invalid_argument("❌ O livro escolhido nao foi encontrado! \n");
             }
@@ -166,8 +181,6 @@ void Estudante::pegarLivro(const Biblioteca& biblioteca) {
 }
 
 //TODO: aceitar digitar com/sem acentos (ou mudar para emprestimo por ID)
-
-
 
 void Estudante::devolverLivro(const Biblioteca& biblioteca){
     escreveDevagar("\n============================================\n",10);
@@ -277,7 +290,7 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
 
     livro_devolvido->setDevolvido(true);
     livro_devolvido->getLivro()->setNumExemplaresDisponiveis(livro_devolvido->getLivro()->getNumExemplaresDisponiveis()+1);
-
+    std::cout << "--------------------------------------------\n";
     escreveDevagar("✅ Livro devolvido com sucesso!\n", 50);
 }
 

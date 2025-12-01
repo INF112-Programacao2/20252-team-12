@@ -56,7 +56,7 @@ void Biblioteca::criarLivro(Livro& _livro) {
         
         arquivo.close();
     } else {
-        std::cerr << "Erro: Não foi possível salvar o livro no banco de dados.\n";
+        std::cerr << "❌ Não foi possível salvar o livro no banco de dados.\n";
     }
 
     this->adicionarLivro(_livro);
@@ -82,25 +82,25 @@ std::string corta(std::string palavra, int n) {
     return saida;
 }
 
-void Biblioteca::listarLivros(){
+void Biblioteca::listarLivros() const{
     if (acervo.empty()) {
         std::cout << "\n❌ Nenhum livro cadastrado no acervo.\n";
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return;
     }
 
     std::string filtro;
     limparTela();
     std::cout << "\n=================== 🔍 CONSULTA AO ACERVO 🔍 ===================\n";
-    std::cout << "Digite um termo para filtrar (Titulo, Autor ou Area)\n";
+    std::cout << "Digite um termo para filtrar. Ex: Titulo, Autor ou Area\n";
     std::cout << "Ou pressione [ENTER] para ver todos os livros: ";
-    
     std::getline(std::cin, filtro);
 
     std::vector<Livro*> livrosExibidos;
     std::string filtroUpper = stringMaiuscula(filtro);
 
     if (filtro.empty()) {
-        livrosExibidos = acervo; //Copia todos se não tiver filtro
+        livrosExibidos = acervo; 
     } else {
         for (auto livro : acervo) {
             if (stringMaiuscula(livro->getTitulo()).find(filtroUpper) != std::string::npos ||
@@ -114,6 +114,7 @@ void Biblioteca::listarLivros(){
     if (livrosExibidos.empty()) {
         std::cout << "\n❌ Nenhum livro encontrado para o termo: \"" << filtro << "\"\n";
         std::cout << "Pressione Enter para voltar...";
+        // ✅ CORREÇÃO 3: Usar getline ou cin.get() para esperar pelo Enter.
         std::cin.get(); 
         return;
     }
@@ -127,41 +128,40 @@ void Biblioteca::listarLivros(){
         std::cout << "\n============ 📚 RESULTADO DA BUSCA (Pagina " << (pagina + 1) << "/" << totalPaginas << ") ============\n";
         if (!filtro.empty()) std::cout << "Filtro aplicado: \"" << filtro << "\"\n";
         
-        std::cout << std::left 
-                  << std::setw(4)  << "ID" 
+        std::cout << std::left
+                  << std::setw(4)  << "ID"
                   << std::setw(40) << "TITULO"
                   << std::setw(25) << "AUTOR"
                   << std::setw(20) << "AREA"
                   << std::setw(12) << "STATUS"
                   << std::endl;
-        std::cout << "--------------------------------------------------------------------------------------------\n";
-
+        std::cout <<"--------------------------------------------------------------------------------------------\n";
         int inicio = pagina * LIVROS_POR_PAGINA;
         int fim = std::min(inicio + LIVROS_POR_PAGINA, totalLivros);
-
         for (int i = inicio; i < fim; i++) {
             Livro* livro = livrosExibidos[i];
             std::string status = (livro->getNumExemplaresDisponiveis() > 0) ? "DISPONIVEL" : "ESGOTADO";
-            
             std::cout << std::left
-                      << std::setw(4)  << (i + 1)
+                      << std::setw(4)  << livro->getId()
                       << std::setw(40) << corta(livro->getTitulo(), 38)
                       << std::setw(25) << corta(livro->getAutor(), 23)
                       << std::setw(20) << corta(livro->getTipo(), 18)
                       << std::setw(12) << status
                       << std::endl;
         }
-        std::cout << "============================================================================================\n";
 
+        std::cout << "============================================================================================\n";
+        
         if (pagina < totalPaginas - 1) {
             std::cout << "\n[Enter] Proxima Pagina  |  [S] Sair: ";
             std::string opcao;
-            std::getline(std::cin, opcao);
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::getline(std::cin, opcao); 
             if (opcao == "S" || opcao == "s") break;
         } else {
             std::cout << "\n(Fim da lista) Pressione Enter para voltar...";
-            char c = std::cin.get();
-            if (c != '\n') std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cin.get(); 
         }
     }
 }
