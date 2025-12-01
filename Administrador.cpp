@@ -8,6 +8,8 @@
 #include <ctime>
 #include <cctype>
 #include <sstream>
+#include <limits>
+#include <algorithm>
 #include "CImg.h"
 
 using namespace cimg_library;
@@ -132,23 +134,53 @@ void Administrador::criarLivro(Biblioteca &biblioteca) {
     std::string _titulo, _autor, _tipo;
     int _numExemplares;
 
-    std::cout<<"-> Titulo: ";
-    std::getline(std::cin,_titulo);             // TODO: Tratamento de erro titulo
+    do {
+        std::cout<<"-> Titulo: ";
+        std::getline(std::cin,_titulo);
+        
+        if (_titulo.empty()) {
+            std::cout << "⚠️  Erro: O titulo nao pode estar vazio. Tente novamente.\n";
+        }
+    } while (_titulo.empty());
 
     std::cout << "--------------------------------------------\n";
 
-    std::cout<<"-> Autor: ";
-    std::getline(std::cin, _autor);             // TODO: Tratamento de erro autor
+    do {
+        std::cout<<"-> Autor: ";
+        std::getline(std::cin, _autor);
+
+        if (_autor.empty()) {
+            std::cout << "⚠️  Erro: O nome do autor e obrigatorio.\n";
+        }
+    } while (_autor.empty());
 
     std::cout << "--------------------------------------------\n";
 
-    std::cout<<"-> Tipo: ";
-    std::getline(std::cin, _tipo);              // TODO: Tratamento de erro tipo
+    do {
+        std::cout<<"-> Tipo: ";
+        std::getline(std::cin, _tipo);
+
+        if (_tipo.empty()) {
+            std::cout << "⚠️  Erro: O tipo do livro e obrigatorio.\n";
+        }
+    } while (_tipo.empty());
 
     std::cout << "--------------------------------------------\n";
 
-    std::cout<<"-> Numero de exemplares: ";
-    std::cin>>_numExemplares;                   // TODO: Tratamento de erro numero_exemplares
+    while (true) {
+        std::cout<<"-> Numero de exemplares: ";
+        std::cin>>_numExemplares;
+
+        if (std::cin.fail() || _numExemplares <= 0) {
+            std::cout << "⚠️  Erro: Digite um numero inteiro valido e maior que zero.\n";
+            
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        } else {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            break;
+        }
+    }
 
     std::cout << "--------------------------------------------\n";
 
@@ -160,7 +192,7 @@ void Administrador::criarLivro(Biblioteca &biblioteca) {
 
 void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
 
-    int opcao;
+    int opcao = 0;
 
     std::cout << "\n============================================\n";
     std::cout << "   📚 MENU DE CADASTRAMENTO DE ESTUDANTE 📚\n";
@@ -169,12 +201,16 @@ void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
     std::cout<<"1 - Aluno Graduação"<<std::endl;
     std::cout<<"2 - Aluno Pós-Graduação"<<std::endl;
     std::cout << "--------------------------------------------\n";
-    std::cout << "Opção: ";
-
-    if (!(std::cin >> opcao)) {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        throw std::invalid_argument("Digite um número válido!");
+    
+    while (true) {
+        std::cout << "Opção: ";
+        if (std::cin >> opcao && (opcao == 1 || opcao == 2)) {
+            break;
+        } else {
+            std::cout << "❌ Opção inválida! Digite 1 ou 2.\n";
+            std::cin.clear(); 
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
     }
 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -182,42 +218,125 @@ void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
     std::cout<<"=== FAVOR PREENCHER AS INFORMACOES ABAIXO ==="<<std::endl<<std::endl;
 
     std::string _nome, _cpf,_data_de_nascimento, _email, _senha, _matricula, _curso;
-    std::cout<<"-> Nome: "; std::getline(std::cin,_nome);               // TODO: Tratamento de erro nome
+
+    do {
+        std::cout<<"-> Nome: ";
+        std::getline(std::cin, _nome);
+        if (_nome.length() < 3) std::cout << "⚠️  Nome muito curto. Digite o nome completo.\n";
+    } while (_nome.length() < 3);
+
     std::cout << "--------------------------------------------\n";
-    std::cout<<"-> CPF: "; std::getline(std::cin, _cpf);                // TODO: Tratamento de erro cpf
+
+    do {
+        std::cout << "-> CPF (apenas números, 11 dígitos): ";
+        std::getline(std::cin, _cpf);
+        bool apenasNumeros = std::all_of(_cpf.begin(), _cpf.end(), ::isdigit);
+        
+        if (_cpf.length() != 11 || !apenasNumeros) {
+            std::cout << "⚠️  CPF inválido. Deve conter exatamente 11 números.\n";
+            _cpf = "";
+        }
+    } while (_cpf.empty());
+
     std::cout << "--------------------------------------------\n";
-    std::cout<<"-> Data de nascimento: "; std::getline(std::cin,_data_de_nascimento);               // TODO: Tratamento de erro data
+
+    do {
+        std::cout << "-> Data de nascimento (DD/MM/AAAA): ";
+        std::getline(std::cin, _data_de_nascimento);
+        if (_data_de_nascimento.length() != 10) std::cout << "⚠️  Formato inválido. Use DD/MM/AAAA.\n";
+    } while (_data_de_nascimento.length() != 10);
+
     std::cout << "--------------------------------------------\n";
-    std::cout<<"-> Email: "; std::cin>>_email;      // TODO: Tratamento de erro email
+
+    do {
+        std::cout<<"-> Email: ";
+        std::cin>>_email;
+        if (_email.find('@') == std::string::npos || _email.find('.') == std::string::npos) {
+            std::cout << "⚠️  Email inválido (deve conter '@' e '.').\n";
+            _email = "";
+        }
+    } while (_email.empty());
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
     std::cout << "--------------------------------------------\n";
-    std::cout<<"-> Senha: "; std::cin>>_senha;      // TODO: Tratamento de erro senha
+
+    do {
+        std::cout<<"-> Senha (min 6 caracteres): ";
+        std::cin>>_senha;
+        if (_senha.length() < 6) {
+            std::cout << "⚠️  Senha muito fraca. Mínimo 6 caracteres.\n";
+            _senha = ""; 
+        }
+    } while (_senha.empty());
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
     std::cout << "--------------------------------------------\n";
-    std::cout<<"-> Matricula: "; std::cin>>_matricula;          // TODO: Tratamento de erro matricula
+
+    bool entradaValida = false;
+
+    do {
+        std::cout << "-> Matrícula do aluno: ";
+        std::cin >> _matricula;
+        bool apenasNumeros = !_matricula.empty() && std::all_of(_matricula.begin(), _matricula.end(), ::isdigit);
+
+        if (apenasNumeros) {
+            entradaValida = true;
+        } else {
+            std::cout << "⚠️  Erro: A matrícula deve conter APENAS números (sem letras ou símbolos).\n";
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+
+    } while (!entradaValida);
+
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
     std::cout << "--------------------------------------------\n";
-    std::cout<<"-> Curso: "; std::getline(std::cin, _curso);    // TODO: Tratamento de erro curso
+
+    do {
+        std::cout<<"-> Curso: ";
+        std::getline(std::cin, _curso);
+        if (_curso.empty()) std::cout << "⚠️  Nome do curso obrigatório.\n";
+    } while (_curso.empty());
+
     std::cout << "--------------------------------------------\n";
 
     if(opcao==1) {
         std::string _modalidade;
-        std::cout<<"-> Modalidade de Graduação: "; std::cin>> _modalidade;      // TODO: Tratamento de erro modalidade
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        EstudanteGraduacao* _novoEstudante = new EstudanteGraduacao(_nome, _cpf,_data_de_nascimento, _email, _senha, _matricula, _curso, _modalidade);
+        do {
+            std::cout<<"-> Modalidade de Graduação: ";
+            std::getline(std::cin, _modalidade); 
+            if (_modalidade.empty()) std::cout << "⚠️  Modalidade obrigatória.\n";
+        } while (_modalidade.empty());
+
+        EstudanteGraduacao* _novoEstudante = new EstudanteGraduacao(_nome, _cpf, _data_de_nascimento, _email, _senha, _matricula, _curso, _modalidade);
         std::cout << "--------------------------------------------\n";
         estudantes.push_back(_novoEstudante);
     }
     else if(opcao==2) {
         std::string _tipoPos, _linhaDePesquisa;
-        std::cout<<"-> Tipo Pos Graduacao: "; std::getline(std::cin, _tipoPos);         // TODO: Tratamento de erro tipo pos graduação
+        
+        do {
+            std::cout<<"-> Tipo Pós-Graduação (ex: Mestrado, Doutorado): ";
+            std::getline(std::cin, _tipoPos);
+            if (_tipoPos.empty()) std::cout << "⚠️  Tipo obrigatório.\n";
+        } while (_tipoPos.empty());
+        
         std::cout << "--------------------------------------------\n";
-        std::cout<<"-> Linha de Pesquisa: "; std::getline(std::cin, _linhaDePesquisa);          // TODO: Tratamento de erro linha de pesquisa
+        
+        do {
+            std::cout<<"-> Linha de Pesquisa: ";
+            std::getline(std::cin, _linhaDePesquisa);
+            if (_linhaDePesquisa.empty()) std::cout << "⚠️  Linha de pesquisa obrigatória.\n";
+        } while (_linhaDePesquisa.empty());
+        
         std::cout << "--------------------------------------------\n";
 
         EstudantePosGraduacao* _novoEstudante = new EstudantePosGraduacao(_nome, _cpf, _data_de_nascimento, _email, _senha, _matricula, _curso, _tipoPos, _linhaDePesquisa);
         estudantes.push_back(_novoEstudante);
     }
+
     escreveDevagar("Estudante de matrícula " + _matricula + " foi cadastrado com sucesso! ✅\n", 50);
 }
 
@@ -246,17 +365,29 @@ void Administrador::listarEstudante(std::vector<Estudante*> &estudantes) {
     }
 }
 
-// Modificar a função para perguntar qual o dado quer alterar
 int Administrador::alterarDadosEstudante(std::vector<Estudante*> &estudantes) {
     std::cout << "\n============================================\n";
     std::cout << "   ✏️  MENU DE ALTERAÇÃO DE DADOS ✏️ \n";
     std::cout << "============================================\n";
 
     std::string matricula;
-    std::cout << "-> Digite a matrícula do estudante: ";            
-    std::cin >> matricula;          // TODO: Tratamento de erro matricula
+    
+    bool entradaValida = false;
 
-    //acha o estudante alvo
+    do {
+        std::cout << "-> Matrícula do aluno: ";
+        std::cin >> matricula;
+        bool apenasNumeros = !matricula.empty() && std::all_of(matricula.begin(), matricula.end(), ::isdigit);
+
+        if (apenasNumeros) {
+            entradaValida = true;
+        } else {
+            std::cout << "⚠️  Erro: A matrícula deve conter APENAS números (sem letras ou símbolos).\n";
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+
+    } while (!entradaValida);
+
     Estudante* estudanteAlvo = nullptr;
     for (auto* est : estudantes) {
         if (est->get_matricula() == matricula) {
@@ -278,12 +409,16 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante*> &estudantes) {
     std::cout << "4 - Alterar Senha\n";
     std::cout << "5 - Cancelar\n";
     std::cout << "--------------------------------------------\n";
-    std::cout << "Opção: ";
-
-    if (!(std::cin >> opcao)) {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        throw std::invalid_argument("Digite um número válido!");
+    
+    while (true) {
+        std::cout << "Opção: ";
+        if (std::cin >> opcao) {
+            break;
+        } else {
+            std::cout << "⚠️  Erro: Digite apenas números.\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
     }
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
@@ -291,30 +426,64 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante*> &estudantes) {
 
     switch (opcao) {
         case 1:
-            std::cout << "-> Novo Nome: ";
-            std::getline(std::cin, novoDado);           // TODO: Tratamento de erro nome
+            do {
+                std::cout << "-> Novo Nome: ";
+                std::getline(std::cin, novoDado);
+                
+                if (novoDado.length() < 3) {
+                    std::cout << "⚠️  Erro: O nome deve ter no mínimo 3 caracteres.\n";
+                }
+            } while (novoDado.length() < 3);
+            
             estudanteAlvo->setNome(novoDado);
             break;
+
         case 2:
-            std::cout << "-> Novo Email: ";
-            std::cin >> novoDado;                       // TODO: Tratamento de erro email
+            do {
+                std::cout << "-> Novo Email: ";
+                std::cin >> novoDado;
+                
+                if (novoDado.find('@') == std::string::npos || novoDado.find('.') == std::string::npos) {
+                    std::cout << "⚠️  Erro: Email inválido (deve conter '@' e '.'). Tente novamente.\n";
+                }
+            } while (novoDado.find('@') == std::string::npos || novoDado.find('.') == std::string::npos);
+            
             estudanteAlvo->setEmail(novoDado);
             break;
+
         case 3:
-            std::cout << "-> Novo Curso (Sigla ou Nome): ";
-            std::getline(std::cin, novoDado);           // TODO: Tratamento de erro curso
+            do {
+                std::cout << "-> Novo Curso (Sigla ou Nome): ";
+                std::getline(std::cin, novoDado);
+
+                if (novoDado.empty()) {
+                    std::cout << "⚠️  Erro: O curso não pode estar vazio.\n";
+                }
+            } while (novoDado.empty());
+
             estudanteAlvo->set_curso(novoDado);
             break;
+
         case 4:
-            std::cout << "-> Nova Senha: ";         
-            std::cin >> novoDado;                       // TODO: Tratamento de erro senha
+            do {
+                std::cout << "-> Nova Senha (min 6 caracteres): ";       
+                std::cin >> novoDado;
+
+                if (novoDado.length() < 6) {
+                    std::cout << "⚠️  Erro: A senha deve ter no mínimo 6 caracteres.\n";
+                }
+            } while (novoDado.length() < 6);
+
             estudanteAlvo->setSenha(novoDado);
             break;
+
         case 5:
             std::cout << "Operação cancelada.\n";
             return 5;
+
         default:
-            throw std::invalid_argument("Opção inválida!");
+            std::cout << "❌ Opção inválida selecionada.\n";
+            return 0; 
     }
 
     escreveDevagar("\n✅ Dados atualizados com sucesso!\n", 50);
@@ -324,7 +493,27 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante*> &estudantes) {
 void Administrador::alterarSenhaAdministrador() {
     std::cout << "--------------------------------------------\n";
     std::string nova_senha;
-    std::cout << "-> Digite sua nova senha: "; std::getline(std::cin, nova_senha);          // TODO: Tratamento de erro senha
+    std::string confirmacao_senha;
+
+    do {
+        std::cout << "-> Digite sua nova senha (min 6 caracteres): "; 
+        std::getline(std::cin, nova_senha); 
+
+        if (nova_senha.length() < 6) {
+            std::cout << "⚠️  Erro: A senha é muito curta. Use no mínimo 6 caracteres.\n";
+            continue;
+        }
+
+        std::cout << "-> Confirme a nova senha: ";
+        std::getline(std::cin, confirmacao_senha);
+
+        if (nova_senha != confirmacao_senha) {
+            std::cout << "⚠️  Erro: As senhas não coincidem. Tente novamente.\n";
+            std::cout << "--------------------------------------------\n";
+        }
+
+    } while (nova_senha.length() < 6 || nova_senha != confirmacao_senha);
+
     this->setSenha(nova_senha);                         
     std::cout << "--------------------------------------------\n";
     escreveDevagar("✅ Senha alterada com sucesso!", 50);
@@ -337,43 +526,94 @@ void Administrador::consultarTransacoes(std::vector<Estudante*> &estudantes) {
     std::cout << "============================================\n";
 
     char resposta;
-    while (true){
-        std::cout << "# Deseja visualizar todas as transações? (S/N)" << std::endl;
+    
+    while (true) {
+        std::cout << "# Deseja visualizar todas as transações? (S/N): ";
         std::cin >> resposta;
-        if (resposta == 'S' || resposta == 's' || resposta == 'N' || resposta == 'n') break;
-    }
-    if (resposta == 'S' || resposta == 's'){
-        for (auto estudante : estudantes){
-            std::cout << "--------------------------------------------\n";
-            std::cout << estudante->getNome() << " - " << estudante->get_matricula() << std::endl;
-            std::cout << "--------------------------------------------\n";
-            estudante->get_carteirinha()->exibir_extrato();
+        
+        resposta = toupper(resposta); 
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        if (resposta == 'S' || resposta == 'N') {
+            break;
         }
-    } else if (resposta == 'N' || resposta == 'n'){
-        std::string matricula;
-        std::cout << "-> Matrícula do aluno: ";
-        std::cin >> matricula;                      // TODO: Tratamento de erro matricula
-        apagarTerminal();
-        for (auto estudante : estudantes){
-            if (estudante->get_matricula() == matricula){
-                std::cout << "--------------------------------------------\n";
-                std::cout << estudante->getNome() << " - " << estudante->get_matricula() << std::endl;
-                std::cout << "--------------------------------------------\n";
+        std::cout << "⚠️  Opção inválida. Digite apenas S ou N.\n";
+    }
+
+    if (resposta == 'S') {
+        if (estudantes.empty()) {
+            std::cout << "⚠️  Nenhum estudante cadastrado no sistema.\n";
+            return;
+        }
+
+        for (auto estudante : estudantes) {
+            std::cout << "--------------------------------------------\n";
+            std::cout << "Aluno: " << estudante->getNome() << " - Matrícula: " << estudante->get_matricula() << std::endl;
+            std::cout << "--------------------------------------------\n";
+            if (estudante->get_carteirinha()) {
                 estudante->get_carteirinha()->exibir_extrato();
+            } else {
+                std::cout << "   (Sem carteirinha ativa)\n";
+            }
+        }
+    } 
+    else {
+        std::string matricula;
+
+        bool entradaValida = false;
+
+        do {
+            std::cout << "-> Matrícula do aluno: ";
+            std::cin >> matricula;
+            bool apenasNumeros = !matricula.empty() && std::all_of(matricula.begin(), matricula.end(), ::isdigit);
+
+            if (apenasNumeros) {
+                entradaValida = true;
+            } else {
+                std::cout << "⚠️  Erro: A matrícula deve conter APENAS números (sem letras ou símbolos).\n";
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            }
+
+        } while (!entradaValida);
+        
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+
+        apagarTerminal();
+
+        bool encontrado = false;
+
+        for (auto estudante : estudantes) {
+            if (estudante->get_matricula() == matricula) {
+                std::cout << "--------------------------------------------\n";
+                std::cout << "Aluno: " << estudante->getNome() << " - Matrícula: " << estudante->get_matricula() << std::endl;
+                std::cout << "--------------------------------------------\n";
+                
+                if (estudante->get_carteirinha()) {
+                    estudante->get_carteirinha()->exibir_extrato();
+                } else {
+                    std::cout << "⚠️  Este aluno não possui carteirinha ativa.\n";
+                }
+                
+                encontrado = true;
                 return;
             }
         }
-        throw std::invalid_argument("❌ Não foi possível localizar o Estudante com matrícula " + matricula);
+
+        if (!encontrado) {
+            std::cout << "❌ Erro: Não foi possível localizar o Estudante com matrícula " << matricula << "\n";
+        }
     }
 }
 
 void Administrador::consultarEmprestimos(std::vector<Estudante*> &estudantes) {
 
     std::cout << "\n============================================\n";
-    std::cout << " 📚 MENU DE CADASTRAMENTO DE EMPRÉSTIMOS 📚\n";
+    std::cout << "  📚 MENU DE CONSULTA DE EMPRÉSTIMOS 📚\n";
     std::cout << "============================================\n";
 
     char resposta;
+    
     while (true){
         std::cout << "# Deseja visualizar todas os empréstimos? (S/N)" << std::endl;
         std::cin >> resposta;
@@ -384,18 +624,35 @@ void Administrador::consultarEmprestimos(std::vector<Estudante*> &estudantes) {
     if (resposta == 'S' || resposta == 's'){
         for (auto estudante : estudantes){
             std::cout << "--------------------------------------------\n";
-            std::cout << estudante->getNome() << " - " << estudante->get_matricula() << std::endl;
+            std::cout << "Aluno: " << estudante->getNome() << " - Matrícula: " << estudante->get_matricula() << std::endl;
             std::cout << "--------------------------------------------\n";
             estudante->exibirEmprestimos();
         }
-    } else if (resposta == 'N' || resposta == 'n'){
+    } else { 
         std::string matricula;
-        std::cout << "-> Matrícula do aluno: ";
-        std::cin >> matricula;                  // TODO: Tratamento de erro matricula
+        
+        bool entradaValida = false;
+
+        do {
+            std::cout << "-> Matrícula do aluno: ";
+            std::cin >> matricula;
+            bool apenasNumeros = !matricula.empty() && std::all_of(matricula.begin(), matricula.end(), ::isdigit);
+
+            if (apenasNumeros) {
+                entradaValida = true;
+            } else {
+                std::cout << "⚠️  Erro: A matrícula deve conter APENAS números (sem letras ou símbolos).\n";
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            }
+
+        } while (!entradaValida);
+        
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+
         apagarTerminal();
-        std::string lixo;
-        for (auto estudante : estudantes){
-            if (estudante->get_matricula() == matricula){
+
+        for (auto estudante : estudantes) {
+            if (estudante->get_matricula() == matricula) {
                 std::cout << "--------------------------------------------\n";
                 std::cout << estudante->getNome() << " - " << estudante->get_matricula() << std::endl;
                 std::cout << "--------------------------------------------\n";
@@ -403,7 +660,7 @@ void Administrador::consultarEmprestimos(std::vector<Estudante*> &estudantes) {
                 return;
             }
         }
-        throw std::invalid_argument("❌ Não foi possível localizar o Estudante com matrícula " + matricula);
+        std::cout << "❌ Não foi possível localizar o Estudante com matrícula " << matricula << "\n";
     }
 }
 
@@ -414,8 +671,24 @@ void Administrador::recarregarCarteirinha(std::vector<Estudante*> &estudantes) {
     std::cout << "============================================\n";
 
     std::string matricula;
-    std::cout << "-> Matrícula do aluno: ";
-    std::cin >> matricula;                      // TODO: Tratamento de erro matricula
+
+    bool entradaValida = false;
+
+    do {
+        std::cout << "-> Matrícula do aluno: ";
+        std::cin >> matricula;
+        bool apenasNumeros = !matricula.empty() && std::all_of(matricula.begin(), matricula.end(), ::isdigit);
+
+        if (apenasNumeros) {
+            entradaValida = true;
+        } else {
+            std::cout << "⚠️  Erro: A matrícula deve conter APENAS números (sem letras ou símbolos).\n";
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+
+    } while (!entradaValida);
+    
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
 
     for (auto estudante : estudantes){
         if (estudante->get_matricula() == matricula){
@@ -447,12 +720,32 @@ std::string Administrador::alterarValorRU() {
     std::cout << "Escolha o nível do estudante:\n";
     std::cout << "1 - Graduação\n2 - Pós-Graduação\n";
     std::cout << "Opção: ";
-    std::cin >> resposta;                                   // TODO: Tratamento de erro resposta
-    if (resposta != '1' && resposta != '2'){
-        throw std::invalid_argument("❌ Opção inválida");
+    
+    while (true) {
+        std::cin >> resposta;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+        
+        if (resposta == '1' || resposta == '2') {
+            break;
+        }
+        std::cout << "❌ Opção inválida. Digite 1 ou 2: ";
     }
+
     std::cout << "-> Novo valor: ";
-    std::cin >> novo_valor;                                 // TODO: Tratamento de erro novo_valor
+    
+    while (true) {
+        std::cin >> novo_valor;
+        
+        if (std::cin.fail() || novo_valor < 0) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "❌ Valor inválido. Digite um número positivo: ";
+        } else {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            break;
+        }
+    }
+
     if (resposta == '1'){   
         EstudanteGraduacao::set_valorRU(novo_valor);
         gradOuPos = "Graduação";
@@ -473,7 +766,20 @@ void Administrador::alterarValorMulta() {
 
     double novo_valor;
     std::cout << "-> Valor da nova multa: ";
-    std::cin >> novo_valor;                                     // TODO: Tratamento de erro novo_valor
+    
+    while (true) {
+        std::cin >> novo_valor;
+        
+        if (std::cin.fail() || novo_valor < 0) {
+            std::cin.clear(); 
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "❌ Valor inválido. Digite um número positivo: ";
+        } else {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+            break;
+        }
+    }
+
     Emprestimo::setMulta(novo_valor);
     escreveDevagar("✅ Valor da multa alterado com sucesso!", 50);
 }
@@ -491,6 +797,12 @@ void Administrador::mobilidadeAcademica(std::vector<Estudante*> &estudantes){
     
     std::ifstream leitura;
     leitura.open("codigo_cursos.txt");
+
+    // Verifica se o arquivo abriu antes de pedir dados ao usuário
+    if(!leitura.is_open()) {
+        std::cout << "❌ Erro crítico: Não foi possível abrir o banco de dados de cursos (codigo_cursos.txt).\n";
+        return; 
+    }
     
     std::string matricula_aluno, parametro;
 
@@ -520,11 +832,7 @@ void Administrador::mobilidadeAcademica(std::vector<Estudante*> &estudantes){
         break;
     }
 
-    std::cout<<"Novo curso(codigo ou nome): ";
-    std::getline(std::cin,parametro);
-
     Estudante* estudante = nullptr;
-
     for (auto aluno:estudantes){
         if(aluno->get_matricula() == matricula_aluno){
             estudante = aluno;
@@ -532,21 +840,24 @@ void Administrador::mobilidadeAcademica(std::vector<Estudante*> &estudantes){
         }
     }
 
-    if (estudante==nullptr)
-        throw std::invalid_argument("Aluno não foi encontrado!");
-
-
-    if(!leitura.is_open())
-        throw std::runtime_error("Nao foi possivel abrir o arquivo de leitura");
-
-
-    bool numerico = false; //supondo nome do curso -- TODO: verificar se essas verificações bastam para validar o tipo de parametro
-    for(char c:parametro){
-        if(isdigit(c)){ //é codigo numerico
-            numerico = true;
-            break;
-        }
+    if (estudante == nullptr) {
+        std::cout << "❌ Aluno não encontrado com a matrícula " << matricula_aluno << ".\n";
+        leitura.close();
+        return;
     }
+
+    std::cout << "Aluno selecionado: " << estudante->getNome() << "\n";
+    std::cout << "--------------------------------------------\n";
+
+    while (true) {
+        std::cout << "Novo curso (digite o CODIGO ou o NOME): ";
+        std::getline(std::cin, parametro);
+
+        if (!parametro.empty()) break;
+        std::cout << "⚠️  O campo não pode ser vazio.\n";
+    }
+
+    bool numerico = std::all_of(parametro.begin(), parametro.end(), ::isdigit);
 
     if(!numerico) //se o parametro for pelo nome do curso
         parametro = deixar_maiusculo(parametro); //deixamos o parametro todo em maisculo para procurar no .txt
@@ -580,14 +891,15 @@ void Administrador::mobilidadeAcademica(std::vector<Estudante*> &estudantes){
         }
     }
 
-    if(!encontrou)
-        throw std::invalid_argument("Parametro invalido para mobilidade academica");
-
-    estudante->set_curso(codigo_curso); //altera o curso que o aluno está fazendo
     leitura.close();
 
-    if(leitura.fail())
-        throw std::runtime_error("Nao foi possivel fechar o arquivo");
+    if(!encontrou) {
+        std::cout << "❌ Curso não encontrado! Verifique se digitou o código ou nome corretamente.\n";
+        return;
+    }
+
+    estudante->set_curso(codigo_curso); //altera o curso que o aluno está fazendo
+    escreveDevagar("✅ Mobilidade realizada! O aluno agora pertence ao curso: " + codigo_curso + "\n", 50);
 }
 
 std::string Administrador::procurar_curso_por_codigo(std::string codigo){
