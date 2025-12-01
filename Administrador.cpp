@@ -278,6 +278,14 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
             std::cout << "⚠️  CPF inválido. Deve conter exatamente 11 números.\n";
             _cpf = "";
         }
+
+        for (auto est : estudantes) {
+            if (_matricula == est->get_matricula()) {
+                std::cout << "⚠️  Erro: O estudante com esse CPF já está cadastrado.\n";
+                return;
+            }
+        }
+
     } while (_cpf.empty());
 
     std::cout << "--------------------------------------------\n";
@@ -286,19 +294,26 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
     {
         std::cout << "-> Data de nascimento (DD/MM/AAAA): ";
         std::getline(std::cin, _data_de_nascimento);
-        if (_data_de_nascimento.length() != 10)
-            std::cout << "⚠️  Formato inválido. Use DD/MM/AAAA.\n";
+
+        std::time_t t = std::time(nullptr);
+        std::tm* now = std::localtime(&t);
+        int anoAtual = now->tm_year + 1900;
+
+        if (_data_de_nascimento.length() != 10) std::cout << "⚠️  Formato inválido. Use DD/MM/AAAA.\n";
+        if (std::stoi(_data_de_nascimento.substr(_data_de_nascimento.size()-4)) > anoAtual-17 
+         || std::stoi(_data_de_nascimento.substr(_data_de_nascimento.size()-4)) < anoAtual-120) {
+            std::cout << "⚠️  Erro: O estudante não preenche os requisitos de idade para ingressar no ensino superior.\n";
+            return;
+        }
     } while (_data_de_nascimento.length() != 10);
 
     std::cout << "--------------------------------------------\n";
 
-    do
-    {
-        std::cout << "-> Email: ";
-        std::cin >> _email;
-        if (_email.find('@') == std::string::npos || _email.find('.') == std::string::npos)
-        {
-            std::cout << "⚠️  Email inválido (deve conter '@' e '.').\n";
+    do {
+        std::cout<<"-> Email: ";
+        std::cin>>_email;
+        if (_email.substr(_email.size()-7) != "@ufv.br" || _email.size() <= 7) {
+            std::cout << "⚠️  Email inválido (Utilize somente email institucional '@ufv.br').\n";
             _email = "";
         }
     } while (_email.empty());
@@ -331,16 +346,19 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
         if (apenasNumeros)
         {
             entradaValida = true;
-        }
-        else
-        {
+
+            for (auto est : estudantes) {
+                if (_matricula == est->get_matricula()) {
+                    std::cout << "⚠️  Erro: Já existe um estudante com essa matrícula.\n";
+                    entradaValida = false;
+                }
+            }
+        } else {
             std::cout << "⚠️  Erro: A matrícula deve conter APENAS números (sem letras ou símbolos).\n";
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
 
     } while (!entradaValida);
-
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 

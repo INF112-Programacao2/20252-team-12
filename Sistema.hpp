@@ -16,11 +16,16 @@ private:
     Administrador *admin;
     Biblioteca *biblioteca;
 
-    void carregarLivros();
-    void carregarDados();
-    void salvarDados();
-    void menuAdministrador();
-    void menuEstudante();
+        void carregarLivros();
+        void carregarDados();
+        void salvarDados();
+        void carregarAdmin();
+        void salvarAdmin();
+        void menuAdministrador();
+        void menuEstudante();
+    public:
+        Sistema();
+        ~Sistema();
 
 public:
     Sistema();

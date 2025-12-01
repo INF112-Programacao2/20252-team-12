@@ -62,7 +62,8 @@ Sistema::Sistema() : estudantes()
 {
     this->arquivo_livros = std::ifstream("livros.txt");
     this->biblioteca = new Biblioteca("Biblioteca UFV");
-    this->admin = new Administrador("Julio Cesar Soares dos Reis", "49588826691", "23/04/1988", "jreis@ufv.br", "admin10");
+    //this->admin = new Administrador("Julio Cesar Soares dos Reis", "49588826691", "23/04/1988", "jreis@ufv.br", "admin");
+    this->carregarAdmin();
     this->estudante_logado = nullptr;
     this->carregarDados(); // Carrega os estudantes existentes
     if (estudantes.empty())
@@ -203,10 +204,58 @@ Administrador *Sistema::get_admin()
     return this->admin;
 }
 
-void Sistema::carregarLivros()
-{
-    if (!this->arquivo_livros.is_open())
-    {
+void Sistema::carregarAdmin() {
+    std::ifstream file("admin_dados.txt");
+    
+    if (file.is_open()) {
+        std::string linha;
+        if (std::getline(file, linha)) {
+            std::stringstream ss(linha);
+            std::string segmento;
+            std::vector<std::string> dados;
+
+            while (std::getline(ss, segmento, ';')) {
+                dados.push_back(segmento);
+            }
+
+            if (dados.size() >= 5) {
+                this->admin = new Administrador(dados[0], dados[1], dados[2], dados[3], dados[4]);
+                file.close();
+                return;
+            }
+        }
+        file.close();
+    }
+
+    // Se o arquivo não existir ou falhar a leitura, cria o Admin Padrão
+    escreveLog("Arquivo de admin não encontrado ou inválido. Criando admin padrão.");
+    this->admin = new Administrador("Julio Cesar Soares dos Reis", "49588826691", "23/04/1988", "jreis@ufv.br", "admin");
+    
+    this->salvarAdmin();
+}
+
+void Sistema::salvarAdmin() {
+    std::ofstream file("admin_dados.txt");
+    if (!file.is_open()) {
+        escreveLog("Erro ao abrir arquivo para salvar dados do administrador!");
+        std::cerr << "Erro ao salvar dados do administrador.\n";
+        return;
+    }
+
+    // Salvando no formato: NOME;CPF;DATA;EMAIL;SENHA
+    file << admin->getNome() << ";"
+         << admin->getCpf() << ";"
+         << admin->getDataDeNascimento() << ";"
+         << admin->getEmail() << ";"
+         << admin->getSenha() << "\n";
+    
+    file.close();
+    
+    escreveLog("Dados do administrador salvos.");
+}
+
+void Sistema::carregarLivros(){
+    if (!this->arquivo_livros.is_open()){
         throw std::invalid_argument("Arquivo não encontrado!");
         return;
     }
@@ -290,116 +339,114 @@ void Sistema::menuAdministrador()
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             apagarTerminal();
 
-            switch (opcao)
-            {
-            case 1:
-                escreveLog("Administrador escolheu a opcao: 1 - Criar Livro");
-                this->admin->criarLivro(*this->biblioteca);
-                pausa(2);
-                apagarTerminal();
-                break;
-            case 2:
-                escreveLog("Administrador escolheu a opcao: 2 - Cadastrar Estudantes");
-                this->admin->criarEstudante(this->estudantes);
-                this->salvarDados();
-                pausa(2);
-                apagarTerminal();
-                break;
-            case 3:
-                escreveLog("Administrador escolheu a opcao: 3 - Listar Estudantes");
-                this->admin->listarEstudante(this->estudantes);
-                pausa(2);
-                apagarTerminal();
-                break;
-            case 4:
-                escreveLog("Administrador escolheu a opcao: 4 - Listar Livros");
-                this->biblioteca->listarLivros();
-                pausa(2);
-                apagarTerminal();
-                break;
-            case 5:
-                escreveLog("Administrador escolheu a opcao: 5 - Visualizar Carteirinha de um Estudante");
-                this->admin->visualizarCarteirinhas(this->estudantes);
-                pausa(2);
-                apagarTerminal();
-                break;
-            case 6:
-            {
-                escreveLog("Administrador escolheu a opcao: 6 - Alterar Dados de Estudante");
-                int menuAltetacao = this->admin->alterarDadosEstudante(this->estudantes);
-                escreveLog("Opcao " + std::to_string(menuAltetacao) + " escolhida dentro do menu de alteração de dados do estudante");
-                this->salvarDados();
-                pausa(2);
-                apagarTerminal();
-                break;
+            switch (opcao) {
+                case 1:
+                    escreveLog("Administrador escolheu a opcao: 1 - Criar Livro");
+                    this->admin->criarLivro(*this->biblioteca);
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 2:
+                    escreveLog("Administrador escolheu a opcao: 2 - Cadastrar Estudantes");                
+                    this->admin->criarEstudante(this->estudantes);
+                    this->salvarDados();
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 3:
+                    escreveLog("Administrador escolheu a opcao: 3 - Listar Estudantes");
+                    this->admin->listarEstudante(this->estudantes);
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 4:
+                    escreveLog("Administrador escolheu a opcao: 4 - Listar Livros");
+                    this->biblioteca->listarLivros();
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 5:
+                    escreveLog("Administrador escolheu a opcao: 5 - Visualizar Carteirinha de um Estudante");
+                    this->admin->visualizarCarteirinhas(this->estudantes);
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 6:{
+                    escreveLog("Administrador escolheu a opcao: 6 - Alterar Dados de Estudante");
+                    int menuAltetacao = this->admin->alterarDadosEstudante(this->estudantes);
+                    escreveLog("Opcao " + std::to_string(menuAltetacao) + " escolhida dentro do menu de alteração de dados do estudante");
+                    this->salvarDados();
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                    }
+                case 7:
+                    escreveLog("Administrador escolheu a opcao: 7 - Alterar sua Senha");
+                    this->admin->alterarSenhaAdministrador();
+                    this->salvarAdmin();
+                    escreveDevagar("Nova senha salva com sucesso!", 20);
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 8:
+                    escreveLog("Administrador escolheu a opcao: 8 - Consultar Transações");
+                    this->admin->consultarTransacoes(this->estudantes);
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cout << "\nAperte ENTER para continuar...";
+                    std::cin.ignore();
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 9:
+                    escreveLog("Administrador escolheu a opcao: 9 - Consultar Empréstimos");
+                    this->admin->consultarEmprestimos(this->estudantes);
+                    std::cout << "\nAperte ENTER para continuar...";
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cin.ignore();
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 10:
+                    escreveLog("Administrador escolheu a opcao: 10 - Recarregar uma Carteirinha");
+                    this->admin->recarregarCarteirinha(this->estudantes);
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 11:{
+                    escreveLog("Administrador escolheu a opcao: 11 - Alterar Valor do RU");
+                    std::string gradOuPos;
+                    gradOuPos = this->admin->alterarValorRU();
+                    escreveLog("Valor do RU para a " + gradOuPos + " alterado");
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                    }
+                case 12:
+                    escreveLog("Administrador escolheu a opcao: 12 - Alterar o valor da Multa do Empréstimo");
+                    this->admin->alterarValorMulta();
+                    apagarTerminal();
+                    break;
+                case 13:
+                    escreveLog("Administrador escolheu a opcao: 13 - Realizar reopção de curso");
+                    escreveDevagar("Preencha os seguintes campos: ",30); std::cout<<std::endl;
+                    pausa(1);
+                    this->admin->mobilidadeAcademica(this->estudantes);
+                    escreveDevagar("Reopção realizada com sucesso!",30);
+                    pausa(2);
+                    apagarTerminal();
+                    break;
+                case 14:
+                    escreveLog("Administrador escolheu a opcao: 14 - Sair");
+                    escreveLog("Logout realizado");
+                    escreveDevagar("📤 Fazendo logout...\n", 50);
+                    pausa(2);
+                    apagarTerminal();
+                    return;
+                default:
+                    throw std::invalid_argument("Digite um número válido!");
+                    break;
             }
-            case 7:
-                escreveLog("Administrador escolheu a opcao: 7 - Alterar sua Senha");
-                this->admin->alterarSenhaAdministrador();
-                // TODO: salvar em um arquivo
-                pausa(2);
-                apagarTerminal();
-                break;
-            case 8:
-                escreveLog("Administrador escolheu a opcao: 8 - Consultar Transações");
-                this->admin->consultarTransacoes(this->estudantes);
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "\nAperte ENTER para continuar...";
-                std::cin.ignore();
-                pausa(2);
-                apagarTerminal();
-                break;
-            case 9:
-                escreveLog("Administrador escolheu a opcao: 9 - Consultar Empréstimos");
-                this->admin->consultarEmprestimos(this->estudantes);
-                std::cout << "\nAperte ENTER para continuar...";
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cin.ignore();
-                pausa(2);
-                apagarTerminal();
-                break;
-            case 10:
-                escreveLog("Administrador escolheu a opcao: 10 - Recarregar uma Carteirinha");
-                this->admin->recarregarCarteirinha(this->estudantes);
-                pausa(2);
-                apagarTerminal();
-                break;
-            case 11:
-            {
-                escreveLog("Administrador escolheu a opcao: 11 - Alterar Valor do RU");
-                std::string gradOuPos;
-                gradOuPos = this->admin->alterarValorRU();
-                escreveLog("Valor do RU para a " + gradOuPos + " alterado");
-                pausa(2);
-                apagarTerminal();
-                break;
-            }
-            case 12:
-                escreveLog("Administrador escolheu a opcao: 12 - Alterar o valor da Multa do Empréstimo");
-                this->admin->alterarValorMulta();
-                apagarTerminal();
-                break;
-            case 13:
-                escreveLog("Administrador escolheu a opcao: 13 - Realizar reopção de curso");
-                escreveDevagar("Preencha os seguintes campos: ", 30);
-                std::cout << std::endl;
-                pausa(1);
-                this->admin->mobilidadeAcademica(this->estudantes);
-                escreveDevagar("Reopção realizada com sucesso!", 30);
-                pausa(2);
-                apagarTerminal();
-                break;
-            case 14:
-                escreveLog("Administrador escolheu a opcao: 14 - Sair");
-                escreveLog("Logout realizado");
-                escreveDevagar("📤 Fazendo logout...\n", 50);
-                pausa(2);
-                apagarTerminal();
-                return;
-            default:
-                throw std::invalid_argument("Digite um número válido!");
-                break;
-            }
+           
         }
         catch (const std::exception &e)
         {
