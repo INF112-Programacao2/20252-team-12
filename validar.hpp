@@ -17,6 +17,7 @@ std::string getDataFormatada(const time_t& data);
 time_t converterStringParaData(const std::string& dataStr);
 void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mask);
 std::string stringMaiuscula(std::string str);
+std::string corta(std::string palavra, int n);
 void apagarTerminal();
 bool validarCPF(const std::string &cpf);
 bool validarEMAIL(const std::string &email);

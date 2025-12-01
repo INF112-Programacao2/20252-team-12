@@ -56,17 +56,6 @@ void Biblioteca::listarLivrosDisponiveis(){
     }
 }
 
-std::string corta(std::string palavra, int n) {
-    std::string saida = palavra;
-    
-    if(saida.size() > (size_t)n)
-        saida = saida.substr(0, n-3) + "...";
-    
-    if(saida.size() < (size_t)n)
-        saida += std::string(n-saida.size(), ' ');
-
-    return saida;
-}
 
 void Biblioteca::listarLivros() const{
     if (acervo.empty()) {
@@ -100,7 +89,6 @@ void Biblioteca::listarLivros() const{
     if (livrosExibidos.empty()) {
         std::cout << "\n❌ Nenhum livro encontrado para o termo: \"" << filtro << "\"\n";
         std::cout << "Pressione Enter para voltar...";
-        // ✅ CORREÇÃO 3: Usar getline ou cin.get() para esperar pelo Enter.
         std::cin.get(); 
         return;
     }
@@ -141,12 +129,10 @@ void Biblioteca::listarLivros() const{
         if (pagina < totalPaginas - 1) {
             std::cout << "\n[Enter] Proxima Pagina  |  [S] Sair: ";
             std::string opcao;
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::getline(std::cin, opcao); 
             if (opcao == "S" || opcao == "s") break;
         } else {
             std::cout << "\n(Fim da lista) Pressione Enter para voltar...";
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cin.get(); 
         }
     }

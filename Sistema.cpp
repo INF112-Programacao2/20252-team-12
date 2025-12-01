@@ -12,17 +12,10 @@
 
 Sistema::Sistema() : estudantes()
 {
-    this->arquivo_livros = std::ifstream("livros.txt");
     this->biblioteca = new Biblioteca("Biblioteca UFV");
-    //this->admin = new Administrador("Julio Cesar Soares dos Reis", "49588826691", "23/04/1988", "jreis@ufv.br", "admin");
-    this->carregarAdmin();
     this->estudante_logado = nullptr;
+    this->carregarAdmin();
     this->carregarDados(); // Carrega os estudantes existentes
-    if (estudantes.empty())
-    { // Se não houver, cria um padrão (para testes)
-        EstudanteGraduacao *estudante = new EstudanteGraduacao("Luiz Filipe Santos Oliveira", "14422059629", "22/09/2006", "luiz.s.oliveira@ufv.br", "luiz", "120553", "141", "SISU");
-        this->estudantes.push_back(estudante);
-    }
     this->carregarLivros();
 }
 
@@ -87,6 +80,13 @@ void Sistema::salvarDados()
 
 void Sistema::carregarDados()
 {
+
+    if (this->estudantes.empty()){
+        EstudanteGraduacao *estudante = new EstudanteGraduacao("Luiz Filipe Santos Oliveira", "14422059629", "22/09/2006", "luiz.s.oliveira@ufv.br", "luiz", "120553", "141", "SISU");
+        this->estudantes.push_back(estudante);
+        return;
+    }
+
     std::ifstream file("banco_estudantes.txt");
     if (!file.is_open())
     {
@@ -157,103 +157,115 @@ Administrador *Sistema::get_admin()
 }
 
 void Sistema::carregarAdmin() {
-    std::ifstream file("admin_dados.txt");
+    try{
+        std::ifstream file("admin_dados.txt");
     
-    if (file.is_open()) {
-        std::string linha;
+        if (file.is_open()) {
+            std::string linha;
 
-        if (std::getline(file, linha)) {
-            std::stringstream ss(linha);
-            std::string segmento;
-            std::vector<std::string> dados;
+            if (std::getline(file, linha)) {
+                std::stringstream ss(linha);
+                std::string segmento;
+                std::vector<std::string> dados;
 
-            while (std::getline(ss, segmento, ';')) {
-                limparString(segmento); 
-                dados.push_back(segmento);
+                while (std::getline(ss, segmento, ';')) {
+                    limparString(segmento); 
+                    dados.push_back(segmento);
+                }
+
+                if (dados.size() >= 5) {
+                    this->admin = new Administrador(dados[0], dados[1], dados[2], dados[3], dados[4]);
+                    file.close();
+                    return;
+                }
             }
-
-            if (dados.size() >= 5) {
-                this->admin = new Administrador(dados[0], dados[1], dados[2], dados[3], dados[4]);
-                file.close();
-                return;
-            }
+            file.close();
         }
-        file.close();
+
+        escreveLog("Arquivo de admin não encontrado ou inválido. Criando admin padrão.");
+
+        this->admin = new Administrador("Julio Cesar Soares dos Reis", "49588826691", "23/04/1988", "jreis@ufv.br", "admin10");
+        
+        this->salvarAdmin();
+    } catch (std::exception &e){
+        std::cerr << e.what() << std::endl;
     }
-
-    escreveLog("Arquivo de admin não encontrado ou inválido. Criando admin padrão.");
-
-    this->admin = new Administrador("Julio Cesar Soares dos Reis", "49588826691", "23/04/1988", "jreis@ufv.br", "admin10");
-    
-    this->salvarAdmin();
 }
 
 void Sistema::salvarAdmin() {
-    std::ofstream file("admin_dados.txt");
-    if (!file.is_open()) {
-        escreveLog("Erro ao abrir arquivo para salvar dados do administrador!");
-        std::cerr << "Erro ao salvar dados do administrador.\n";
-        return;
+    try{
+        std::ofstream file("admin_dados.txt");
+        if (!file.is_open()) {
+            escreveLog("Erro ao abrir arquivo para salvar dados do administrador!");
+            std::cerr << "❌ Erro ao salvar dados do administrador.\n";
+            return;
+        }
+        // Salvando no formato: NOME;CPF;DATA;EMAIL;SENHA
+        file << admin->getNome() << ";"
+            << admin->getCpf() << ";"
+            << admin->getDataDeNascimento() << ";"
+            << admin->getEmail() << ";"
+            << admin->getSenha() << "\n";
+        
+        file.close();
+        
+        escreveLog("Dados do administrador salvos.");
+    } catch (std::exception &e){
+        std::cerr << e.what() << std::endl;
     }
-
-    // Salvando no formato: NOME;CPF;DATA;EMAIL;SENHA
-    file << admin->getNome() << ";"
-         << admin->getCpf() << ";"
-         << admin->getDataDeNascimento() << ";"
-         << admin->getEmail() << ";"
-         << admin->getSenha() << "\n";
-    
-    file.close();
-    
-    escreveLog("Dados do administrador salvos.");
 }
 
 void Sistema::carregarLivros(){
-    if (!this->arquivo_livros.is_open()){
-        throw std::invalid_argument("Arquivo não encontrado!");
-        return;
-    }
-
-    std::string linha;
-    while (std::getline(this->arquivo_livros, linha))
-    {
-        std::stringstream ss(linha);
-        std::string campo;
-
-        std::string titulo, autor, tipo;
-        int numExemplaresTotal = 0;
-
-        std::vector<std::string> campos;
-
-        while (std::getline(ss, campo, ','))
-        {
-            campos.push_back(campo);
+    try{
+        std::ifstream fin("livros.txt");
+        if (!fin.is_open()){
+            throw std::invalid_argument("❌ Arquivo não encontrado!");
+            return;
         }
-        if (campos.size() == 4)
-        {
-            titulo = campos[0];
-            autor = campos[1];
-            tipo = campos[2];
 
-            try
+        std::string linha;
+        while (std::getline(fin, linha))
+        {
+            std::stringstream ss(linha);
+            std::string campo;
+
+            std::string titulo, autor, tipo;
+            int numExemplaresTotal = 0;
+
+            std::vector<std::string> campos;
+
+            while (std::getline(ss, campo, ','))
             {
-                numExemplaresTotal = std::stoi(campos[3]);
+                campos.push_back(campo);
             }
-            catch (const std::exception &e)
+            if (campos.size() == 4)
             {
-                throw std::runtime_error("Aviso: Linha mal formatada ou incompleta pulada: " + linha);
-                continue;
-            }
+                titulo = campos[0];
+                autor = campos[1];
+                tipo = campos[2];
 
-            Livro *novoLivro = new Livro(titulo, autor, tipo, numExemplaresTotal);
-            this->biblioteca->adicionarLivro(*novoLivro);
+                try
+                {
+                    numExemplaresTotal = std::stoi(campos[3]);
+                }
+                catch (const std::exception &e)
+                {
+                    throw std::runtime_error("⚠️ Aviso: Linha mal formatada ou incompleta pulada: " + linha);
+                    continue;
+                }
+
+                Livro *novoLivro = new Livro(titulo, autor, tipo, numExemplaresTotal);
+                this->biblioteca->adicionarLivro(*novoLivro);
+            }
+            else
+            {
+                throw std::runtime_error("⚠️ Aviso: Linha mal formatada ou incompleta pulada: " + linha);
+            }
         }
-        else
-        {
-            throw std::runtime_error("Aviso: Linha mal formatada ou incompleta pulada: " + linha);
-        }
+        fin.close();
+    } catch (std::exception &e){
+        std::cerr << e.what() << std::endl;
     }
-    this->arquivo_livros.close();
 }
 
 void Sistema::menuAdministrador()
@@ -492,7 +504,7 @@ void Sistema::menuEstudante()
                 break;
             case 8:
                 escreveLog("Estudante Escolheu a Opcao: 8 - Devolver Livro");
-                this->estudante_logado->devolverLivro(*this->biblioteca);  //TODO: se o aluno escrever uma string no "id" do livro a ser devolvido, o terminal entra em loop com mensagem de erro
+                this->estudante_logado->devolverLivro(*this->biblioteca);
                 pausa(2);
                 apagarTerminal();
                 break;
@@ -510,6 +522,7 @@ void Sistema::menuEstudante()
                 return;
             default:
                 throw std::invalid_argument("Digite um número válido!");
+                break;
             }
         }
         catch (const std::exception &e)
