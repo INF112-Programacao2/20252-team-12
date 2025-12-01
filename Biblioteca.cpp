@@ -57,6 +57,8 @@ void Biblioteca::criarLivro(Livro& _livro) {
     } else {
         std::cerr << "Erro: Não foi possível salvar o livro no banco de dados.\n";
     }
+
+    this->adicionarLivro(_livro);
 }
 
 void Biblioteca::listarLivrosDisponiveis(){

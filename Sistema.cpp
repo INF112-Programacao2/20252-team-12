@@ -261,6 +261,7 @@ void Sistema::menuAdministrador(){
                 case 2:
                     escreveLog("Administrador escolheu a opcao: 2 - Cadastrar Estudantes");                
                     this->admin->criarEstudante(this->estudantes);
+                    this->salvarDados();
                     pausa(2);
                     apagarTerminal();
                     break;
@@ -286,6 +287,7 @@ void Sistema::menuAdministrador(){
                     escreveLog("Administrador escolheu a opcao: 6 - Alterar Dados de Estudante");
                     int menuAltetacao = this->admin->alterarDadosEstudante(this->estudantes);
                     escreveLog("Opcao " + std::to_string(menuAltetacao) + " escolhida dentro do menu de alteração de dados do estudante");
+                    this->salvarDados();
                     pausa(2);
                     apagarTerminal();
                     break;
@@ -293,6 +295,7 @@ void Sistema::menuAdministrador(){
                 case 7:
                     escreveLog("Administrador escolheu a opcao: 7 - Alterar sua Senha");
                     this->admin->alterarSenhaAdministrador();
+                    //TODO: salvar em um arquivo
                     pausa(2);
                     apagarTerminal();
                     break;

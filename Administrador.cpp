@@ -153,7 +153,7 @@ void Administrador::criarLivro(Biblioteca &biblioteca) {
     std::cout << "--------------------------------------------\n";
 
     Livro *novo_livro = new Livro(_titulo,_autor,_tipo,_numExemplares);
-    biblioteca.adicionarLivro(*novo_livro);
+    biblioteca.criarLivro(*novo_livro);
 
     // (Escrever devagar)
     escreveDevagar(novo_livro->getTitulo() + " foi adicionado na Bibilioteca! ✅\n", 50);
