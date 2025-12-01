@@ -1,0 +1,46 @@
+[01/12/2025 18:06:46] Sistema aberto
+[01/12/2025 18:07:07] Administrador Logou no Sistema
+[01/12/2025 18:07:43] Administrador escolheu a opcao: 2 - Cadastrar Estudantes
+[01/12/2025 18:10:35] Dados salvos com sucesso!
+[01/12/2025 18:12:50] Administrador escolheu a opcao: 3 - Listar Estudantes
+[01/12/2025 18:13:15] Administrador escolheu a opcao: 4 - Listar Livros
+[01/12/2025 18:15:33] Administrador escolheu a opcao: 6 - Alterar Dados de Estudante
+[01/12/2025 18:15:45] Opcao 1 escolhida dentro do menu de alteração de dados do estudante
+[01/12/2025 18:15:45] Dados salvos com sucesso!
+[01/12/2025 18:16:09] Administrador escolheu a opcao: 6 - Alterar Dados de Estudante
+[01/12/2025 18:16:35] Opcao 2 escolhida dentro do menu de alteração de dados do estudante
+[01/12/2025 18:16:35] Dados salvos com sucesso!
+[01/12/2025 18:18:10] Administrador escolheu a opcao: 7 - Alterar sua Senha
+[01/12/2025 18:18:20] Dados do administrador salvos.
+[01/12/2025 18:18:32] Administrador escolheu a opcao: 8 - Consultar Transações
+[01/12/2025 18:19:46] Administrador escolheu a opcao: 9 - Consultar Empréstimos
+[01/12/2025 18:20:08] Administrador escolheu a opcao: 7 - Alterar sua Senha
+[01/12/2025 18:20:17] Dados do administrador salvos.
+[01/12/2025 18:20:30] Administrador escolheu a opcao: 8 - Consultar Transações
+[01/12/2025 18:20:50] Administrador escolheu a opcao: 9 - Consultar Empréstimos
+[01/12/2025 18:21:17] Administrador escolheu a opcao: 9 - Consultar Empréstimos
+[01/12/2025 18:21:32] Administrador escolheu a opcao: 10 - Recarregar uma Carteirinha
+[01/12/2025 18:21:49] Administrador escolheu a opcao: 10 - Recarregar uma Carteirinha
+[01/12/2025 18:22:12] Administrador escolheu a opcao: 11 - Alterar Valor do RU
+[01/12/2025 18:22:23] Valor do RU para a Graduação alterado
+[01/12/2025 18:22:46] Administrador escolheu a opcao: 11 - Alterar Valor do RU
+[01/12/2025 18:22:52] Valor do RU para a Graduação alterado
+[01/12/2025 18:23:02] Administrador escolheu a opcao: 12 - Alterar o valor da Multa do Empréstimo
+[01/12/2025 18:23:21] Administrador escolheu a opcao: 12 - Alterar o valor da Multa do Empréstimo
+[01/12/2025 18:23:42] Administrador escolheu a opcao: 13 - Realizar reopção de curso
+[01/12/2025 18:24:09] Administrador escolheu a opcao: 14 - Sair
+[01/12/2025 18:24:09] Logout realizado
+[01/12/2025 18:24:12] Administrador logou no sistema
+[01/12/2025 18:25:12] Estudante 12 logou no sistema
+[01/12/2025 18:26:12] Estudante Escolheu a Opcao: 1 - Consultar Saldo
+[01/12/2025 18:26:22] Estudante Escolheu a Opcao: 2 - Recarregar Carteirinha
+[01/12/2025 18:26:46] Estudante Escolheu a Opcao: 4 - Ver Extrato Financeiro
+[01/12/2025 18:27:02] Estudante Escolheu a Opção: 5 - Buscar Livro no Acervo
+[01/12/2025 18:27:59] Estudante Escolheu a Opção: 5 - Buscar Livro no Acervo
+[01/12/2025 18:28:18] Estudante Escolheu a Opcao: 7 - Pegar Livro Emprestado
+[01/12/2025 18:30:11] Estudante Escolheu a Opcao: 9 - ComerRU
+[01/12/2025 18:30:22] Estudante Escolheu a Opcao: 1 - Consultar Saldo
+[01/12/2025 18:30:32] Estudante Escolheu a Opcao: 4 - Ver Extrato Financeiro
+[01/12/2025 18:30:47] Estudante Escolheu a Opcao: 6 - Ver Meus Empréstimos
+[01/12/2025 18:32:21] Estudante Escolheu a Opcao: 8 - Devolver Livro
+[01/12/2025 18:34:15] Logout realizado

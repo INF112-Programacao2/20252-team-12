@@ -3,3 +3,4 @@ GRAD;Thales Neves;16602866621;22/12/1999;thales.neves@ufv.br;talao10;120558;141;
 GRAD;Paulo Henrique de Souza Catro;02319643664;27/04/2006;paulo.s.castro@ufv.br;paulo;120582;141;SISU;0
 GRAD;Agostinho Carrara;12345678912;20/10/1987;agostinho@ufv.br;mariaisabel;150225;135;SISU;0
 POS;Joao;11122233300;28/01/2007;joao@ufv.br;joaovmc;120574;141;Mestrado;IA;0
+GRAD;Joaoo;11122233344;12/12/2000;joao@ufv.br;joao123;12;Ciencia da Computacao;SISU;0
