@@ -48,9 +48,7 @@ void Administrador::criarLivro(Biblioteca &biblioteca)
         try{  
             std::cout << "-> Titulo: ";
             std::getline(std::cin, _titulo);
-
-            // if (!validaTITULO(_titulo)){ throw std::invalid_argument("❌ Título inválido") }
-            break;
+            // if (validaTITULO(_titulo)){ break }
         } catch (std::exception &e){
             std::cerr << e.what() << std::endl;
         }
@@ -64,8 +62,7 @@ void Administrador::criarLivro(Biblioteca &biblioteca)
             std::cout << "-> Autor: ";
             std::getline(std::cin, _autor);
 
-            // if (!validaAUTOR(_autor)){ throw std::invalid_argument("❌ Autor inválido") }
-            break;
+            // if (validaAUTOR(_autor)){ break;}
         } catch (std::exception &e){
             std::cerr << e.what() << std::endl;
         }
@@ -78,7 +75,7 @@ void Administrador::criarLivro(Biblioteca &biblioteca)
             std::cout << "-> Tipo: ";
             std::getline(std::cin, _tipo);
 
-            // if (!validaTITULO(_tipo)){ throw std::invalid_argument("❌ Tipo inválido") }
+            // if (validaTIPO(_tipo)){ break; }
             break;
         } catch (std::exception &e){
             std::cerr << e.what() << std::endl;
@@ -132,18 +129,13 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
     {
         std::cout << "Opção: ";
         if (!std::cin >> opcao){
-            throw std::invalid_argument("❌ ");
+            throw std::invalid_argument("❌ Opção inválida");
         }
-        if (std::cin >> opcao && (opcao == 1 || opcao == 2))
-        {
-            break;
+        if (opcao != 1 && opcao != 2){
+            throw std::invalid_argument("❌ Opção inválida");
         }
-        else
-        {
-            std::cout << "❌ Opção inválida! Digite 1 ou 2.\n";
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        }
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -154,146 +146,119 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
     std::string _nome, _cpf, _data_de_nascimento, _email, _senha, _matricula, _curso;
 
     // --- NOME ---
-    do {
+    while (1){
         try {
             std::cout << "-> Nome: ";
             std::getline(std::cin, _nome);
-            validarNOME(_nome);
-            break;
+            if (!validarNOME(_nome)){
+                break;
+            }
         } catch (const std::exception &e) {
             std::cout << e.what() << std::endl;
         }
-    } while (true);
+    }
 
     std::cout << "--------------------------------------------\n";
 
     // --- CPF ---
-    do {
+    while (1){
         try {
-            std::cout << "-> CPF (apenas números): ";
+            std::cout << "-> CPF: ";
             std::getline(std::cin, _cpf);
-            validarCPF(_cpf);
-
-            for (auto est : estudantes) {
-                if (_cpf == est->getCpf()) {
-                     throw std::invalid_argument("⚠️  Erro: O estudante com esse CPF já está cadastrado.");
-                }
+            if (validarCPF(_cpf)){
+                break;
             }
-            break;
         } catch (const std::exception &e) {
-             std::cout << e.what() << std::endl;
-             _cpf = "";
+            std::cout << e.what() << std::endl;
         }
-    } while (true);
+    }
 
     std::cout << "--------------------------------------------\n";
 
     // --- DATA NASCIMENTO ---
-    do {
+    while (1){
         try {
-            std::cout << "-> Data de nascimento (DD/MM/AAAA): ";
+            std::cout << "-> Data de Nascimento (DD/MM/YYYY): ";
             std::getline(std::cin, _data_de_nascimento);
-            validarDATA(_data_de_nascimento);
-            
-            std::time_t t = std::time(nullptr);
-            std::tm* now = std::localtime(&t);
-            int anoAtual = now->tm_year + 1900;
-            int anoNasc = std::stoi(_data_de_nascimento.substr(_data_de_nascimento.size()-4));
-            
-            if (anoNasc > anoAtual - 17) {
-                throw std::invalid_argument("⚠️  Erro: O estudante deve ter no mínimo 17 anos.");
+            if (validarDATA(_data_de_nascimento)){
+                break;
             }
-            break;
         } catch (const std::exception &e) {
             std::cout << e.what() << std::endl;
         }
-    } while (true);
+    }
 
     std::cout << "--------------------------------------------\n";
 
     // --- EMAIL ---
-    do {
+    while (1){
         try {
             std::cout << "-> Email: ";
-            std::cin >> _email;
-            validarEMAIL(_email);
-
-            if (_email.substr(_email.size()-7) != "@ufv.br" || _email.size() <= 7) {
-                throw std::invalid_argument("⚠️  Email inválido (Utilize somente email institucional '@ufv.br').");
+            std::getline(std::cin, _email);
+            if (validarEMAIL(_email)){
+                break;
             }
-            break;
         } catch (const std::exception &e) {
-             std::cout << e.what() << std::endl;
+            std::cout << e.what() << std::endl;
         }
-    } while (true);
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
 
     std::cout << "--------------------------------------------\n";
 
     // --- SENHA ---
-    do {
+    while (1){
         try {
             std::cout << "-> Senha: ";
-            std::cin >> _senha;
-            validarSENHA(_senha);
-            break;
+            std::getline(std::cin, _senha);
+            if (validarSENHA(_senha)){
+                break;
+            }
         } catch (const std::exception &e) {
             std::cout << e.what() << std::endl;
         }
-    } while (true);
+    }
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "--------------------------------------------\n";
 
     // --- MATRÍCULA ---
-    do {
+    while (1){
         try {
-            std::cout << "-> Matrícula do aluno: ";
-            std::cin >> _matricula;
-            // TODO validarMATRICULA(_matricula);
-
-            for (auto est : estudantes) {
-                if (_matricula == est->get_matricula()) {
-                    throw std::invalid_argument("⚠️  Erro: Já existe um estudante com essa matrícula.");
-                }
-            }
-            break;
+            std::cout << "-> Matrícula: ";
+            std::getline(std::cin, _matricula);
+            //if (validarMATRICULA(_matricula)){ break; }
         } catch (const std::exception &e) {
-             std::cout << e.what() << std::endl;
-             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+            std::cout << e.what() << std::endl;
         }
-    } while (true);
+    }
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "--------------------------------------------\n";
 
-    do
-    {
+    while (1){
         try {
-            std::cout << "-> Curso (Nome ou Código): ";
+            std::cout << "-> Curso: ";
             std::getline(std::cin, _curso);
-            
-            // TODO validarCURSO(_curso); 
-            
-            std::cout << "   (Curso selecionado: " << _curso << ")\n"; 
-            break;
+            //if (validarCURSO(_curso)){ break; }
         } catch (const std::exception &e) {
             std::cout << e.what() << std::endl;
         }
-    } while (true);
+    }
 
     std::cout << "--------------------------------------------\n";
 
     if (opcao == 1)
     {
         std::string _modalidade;
-        do
-        {
-            std::cout << "-> Modalidade de Graduação: ";
-            std::getline(std::cin, _modalidade);
-            if (_modalidade.empty())
-                std::cout << "⚠️  Modalidade obrigatória.\n";
-        } while (_modalidade.empty());
+        while (1){
+            try {
+                std::cout << "-> Modalidade de Ingresso: ";
+                std::getline(std::cin, _modalidade);
+                //if (validarMODALIDADE(_modalidade)){ break; }
+            } catch (const std::exception &e) {
+                std::cout << e.what() << std::endl;
+            }
+        }
 
         EstudanteGraduacao *_novoEstudante = new EstudanteGraduacao(_nome, _cpf, _data_de_nascimento, _email, _senha, _matricula, _curso, _modalidade);
         std::cout << "--------------------------------------------\n";
@@ -303,23 +268,27 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
     {
         std::string _tipoPos, _linhaDePesquisa;
 
-        do
-        {
-            std::cout << "-> Tipo Pós-Graduação (ex: Mestrado, Doutorado): ";
-            std::getline(std::cin, _tipoPos);
-            if (_tipoPos.empty())
-                std::cout << "⚠️  Tipo obrigatório.\n";
-        } while (_tipoPos.empty());
+        while (1){
+            try {
+                std::cout << "-> Tipo de Pos: ";
+                std::getline(std::cin, _tipoPos);
+                //if (validarTIPOPOS(_tipoPos)){ break; }
+            } catch (const std::exception &e) {
+                std::cout << e.what() << std::endl;
+            }
+        }
 
         std::cout << "--------------------------------------------\n";
 
-        do
-        {
-            std::cout << "-> Linha de Pesquisa: ";
-            std::getline(std::cin, _linhaDePesquisa);
-            if (_linhaDePesquisa.empty())
-                std::cout << "⚠️  Linha de pesquisa obrigatória.\n";
-        } while (_linhaDePesquisa.empty());
+        while (1){
+            try {
+                std::cout << "-> Linha de Pesquisa: ";
+                std::getline(std::cin, _linhaDePesquisa);
+                //if (validarLINHADEPESQUISA(_linhaDePesquisa)){ break; }
+            } catch (const std::exception &e) {
+                std::cout << e.what() << std::endl;
+            }
+        }
 
         std::cout << "--------------------------------------------\n";
 
@@ -372,40 +341,32 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
     std::string matricula;
     Estudante *estudanteAlvo = nullptr;
 
-    while (true)
-    {
-        try 
-        {
+    while (1){
+        try{
             std::cout << "-> Matrícula do aluno (ou '0' para sair): ";
             std::cin >> matricula;
 
             if (matricula == "0") return 0;
 
-            // TODO: validarMATRICULA(matricula);
+            // if(validarMATRICULA(matricula)) { break; }
 
-            bool encontrado = false;
             for (auto *est : estudantes)
             {
                 if (est->get_matricula() == matricula)
                 {
                     estudanteAlvo = est;
-                    encontrado = true;
                     break;
                 }
             }
 
-            if (!encontrado) {
+            if (estudanteAlvo == nullptr) {
                 throw std::invalid_argument("❌ Estudante não encontrado com a matrícula informada.");
             }
-
             break; 
+        } catch (std::exception &e){
+            std::cerr << e.what() << std::endl;
         }
-        catch (const std::exception &e)
-        {
-            std::cout << e.what() << std::endl;
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        }
-    }
+    } 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Limpa buffer após cin >>
 
     int opcao = 0;
@@ -418,19 +379,19 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
     std::cout << "5 - Cancelar\n";
     std::cout << "--------------------------------------------\n";
 
-    while (true)
+    while (1)
     {
-        std::cout << "Opção: ";
-        if (std::cin >> opcao)
-        {
-            if (opcao >= 1 && opcao <= 5) break;
-            std::cout << "❌ Opção inválida. Escolha entre 1 e 5.\n";
-        }
-        else
-        {
-            std::cout << "❌ Digite apenas números.\n";
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        try{
+            std::cout << "Opção: ";
+            if (!std::cin >> opcao){
+                throw std::invalid_argument("❌ Opção inválida");
+            }
+            if (opcao < 1 || opcao > 5){
+                throw std::invalid_argument("❌ Opção inválida");
+            }
+            break;
+        } catch (std::exception &e){
+            std::cerr << e.what() << std::endl;
         }
     }
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -444,10 +405,10 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
             try {
                 std::cout << "-> Novo Nome: ";
                 std::getline(std::cin, novoDado);
-                validarNOME(novoDado);
-                
-                estudanteAlvo->setNome(novoDado);
-                break;
+                if (validarNOME(novoDado)){
+                    estudanteAlvo->setNome(novoDado);
+                    break;
+                }
             } catch (const std::exception &e) {
                 std::cout << e.what() << std::endl;
             }
@@ -459,13 +420,10 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
             try {
                 std::cout << "-> Novo Email: ";
                 std::getline(std::cin, novoDado);
-                validarEMAIL(novoDado);
-
-                if (novoDado.substr(novoDado.size()-7) != "@ufv.br" || novoDado.size() <= 7) {
-                     throw std::invalid_argument("⚠️  Email inválido (Utilize somente email institucional '@ufv.br').");
+                if (validarEMAIL(novoDado)){
+                    estudanteAlvo->setEmail(novoDado);
+                    break;
                 }
-
-                estudanteAlvo->setEmail(novoDado);
                 break;
             } catch (const std::exception &e) {
                 std::cout << e.what() << std::endl;
@@ -479,10 +437,7 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
                 std::cout << "-> Novo Curso (Sigla ou Nome): ";
                 std::getline(std::cin, novoDado);
                 
-                // TODO validarCURSO(novoDado);
-                
-                estudanteAlvo->set_curso(novoDado);
-                break;
+                // if(validarCURSO(novoDado)){ estudanteAlvo->set_curso(novoDado); break;}
             } catch (const std::exception &e) {
                 std::cout << e.what() << std::endl;
             }
@@ -494,10 +449,7 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
             try {
                 std::cout << "-> Nova Senha (min 6 caracteres, letras e números): ";
                 std::getline(std::cin, novoDado);
-                validarSENHA(novoDado);
-                
-                estudanteAlvo->setSenha(novoDado);
-                break;
+                // if(validarSENHA(novoDado)){ estudanteAlvo->setSenha(novoDado); break;}
             } catch (const std::exception &e) {
                 std::cout << e.what() << std::endl;
             }
@@ -526,17 +478,15 @@ void Administrador::alterarSenhaAdministrador()
             std::cout << "-> Digite sua nova senha (min 6 caracteres): ";
             std::getline(std::cin, nova_senha);
 
-            validarSENHA(nova_senha); 
-
             std::cout << "-> Confirme a nova senha: ";
             std::getline(std::cin, confirmacao_senha);
 
             if (nova_senha != confirmacao_senha)
             {
-                throw std::invalid_argument("⚠️  Erro: As senhas não coincidem. Tente novamente.");
+                throw std::invalid_argument("❌  Erro: As senhas não coincidem. Tente novamente.");
             }
 
-            break; 
+            // if (validarSENHA(nova_senha)){ this->admin->setSenha(nova_senha); break; } 
         }
         catch (const std::exception &e)
         {
@@ -544,8 +494,6 @@ void Administrador::alterarSenhaAdministrador()
             std::cout << "--------------------------------------------\n";
         }
     }
-
-    this->setSenha(nova_senha);
     std::cout << "--------------------------------------------\n";
     escreveDevagar("✅ Senha alterada com sucesso!", 50);
 }
@@ -568,14 +516,14 @@ void Administrador::consultarTransacoes(std::vector<Estudante *> &estudantes)
         resposta = toupper(resposta);
         if (resposta == 'S' || resposta == 'N') break;
 
-        std::cout << "⚠️  Opção inválida. Digite apenas S ou N.\n";
+        std::cout << "❌  Opção inválida. Digite apenas S ou N.\n";
     }
 
     if (resposta == 'S')
     {
         if (estudantes.empty())
         {
-            std::cout << "⚠️  Nenhum estudante cadastrado no sistema.\n";
+            std::cout << "❌  Nenhum estudante cadastrado no sistema.\n";
             return;
         }
 
@@ -608,20 +556,16 @@ void Administrador::consultarTransacoes(std::vector<Estudante *> &estudantes)
 
                 if (matricula == "0") return;
 
-                //TODO: validarMATRICULA(matricula);
-
-                bool achou = false;
                 for (auto estudante : estudantes)
                 {
                     if (estudante->get_matricula() == matricula)
                     {
                         estudanteEncontrado = estudante;
-                        achou = true;
                         break;
                     }
                 }
 
-                if (!achou) {
+                if (estudanteEncontrado == nullptr) {
                     throw std::invalid_argument("❌ Erro: Não foi possível localizar o Estudante com a matrícula " + matricula);
                 }
 
@@ -647,7 +591,7 @@ void Administrador::consultarTransacoes(std::vector<Estudante *> &estudantes)
         }
         else
         {
-            std::cout << "⚠️  Este aluno não possui carteirinha ativa.\n";
+            std::cout << "❌  Este aluno não possui carteirinha ativa.\n";
         }
     }
 }
@@ -670,7 +614,7 @@ void Administrador::consultarEmprestimos(std::vector<Estudante *> &estudantes)
         resposta = toupper(resposta);
         if (resposta == 'S' || resposta == 'N') break;
 
-        std::cout << "⚠️  Opção inválida. Digite apenas S ou N.\n";
+        std::cerr << "❌  Opção inválida. Digite apenas S ou N.\n";
     }
 
     apagarTerminal();
@@ -679,7 +623,7 @@ void Administrador::consultarEmprestimos(std::vector<Estudante *> &estudantes)
     {
         if (estudantes.empty())
         {
-            std::cout << "⚠️  Nenhum estudante cadastrado.\n";
+            std::cerr << "❌  Nenhum estudante cadastrado.\n";
             return;
         }
 
@@ -705,20 +649,18 @@ void Administrador::consultarEmprestimos(std::vector<Estudante *> &estudantes)
 
                 if (matricula == "0") return;
 
-                //TODO: validarMATRICULA(matricula);
+                //TODO: if (validarMATRICULA(matricula)){  }
 
-                bool achou = false;
                 for (auto estudante : estudantes)
                 {
                     if (estudante->get_matricula() == matricula)
                     {
                         estudanteEncontrado = estudante;
-                        achou = true;
                         break;
                     }
                 }
 
-                if (!achou) {
+                if (estudanteEncontrado == nullptr) {
                     throw std::invalid_argument("❌ Erro: Não foi possível localizar o Estudante com matrícula " + matricula);
                 }
 
@@ -758,20 +700,18 @@ void Administrador::recarregarCarteirinha(std::vector<Estudante *> &estudantes)
 
             if (matricula == "0") return;
 
-            //TODO: validarMATRICULA(matricula);
+            //TODO: if (validarMATRICULA(matricula)) {  }
 
-            bool encontrado = false;
             for (auto *est : estudantes)
             {
                 if (est->get_matricula() == matricula)
                 {
                     estudanteAlvo = est;
-                    encontrado = true;
                     break;
                 }
             }
 
-            if (!encontrado)
+            if (estudanteAlvo == nullptr)
             {
                 throw std::invalid_argument("❌ Erro: Não foi possível localizar o Estudante com matrícula " + matricula);
             }
@@ -786,15 +726,7 @@ void Administrador::recarregarCarteirinha(std::vector<Estudante *> &estudantes)
     }
 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-    if (estudanteAlvo != nullptr)
-    {
-        try {
-            estudanteAlvo->recarregarCarteirinha();
-        } catch (const std::exception &e) {
-            std::cout << "❌ Falha na recarga: " << e.what() << std::endl;
-        }
-    }
+    estudanteAlvo->recarregarCarteirinha();
 }
 
 // TODO: (Thales) Implementar a função de gerar carteirinha
@@ -819,7 +751,7 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
     {
         try
         {
-            std::cout << "Opção: ";
+            std::cout << "-> Opção: ";
             if (!(std::cin >> opcao))
             {
                 std::cin.clear();
@@ -858,20 +790,18 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
 
                 if (matricula_aluno == "0") return;
 
-                //TODO: validarMATRICULA(matricula_aluno);
+                //TODO: if (validarMATRICULA(matricula_aluno)) {}
 
-                bool encontrado = false;
                 for (auto estudante : estudantes)
                 {
                     if (estudante->get_matricula() == matricula_aluno)
                     {
                         aluno_carteirinha = estudante;
-                        encontrado = true;
                         break;
                     }
                 }
 
-                if (!encontrado)
+                if (aluno_carteirinha == nullptr)
                 {
                     throw std::invalid_argument("❌ Credenciais inválidas! Não foi possível localizar o aluno com essa matrícula.");
                 }
@@ -886,39 +816,28 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
         }
         
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
-
-        if (aluno_carteirinha != nullptr) 
-        {
-            try {
-                aluno_carteirinha->visualizarCarteirinha();
-            } catch (const std::exception &e) {
-                std::cout << "❌ Erro ao visualizar carteirinha: " << e.what() << std::endl;
-            }
-        }
+        aluno_carteirinha->visualizarCarteirinha();
     }
     else if (opcao == 2)
     { 
-        std::cout << std::endl;
-        escreveDevagar("Exibindo informações...", 30);
-        std::cout << "\n\n";
-        
-        if (estudantes.empty()) {
-            std::cout << "⚠️  Nenhum estudante cadastrado.\n";
-        }
+        try{
+            std::cout << std::endl;
+            escreveDevagar("Exibindo informações...", 30);
+            std::cout << "\n\n";
+            
+            if (estudantes.empty()) {
+                std::cout << "❌  Nenhum estudante cadastrado.\n";
+            }
 
-        for (auto estudante : estudantes)
-        {
-            escreveDevagar("Exibindo carteirinha de: ", 20);
-            std::cout << estudante->getNome() << " (" << estudante->get_matricula() << ")\n\n";
-            try
+            for (auto estudante : estudantes)
             {
+                escreveDevagar("Exibindo carteirinha de: ", 20);
+                std::cout << estudante->getNome() << " (" << estudante->get_matricula() << ")\n\n";
                 estudante->visualizarCarteirinha();
+                std::cout << "======================================================\n";
             }
-            catch (const std::exception &e)
-            {
-                std::cerr << "❌ Não foi possível gerar a carteirinha de " << estudante->getNome() << ": " << e.what() << std::endl << std::endl;
-            }
-            std::cout << "======================================================\n";
+        } catch (std::exception &e){
+            std::cerr << e.what() << std::endl;
         }
     }
 
@@ -938,11 +857,11 @@ std::string Administrador::alterarValorRU()
     char resposta;
     double novo_valor;
 
-    while (true)
+    while (1)
     {
         try
         {
-            std::cout << "Opção: ";
+            std::cout << "-> Opção: ";
             std::cin >> resposta;
             
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -959,7 +878,7 @@ std::string Administrador::alterarValorRU()
             std::cout << e.what() << std::endl;
         }
     }
-    while (true)
+    while (1)
     {
         try
         {
@@ -1062,20 +981,18 @@ void Administrador::mobilidadeAcademica(std::vector<Estudante *> &estudantes)
 
             if (matricula_aluno == "0") return;
 
-            //TODO: validarMATRICULA(matricula_aluno);
+            //TODO: if (validarMATRICULA(matricula_aluno)){  }
 
-            bool encontrado = false;
             for (auto *est : estudantes)
             {
                 if (est->get_matricula() == matricula_aluno)
                 {
                     estudanteAlvo = est;
-                    encontrado = true;
                     break;
                 }
             }
 
-            if (!encontrado)
+            if (estudanteAlvo == nullptr)
             {
                 throw std::invalid_argument("❌ Erro: Aluno não encontrado com a matrícula " + matricula_aluno);
             }
@@ -1104,10 +1021,10 @@ void Administrador::mobilidadeAcademica(std::vector<Estudante *> &estudantes)
             std::cout << "-> Novo curso (Código ou Nome): ";
             std::getline(std::cin, novoCurso);
 
-            //TODO: validarCURSO(novoCurso); 
+            //TODO: if (validarCURSO(novoCurso)) { estudanteAlvo->set_curso(novoCurso); } 
 
             if (novoCurso == estudanteAlvo->get_curso()) {
-                 throw std::invalid_argument("⚠️  O aluno já está matriculado neste curso.");
+                 throw std::invalid_argument("❌  O aluno já está matriculado neste curso.");
             }
 
             break;
@@ -1117,8 +1034,6 @@ void Administrador::mobilidadeAcademica(std::vector<Estudante *> &estudantes)
             std::cout << e.what() << std::endl;
         }
     }
-
-    estudanteAlvo->set_curso(novoCurso); 
     escreveDevagar("\n✅ Mobilidade realizada com sucesso! O aluno agora pertence ao curso: " + novoCurso + "\n", 50);
 }
 

@@ -56,7 +56,6 @@ void Biblioteca::listarLivrosDisponiveis(){
     }
 }
 
-
 //TODO: ajustar filtro para caso em que não encontra resultado
 void Biblioteca::listarLivros() const{
     if (acervo.empty()) {

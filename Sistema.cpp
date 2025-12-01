@@ -425,7 +425,7 @@ void Sistema::menuAdministrador()
 void Sistema::menuEstudante()
 {
     int opcao;
-    while (true)
+    while (1)
     {
         escreveDevagar("\n============================================\n", 10);
         escreveDevagar("🎓 BEM-VINDO AO PAINEL DO ESTUDANTE 🎓 \n", 50);
@@ -441,7 +441,7 @@ void Sistema::menuEstudante()
         std::cout << "7 - Pegar Livro Emprestado\n";
         std::cout << "8 - Devolver Livro\n";
         std::cout << "9 - Comer no RU\n";
-        std::cout << "0 - Sair\n";
+        std::cout << "10 - Sair\n";
         std::cout << "--------------------------------------------\n";
         std::cout << "Opção: ";
 
@@ -484,13 +484,11 @@ void Sistema::menuEstudante()
                 apagarTerminal();
                 break;
             case 5:
-            //TODO: nao esta mostrando os filtros e precisa de enter duplo
                 escreveLog("Estudante Escolheu a Opção: 5 - Buscar Livro no Acervo");
                 this->biblioteca->listarLivros();
                 apagarTerminal();
                 break;
             case 6:
-                //TODO: ID ambiguo, dá a entender que pode ser tanto o id da transação quanto do livro, especificar
                 escreveLog("Estudante Escolheu a Opcao: 6 - Ver Meus Empréstimos");
                 this->estudante_logado->exibirEmprestimos();
                 std::cout << "\nPressione ENTER para continuar...";
@@ -499,7 +497,6 @@ void Sistema::menuEstudante()
                 apagarTerminal();
                 break;
             case 7:
-                //TODO: perguntar primeiro se quer buscar o livro, esta caindo direto na busca
                 escreveLog("Estudante Escolheu a Opcao: 7 - Pegar Livro Emprestado");
                 this->estudante_logado->pegarLivro(*this->biblioteca);
                 pausa(2);
@@ -517,7 +514,7 @@ void Sistema::menuEstudante()
                 this->estudante_logado->comerRU();
                 apagarTerminal();
                 break;
-            case 0:
+            case 10:
                 escreveLog("Logout realizado");
                 escreveDevagar("📤 Fazendo logout...\n", 50);
                 pausa(2);
