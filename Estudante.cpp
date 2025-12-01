@@ -54,8 +54,7 @@ void Estudante::pegarLivro(const Biblioteca &biblioteca)
 
     biblioteca.listarLivros();
 
-    while (true)
-    {
+    while(1){
         std::cout << "-> Digite o ID do livro: ";
 
         int id_do_livro;
