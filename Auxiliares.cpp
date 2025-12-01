@@ -388,8 +388,6 @@ bool validarDATA(const std::string &data)
     return true;
 }
 
-/*VALIDAR DE TIPO DE POS
-VALIDAR LINHA DE PESQUISA*/
 bool validarMATRICULA(const std::string &matricula)
 {
     // Deve ter exatamente 6 caracteres
@@ -487,16 +485,13 @@ bool validarTIPOPOS(const std::string &tipopos)
         return true;
     }
 
-    throw std::invalid_argument("❌ Tipo de ingresso inválido. As opções permitidas são: MEST ou DOUT.\n");
-
-    return false;
+    throw std::invalid_argument("❌ Tipo de pós-graduação inválido. As opções permitidas são: MEST ou DOUT.");
 }
 bool validarLINHAPESQUISA(const std::string &linhapesquisa)
 {
     if (linhapesquisa.size() < 5)
     {
-        std::cout << "❌ A linha de pesquisa deve conter pelo menos 5 caracteres.\n";
-        return false;
+        throw std::invalid_argument("❌ A linha de pesquisa deve conter pelo menos 5 caracteres.");
     }
 
     for (unsigned char c : linhapesquisa)
@@ -506,11 +501,56 @@ bool validarLINHAPESQUISA(const std::string &linhapesquisa)
 
         if (!letra && !espaco)
         {
-            std::cout << "❌ A linha de pesquisa deve conter apenas letras e espaços.\n";
-            return false;
+            throw std::invalid_argument("❌ A linha de pesquisa deve conter apenas letras e espaços.");
         }
     }
 
     return true;
+}
+bool validarTITULO(const std::string &titulo)
+{
+    if (titulo.empty())
+    {
+        throw std::invalid_argument("❌ O título não pode ser vazio.");
+    }
 
+    if (titulo.front() == ' ' || titulo.back() == ' ')
+    {
+        throw std::invalid_argument("❌ O título não pode começar ou terminar com espaço.");
+    }
+
+    bool ultimoEspaco = false;
+
+    for (unsigned char c : titulo)
+    {
+        if (c == ' ')
+        {
+            if (ultimoEspaco)
+            {
+                throw std::invalid_argument("❌ O título não pode ter dois espaços seguidos.");
+            }
+            ultimoEspaco = true;
+        }
+        else
+        {
+            bool ehAlfanumericoBasico = std::isalnum(c);
+
+            bool ehAcentuadoOuExtendido = (c >= 128);
+
+            bool ehPontuacaoPermitida =
+                c == '.' || c == ',' || c == ':' ||
+                c == ';' || c == '-' || c == '\'' ||
+                c == '"' || c == '!' || c == '?' ||
+                c == '(' || c == ')';
+
+            if (!ehAlfanumericoBasico && !ehAcentuadoOuExtendido && !ehPontuacaoPermitida)
+            {
+                throw std::invalid_argument("❌ Caractere inválido no título.");
+            }
+
+            ultimoEspaco = false;
+        }
+    }
+
+    return true;
 }

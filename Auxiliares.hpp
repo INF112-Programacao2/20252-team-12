@@ -25,3 +25,8 @@ bool validarNOME(const std::string &nome);
 bool validarSENHA(const std::string &senha);
 bool validarDATA(const std::string &data);
 bool validarMATRICULA(const std::string &matricula);
+bool validarLINHAPESQUISA(const std::string &linhapesquisa);
+bool validarTIPOPOS(const std::string &tipopos);
+bool validarMODALIDADE(const std::string &modalidade);
+bool validarCURSO(std::string &cursoInput);
+bool validarTITULO(const std::string &titulo);
