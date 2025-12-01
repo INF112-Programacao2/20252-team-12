@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <string>
 #include <iostream>
+#include <limits>
 
 static void limparTela(){
     #if defined(_WIN32) || defined(_WIN64)
@@ -40,7 +41,10 @@ void Biblioteca::setNome(std::string _nome){
 
 void Biblioteca::adicionarLivro(Livro& _livro){
     acervo.push_back(&_livro);
-    
+}
+
+void Biblioteca::criarLivro(Livro& _livro) {
+
     std::ofstream arquivo("livros.txt", std::ios::app);
 
     if (arquivo.is_open()) {
@@ -65,11 +69,11 @@ void Biblioteca::listarLivrosDisponiveis(){
 
 std::string corta(std::string palavra, int n) {
     std::string saida = palavra;
-
-    if(saida.size() > n)
+    
+    if(saida.size() > (size_t)n)
         saida = saida.substr(0, n-3) + "...";
     
-    if(saida.size() < n)
+    if(saida.size() < (size_t)n)
         saida += std::string(n-saida.size(), ' ');
 
     return saida;

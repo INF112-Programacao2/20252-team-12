@@ -18,6 +18,7 @@ class Biblioteca{
         void setNome(std::string _nome);
 
         void adicionarLivro(Livro& _livro);
+        void criarLivro(Livro& _livro);
         void listarLivrosDisponiveis();
         void listarLivros();
 };
