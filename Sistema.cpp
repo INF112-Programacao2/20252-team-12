@@ -61,7 +61,7 @@ Sistema::Sistema() : estudantes(){
         EstudanteGraduacao* estudante = new EstudanteGraduacao("Luiz Filipe Santos Oliveira", "14422059629", "22/09/2006", "luiz.s.oliveira@ufv.br", "luiz", "120553", "CCP", "SISU");
         this->estudantes.push_back(estudante);
     }
-    this->criarLivros();
+    this->carregarLivros();
 }
 
 Sistema::~Sistema(){
@@ -177,7 +177,7 @@ Administrador* Sistema::get_admin(){
     return this->admin;
 }
 
-void Sistema::criarLivros(){
+void Sistema::carregarLivros(){
     if (!this->arquivo_livros.is_open()){
         throw std::invalid_argument("Arquivo não encontrado!");
         return;

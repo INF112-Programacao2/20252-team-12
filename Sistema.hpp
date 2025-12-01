@@ -15,7 +15,7 @@ class Sistema{
         Administrador* admin;
         Biblioteca* biblioteca;
 
-        void criarLivros();
+        void carregarLivros();
         void carregarDados();
         void salvarDados();
         void menuAdministrador();
