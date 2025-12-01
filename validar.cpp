@@ -2,8 +2,8 @@
 #include <iostream>
 #include <algorithm>
 #include <string>
-#include <cctype> // Para std::isspace
-//tratamentos de erro
+#include <cctype> 
+#include <vector>
 
 void limparString(std::string &string){
     auto it_reverso = std::find_if(string.rbegin(), string.rend(), [](int ch) {
@@ -134,6 +134,78 @@ bool validarSENHA(const std::string &senha)
         throw std::invalid_argument("❌ a senha deve conter pelo menos um número.\n");
         return false;
     }
+
+    return true;
+}
+
+static std::vector<std::string> split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    size_t start = 0;
+    while (true) {
+        size_t pos = s.find(delim, start);
+        if (pos == std::string::npos) {
+            elems.push_back(s.substr(start));
+            break;
+        }
+        elems.push_back(s.substr(start, pos - start));
+        start = pos + 1;
+    }
+    return elems;
+}
+
+bool validarDATA(const std::string &data)
+{
+    auto parts = split(data, '/');
+    if (parts.size() != 3)
+    {
+        throw std::invalid_argument("❌ Formato de data inválido. Use DD/MM/AAAA.");
+    }
+
+    int dia, mes, ano;
+    try {
+        dia = std::stoi(parts[0]);
+        mes = std::stoi(parts[1]);
+        ano = std::stoi(parts[2]);
+    } catch (...) {
+        throw std::invalid_argument("❌ Data contém caracteres inválidos.");
+    }
+
+    std::time_t t = std::time(nullptr);
+    std::tm* now = std::localtime(&t);
+    int anoAtual = now->tm_year + 1900;
+
+    if (ano < 1900 || ano > anoAtual) {
+        throw std::invalid_argument("❌ Ano fora do intervalo válido.");
+    }
+    if (mes < 1 || mes > 12) {
+        throw std::invalid_argument("❌ Mês inválido.");
+    }
+
+    int diasPorMes[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    // Verifica ano bissexto
+    if ((ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0)) {
+        diasPorMes[1] = 29;
+    }
+
+    if (dia < 1 || dia > diasPorMes[mes - 1]) {
+        throw std::invalid_argument("❌ Dia inválido para o mês especificado.");
+    }
+
+    return true;
+}
+
+bool validarMATRICULA(const std::string &matricula)
+{
+    if (matricula.empty()) {
+        throw std::invalid_argument("❌ A matrícula não pode estar vazia.");
+    }
+    
+    bool apenasNumeros = std::all_of(matricula.begin(), matricula.end(), ::isdigit);
+    if (!apenasNumeros) {
+        throw std::invalid_argument("❌ A matrícula deve conter APENAS números.");
+    }
+    
+    if (matricula.size() != 6) throw std::invalid_argument("❌ Matrícula deve conter 6 dígitos.");
 
     return true;
 }

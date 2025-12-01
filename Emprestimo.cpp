@@ -197,9 +197,5 @@ void Emprestimo::exibirInformacoes(){
     std::cout << "TITULO: " << this->livro->getTitulo() << std::endl;
     std::cout << "STATUS: " << ((this->devolvido) ? "Devolvido" : "Não Devolvido") << std::endl;
     std::cout << "DATA DE EMPRÉSTIMO: " << getDataFormatada(this->dataDeEmprestimo) << std::endl;
-<<<<<<< HEAD
     std::cout << "DATA DE MÁXIMA DE DEVOLUÇÃO: " << getDataFormatada(this->dataDeDevolucao) << std::endl;
-=======
-    std::cout << "DATA MÁXIMA DE DEVOLUÇÃO: " << getDataFormatada(this->dataDeDevolução) << std::endl;
->>>>>>> main
 }
