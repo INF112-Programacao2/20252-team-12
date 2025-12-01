@@ -2,6 +2,7 @@
 #include <chrono>
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 
 static std::string getDataAtual() {
     auto agora = std::chrono::system_clock::now();
@@ -68,7 +69,7 @@ void Carteirinha::exibir_extrato(){
     std::cout << "Total de transações: " << this->extrato.size() << "\n";
     std::cout << "------------------------------------\n";
 
-    for (int i = 0; i < this->extrato.size(); i++){
+    for (size_t i = 0; i < this->extrato.size(); i++){
         this->extrato[i]->exibir_transacao();
     }
 

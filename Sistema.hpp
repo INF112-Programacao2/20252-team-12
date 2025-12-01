@@ -9,13 +9,15 @@
 
 class Sistema{
     private:
-        std::ifstream arquivo_inicializador;
+        std::ifstream arquivo_livros;
         std::vector <Estudante*> estudantes;
         Estudante* estudante_logado;
         Administrador* admin;
         Biblioteca* biblioteca;
 
-        void criarLivros();
+        void carregarLivros();
+        void carregarDados();
+        void salvarDados();
         void menuAdministrador();
         void menuEstudante();
     public:

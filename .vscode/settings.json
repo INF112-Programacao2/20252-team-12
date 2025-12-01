@@ -75,6 +75,7 @@
         "semaphore": "cpp",
         "span": "cpp",
         "variant": "cpp",
-        "codecvt": "cpp"
+        "codecvt": "cpp",
+        "filesystem": "cpp"
     }
 }

@@ -111,7 +111,7 @@ static bool validaData(const std::string& data) {
 
 int Administrador::nextID = 1;
 Administrador::Administrador(const std::string& _nome, const std::string &_cpf,const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha):
-    id(nextID++), Usuario(_nome, _cpf,_data_de_nascimento, _email, _senha){}
+    Usuario(_nome, _cpf,_data_de_nascimento, _email, _senha), id(nextID++) {}
 
 Administrador::~Administrador(){}
 
@@ -153,7 +153,7 @@ void Administrador::criarLivro(Biblioteca &biblioteca) {
     std::cout << "--------------------------------------------\n";
 
     Livro *novo_livro = new Livro(_titulo,_autor,_tipo,_numExemplares);
-    biblioteca.adicionarLivro(*novo_livro);
+    biblioteca.criarLivro(*novo_livro);
 
     escreveDevagar(novo_livro->getTitulo() + " foi adicionado na Bibilioteca! ✅\n", 50);
 }

@@ -120,6 +120,8 @@ void Estudante::exibirEmprestimos(){
         emprestimo->exibirInformacoes();
     }
 }
+
+//TODO: aceitar digitar com/sem acentos (ou mudar para emprestimo por ID)
 void Estudante::pegarLivro(const Biblioteca& biblioteca) {
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     escreveDevagar("\n============================================\n",10);
@@ -162,6 +164,8 @@ void Estudante::pegarLivro(const Biblioteca& biblioteca) {
 
     escreveDevagar("\n✅ Livro emprestado com sucesso!\n", 50);
 }
+
+//TODO: aceitar digitar com/sem acentos (ou mudar para emprestimo por ID)
 
 
 
