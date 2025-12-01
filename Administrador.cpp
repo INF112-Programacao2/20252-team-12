@@ -13,7 +13,7 @@
 #include <limits>
 #include "CImg.h"
 #include "Estudante.hpp"
-#include "Validar.hpp"
+#include "Auxiliares.hpp"
 
 using namespace cimg_library;
 

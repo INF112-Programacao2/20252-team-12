@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 #include <limits>
-#include "Validar.hpp"
+#include "Auxiliares.hpp"
 
 
 Biblioteca::Biblioteca(const std::string& _nome) : nome(_nome), acervo() {}

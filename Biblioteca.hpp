@@ -5,22 +5,24 @@
 #include <string>
 #include <vector>
 
-class Biblioteca{
-    private:
-        std::string nome;
-        std::vector<Livro*> acervo;
-    public:
-        Biblioteca(const std::string& _nome);
-        ~Biblioteca();
+class Biblioteca
+{
+private:
+    std::string nome;
+    std::vector<Livro *> acervo;
 
-        std::string getNome();
-        std::vector<Livro*> getAcervo() const;
-        void setNome(std::string _nome);
+public:
+    Biblioteca(const std::string &_nome);
+    ~Biblioteca();
 
-        void adicionarLivro(Livro& _livro);
-        void criarLivro(Livro& _livro);
-        void listarLivrosDisponiveis();
-        void listarLivros() const;
+    std::string getNome();
+    std::vector<Livro *> getAcervo() const;
+    void setNome(std::string _nome);
+
+    void adicionarLivro(Livro &_livro);
+    void criarLivro(Livro &_livro);
+    void listarLivrosDisponiveis();
+    void listarLivros() const;
 };
 
 #endif

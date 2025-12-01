@@ -1,5 +1,5 @@
 #define cimg_display 0
-#include "Validar.hpp"
+#include "Auxiliares.hpp"
 #include <iostream>
 #include <algorithm>
 #include <string>
@@ -16,15 +16,17 @@ using namespace cimg_library;
 
 void apagarTerminal()
 {
-    #if defined(_WIN32) || defined(_WIN64)
-        std::system("cls");
-    #elif defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
-        std::system("clear");
-    #endif
+#if defined(_WIN32) || defined(_WIN64)
+    std::system("cls");
+#elif defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
+    std::system("clear");
+#endif
 }
 
-void escreveDevagar(const std::string &texto, int ms){
-    for (char c : texto){
+void escreveDevagar(const std::string &texto, int ms)
+{
+    for (char c : texto)
+    {
         std::cout << c << std::flush;
         std::this_thread::sleep_for(std::chrono::milliseconds(ms));
     }
@@ -35,9 +37,12 @@ void pausa(int seg)
     std::this_thread::sleep_for(std::chrono::seconds(seg));
 }
 
-void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mask) {
-    cimg_forXY(img, x, y) {
-        if (mask(x, y, 0) > 0 || mask(x, y, 1) > 0 || mask(x, y, 2) > 0) {
+void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mask)
+{
+    cimg_forXY(img, x, y)
+    {
+        if (mask(x, y, 0) > 0 || mask(x, y, 1) > 0 || mask(x, y, 2) > 0)
+        {
             img(x, y, 0) = 0; // vermelho
             img(x, y, 1) = 0; // verde
             img(x, y, 2) = 0; // azul
@@ -45,28 +50,31 @@ void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mask) {
     }
 }
 
-std::string corta(std::string palavra, int n) {
+std::string corta(std::string palavra, int n)
+{
     std::string saida = palavra;
-    
-    if(saida.size() > (size_t)n)
-        saida = saida.substr(0, n-3) + "...";
-    
-    if(saida.size() < (size_t)n)
-        saida += std::string(n-saida.size(), ' ');
+
+    if (saida.size() > (size_t)n)
+        saida = saida.substr(0, n - 3) + "...";
+
+    if (saida.size() < (size_t)n)
+        saida += std::string(n - saida.size(), ' ');
 
     return saida;
 }
 
-std::string deixar_maiusculo(std::string &palavra){
+std::string deixar_maiusculo(std::string &palavra)
+{
     std::string resultado;
 
-    for(char c: palavra)
+    for (char c : palavra)
         resultado += toupper(c);
 
     return resultado;
 }
 
-std::string addDias(const std::string& data_str, int dias) {
+std::string addDias(const std::string &data_str, int dias)
+{
     int d, m, a;
     char sep1, sep2;
 
@@ -75,14 +83,14 @@ std::string addDias(const std::string& data_str, int dias) {
 
     std::tm data_tm = {};
     data_tm.tm_mday = d;
-    data_tm.tm_mon  = m - 1;
+    data_tm.tm_mon = m - 1;
     data_tm.tm_year = a - 1900;
 
     std::time_t t = std::mktime(&data_tm);
 
     t += dias * 24 * 60 * 60;
 
-    std::tm* nova_data = std::localtime(&t);
+    std::tm *nova_data = std::localtime(&t);
 
     std::stringstream out;
     out << std::setfill('0') << std::setw(2) << nova_data->tm_mday << "/"
@@ -110,53 +118,61 @@ std::vector<std::string> split(const std::string &s, char delim)
     return elems;
 }
 
-std::string getDataFormatada(const time_t& data){
+std::string getDataFormatada(const time_t &data)
+{
     char buffer[80];
     std::tm timeinfo;
 
-    #if defined(_MSC_VER)
-        localtime_s(&timeinfo, &data);
-    #elif defined(__unix__) || defined(__APPLE__) || defined(__MACH__)
-        localtime_r(&data, &timeinfo);
-    #else
-        std::tm *tmp = std::localtime(&data);
-        if (!tmp) return std::string();
-        timeinfo = *tmp;
-    #endif
+#if defined(_MSC_VER)
+    localtime_s(&timeinfo, &data);
+#elif defined(__unix__) || defined(__APPLE__) || defined(__MACH__)
+    localtime_r(&data, &timeinfo);
+#else
+    std::tm *tmp = std::localtime(&data);
+    if (!tmp)
+        return std::string();
+    timeinfo = *tmp;
+#endif
 
     strftime(buffer, sizeof(buffer), "%d/%m/%Y", &timeinfo);
     return std::string(buffer);
 }
 
-std::string stringMaiuscula(std::string str) {
+std::string stringMaiuscula(std::string str)
+{
     std::string upper = str;
-    for (char &c : upper) {
+    for (char &c : upper)
+    {
         c = std::toupper(c);
     }
     return upper;
 }
 
-time_t converterStringParaData(const std::string& dataStr) {
+time_t converterStringParaData(const std::string &dataStr)
+{
     struct tm tm = {0};
-    if (sscanf(dataStr.c_str(), "%d/%d/%d", &tm.tm_mday, &tm.tm_mon, &tm.tm_year) != 3) {
+    if (sscanf(dataStr.c_str(), "%d/%d/%d", &tm.tm_mday, &tm.tm_mon, &tm.tm_year) != 3)
+    {
         throw std::invalid_argument("Falha ao interpretar a data. Use D/M/YYYY ou DD/MM/YYYY");
     }
     tm.tm_mon -= 1;
     tm.tm_year -= 1900;
     tm.tm_isdst = -1;
     time_t t = mktime(&tm);
-    if (t == (time_t)-1) {
+    if (t == (time_t)-1)
+    {
         throw std::runtime_error("Conversão de data inválida");
     }
     return t;
 }
 
-std::string getDataAtual() {
+std::string getDataAtual()
+{
     auto agora = std::chrono::system_clock::now();
 
     std::time_t tt = std::chrono::system_clock::to_time_t(agora);
 
-    std::tm* data = std::localtime(&tt);
+    std::tm *data = std::localtime(&tt);
 
     std::stringstream ss;
     ss << std::setfill('0') << std::setw(2) << data->tm_mday << "/"
@@ -178,10 +194,10 @@ std::string obterDataHora()
     return std::string(buffer);
 }
 
-void limparString(std::string &string){
-    auto it_reverso = std::find_if(string.rbegin(), string.rend(), [](int ch) {
-        return !std::isspace(ch);
-    });
+void limparString(std::string &string)
+{
+    auto it_reverso = std::find_if(string.rbegin(), string.rend(), [](int ch)
+                                   { return !std::isspace(ch); });
     auto it_normal = it_reverso.base();
     string.erase(it_normal, string.end());
 }
@@ -210,7 +226,7 @@ bool validarNOME(const std::string &nome)
 
     for (unsigned char c : nome)
     {
-        bool letraOuNumero = std::isalpha(c);  // vai pegar as letras normais
+        bool letraOuNumero = std::isalpha(c); // vai pegar as letras normais
         bool espaco = (c == ' ');
 
         // Qualquer coisa que não seja letra nem espaço é inválida
@@ -370,4 +386,131 @@ bool validarDATA(const std::string &data)
     }
 
     return true;
+}
+
+/*VALIDAR DE TIPO DE POS
+VALIDAR LINHA DE PESQUISA*/
+bool validarMATRICULA(const std::string &matricula)
+{
+    // Deve ter exatamente 6 caracteres
+    if (matricula.size() != 6)
+    {
+        throw std::invalid_argument("❌ Matrícula deve conter exatamente 6 dígitos.\n");
+        return false;
+    }
+
+    // Verifica se todos são números
+    for (char c : matricula)
+    {
+        if (!isdigit((unsigned char)c))
+        {
+            throw std::invalid_argument("❌ Matrícula deve conter APENAS números.\n");
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool validarCURSO(std::string &cursoInput)
+{
+    if (cursoInput.empty())
+    {
+        throw std::invalid_argument("❌ O curso não pode estar vazio.");
+    }
+
+    std::ifstream arquivo("codigo_cursos.txt"); //
+    if (!arquivo.is_open())
+    {
+        throw std::runtime_error("❌ Erro crítico: Não foi possível abrir o banco de dados de cursos (codigo_cursos.txt).");
+    }
+
+    std::string linha;
+    std::string inputUpper = stringMaiuscula(cursoInput);
+    bool header = true;
+    bool encontrado = false;
+
+    while (std::getline(arquivo, linha))
+    {
+        if (header)
+        {
+            header = false;
+            continue;
+        }
+
+        if (linha.empty())
+            continue;
+
+        size_t posEspaco = linha.find(' ');
+        if (posEspaco == std::string::npos)
+            continue;
+
+        std::string codigoArquivo = linha.substr(0, posEspaco);
+        std::string nomeArquivo = linha.substr(posEspaco + 1);
+
+        limparString(nomeArquivo);
+
+        if (inputUpper == codigoArquivo)
+        {
+            cursoInput = codigoArquivo;
+            encontrado = true;
+            break;
+        }
+
+        if (inputUpper == stringMaiuscula(nomeArquivo))
+        {
+            cursoInput = codigoArquivo; // Salva o código no lugar do nome
+            encontrado = true;
+            break;
+        }
+    }
+}
+bool validarMODALIDADE(const std::string &modalidade)
+{
+    std::string t = stringMaiuscula(modalidade);
+
+    if (t == "SISU" || t == "TRANSF")
+    {
+        return true;
+    }
+
+    throw std::invalid_argument("❌ Tipo de ingresso inválido. As opções permitidas são: SISU ou TRANSF.\n");
+
+    return false;
+}
+bool validarTIPOPOS(const std::string &tipopos)
+{
+    std::string t = stringMaiuscula(tipopos);
+
+    if (t == "MEST" || t == "DOUT")
+    {
+        return true;
+    }
+
+    throw std::invalid_argument("❌ Tipo de ingresso inválido. As opções permitidas são: MEST ou DOUT.\n");
+
+    return false;
+}
+bool validarLINHAPESQUISA(const std::string &linhapesquisa)
+{
+    if (linhapesquisa.size() < 5)
+    {
+        std::cout << "❌ A linha de pesquisa deve conter pelo menos 5 caracteres.\n";
+        return false;
+    }
+
+    for (unsigned char c : linhapesquisa)
+    {
+        bool letra = std::isalpha(c);
+        bool espaco = (c == ' ');
+
+        if (!letra && !espaco)
+        {
+            std::cout << "❌ A linha de pesquisa deve conter apenas letras e espaços.\n";
+            return false;
+        }
+    }
+
+    return true;
+
 }
