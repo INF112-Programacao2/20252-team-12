@@ -24,4 +24,3 @@
 [01/12/2025 13:14:22] Estudante Escolheu a Opcao: 3 - Visualizar Carteirinha
 =======
 [01/12/2025 14:29:43] Sistema aberto
->>>>>>> main
