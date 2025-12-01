@@ -48,10 +48,11 @@ void Biblioteca::criarLivro(Livro& _livro) {
     std::ofstream arquivo("livros.txt", std::ios::app);
 
     if (arquivo.is_open()) {
-        arquivo << _livro.getTitulo() << ","
+        arquivo << "\n"
+                << _livro.getTitulo() << ","
                 << _livro.getAutor() << ","
                 << _livro.getTipo() << ","
-                << _livro.getNumExemplaresTotal() << "\n";
+                << _livro.getNumExemplaresTotal();
         
         arquivo.close();
     } else {

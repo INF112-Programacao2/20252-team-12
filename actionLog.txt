@@ -1,0 +1,6 @@
+[01/12/2025 08:52:25] Arquivo de admin não encontrado ou inválido. Criando admin padrão.
+[01/12/2025 08:52:25] Dados do administrador salvos.
+[01/12/2025 08:52:25] banco_estudantes.txt ainda não existe, sem dados para carregar.
+[01/12/2025 08:52:25] Sistema aberto
+[01/12/2025 08:53:53] Administrador Logou no Sistema
+[01/12/2025 08:54:12] Administrador escolheu a opcao: 1 - Criar Livro

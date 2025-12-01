@@ -54,7 +54,8 @@ void pausa(int seg){
 Sistema::Sistema() : estudantes(){
     this->arquivo_livros = std::ifstream("livros.txt");
     this->biblioteca = new Biblioteca("Biblioteca UFV");
-    this->admin = new Administrador("Julio Cesar Soares dos Reis", "49588826691", "23/04/1988", "jreis@ufv.br", "admin");
+    //this->admin = new Administrador("Julio Cesar Soares dos Reis", "49588826691", "23/04/1988", "jreis@ufv.br", "admin");
+    this->carregarAdmin();
     this->estudante_logado = nullptr;
     this->carregarDados();     //Carrega os estudantes existentes
     if (estudantes.empty()) {  //Se não houver, cria um padrão (para testes)
@@ -177,6 +178,56 @@ Administrador* Sistema::get_admin(){
     return this->admin;
 }
 
+void Sistema::carregarAdmin() {
+    std::ifstream file("admin_dados.txt");
+    
+    if (file.is_open()) {
+        std::string linha;
+        if (std::getline(file, linha)) {
+            std::stringstream ss(linha);
+            std::string segmento;
+            std::vector<std::string> dados;
+
+            while (std::getline(ss, segmento, ';')) {
+                dados.push_back(segmento);
+            }
+
+            if (dados.size() >= 5) {
+                this->admin = new Administrador(dados[0], dados[1], dados[2], dados[3], dados[4]);
+                file.close();
+                return;
+            }
+        }
+        file.close();
+    }
+
+    // Se o arquivo não existir ou falhar a leitura, cria o Admin Padrão
+    escreveLog("Arquivo de admin não encontrado ou inválido. Criando admin padrão.");
+    this->admin = new Administrador("Julio Cesar Soares dos Reis", "49588826691", "23/04/1988", "jreis@ufv.br", "admin");
+    
+    this->salvarAdmin();
+}
+
+void Sistema::salvarAdmin() {
+    std::ofstream file("admin_dados.txt");
+    if (!file.is_open()) {
+        escreveLog("Erro ao abrir arquivo para salvar dados do administrador!");
+        std::cerr << "Erro ao salvar dados do administrador.\n";
+        return;
+    }
+
+    // Salvando no formato: NOME;CPF;DATA;EMAIL;SENHA
+    file << admin->getNome() << ";"
+         << admin->getCpf() << ";"
+         << admin->getDataDeNascimento() << ";"
+         << admin->getEmail() << ";"
+         << admin->getSenha() << "\n";
+    
+    file.close();
+    
+    escreveLog("Dados do administrador salvos.");
+}
+
 void Sistema::carregarLivros(){
     if (!this->arquivo_livros.is_open()){
         throw std::invalid_argument("Arquivo não encontrado!");
@@ -295,7 +346,8 @@ void Sistema::menuAdministrador(){
                 case 7:
                     escreveLog("Administrador escolheu a opcao: 7 - Alterar sua Senha");
                     this->admin->alterarSenhaAdministrador();
-                    //TODO: salvar em um arquivo
+                    this->salvarAdmin();
+                    escreveDevagar("Nova senha salva com sucesso!", 20);
                     pausa(2);
                     apagarTerminal();
                     break;

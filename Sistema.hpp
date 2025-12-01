@@ -18,6 +18,8 @@ class Sistema{
         void carregarLivros();
         void carregarDados();
         void salvarDados();
+        void carregarAdmin();
+        void salvarAdmin();
         void menuAdministrador();
         void menuEstudante();
     public:
