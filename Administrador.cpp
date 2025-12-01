@@ -393,13 +393,19 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante*> &estudantes) {
     switch (opcao) {
         case 1:
             do {
+                bool entradaValida = true;
                 std::cout << "-> Novo Nome: ";
                 std::getline(std::cin, novoDado);
                 
                 if (novoDado.length() < 3) {
                     std::cout << "⚠️  Erro: O nome deve ter no mínimo 3 caracteres.\n";
+                    entradaValida = false;
                 }
-            } while (novoDado.length() < 3);
+                if (std::any_of(novoDado.begin(), novoDado.end(), ::isdigit)) {
+                    std::cout << "⚠️  Erro: O nome não deve conter números.\n";
+                    entradaValida = false;
+                }
+            } while (!entradaValida);
             
             estudanteAlvo->setNome(novoDado);
             break;
@@ -408,22 +414,24 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante*> &estudantes) {
             do {
                 std::cout << "-> Novo Email: ";
                 std::cin >> novoDado;
-                
-                if (novoDado.find('@') == std::string::npos || novoDado.find('.') == std::string::npos) {
-                    std::cout << "⚠️  Erro: Email inválido (deve conter '@' e '.'). Tente novamente.\n";
+
+                if (novoDado.substr(novoDado.size()-7) != "@ufv.br" || novoDado.size() <= 7) {
+                    std::cout << "⚠️  Email inválido (Utilize somente email institucional '@ufv.br').\n";
+                    novoDado = "";
                 }
-            } while (novoDado.find('@') == std::string::npos || novoDado.find('.') == std::string::npos);
+            } while (novoDado.empty());
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             
             estudanteAlvo->setEmail(novoDado);
             break;
 
         case 3:
             do {
-                std::cout << "-> Novo Curso (Sigla ou Nome): ";
+                std::cout << "-> Novo Curso (Sigla ou Código): ";
                 std::getline(std::cin, novoDado);
 
-                if (novoDado.empty()) {
-                    std::cout << "⚠️  Erro: O curso não pode estar vazio.\n";
+                if (novoDado.size() != 3) {
+                    std::cout << "⚠️  Erro: Insira o código ou sigla do curso (3 caracteres).\n";
                 }
             } while (novoDado.empty());
 
