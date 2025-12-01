@@ -12,6 +12,14 @@ static void limparTela(){
     #endif
 }
 
+static std::string stringMaiuscula(std::string str) {
+    std::string upper = str;
+    for (char &c : upper) {
+        c = std::toupper(c);
+    }
+    return upper;
+}
+
 Biblioteca::Biblioteca(const std::string& _nome) : nome(_nome), acervo() {}
 
 Biblioteca::~Biblioteca(){
@@ -73,15 +81,45 @@ void Biblioteca::listarLivros(){
         return;
     }
 
+    std::string filtro;
+    limparTela();
+    std::cout << "\n=================== 🔍 CONSULTA AO ACERVO 🔍 ===================\n";
+    std::cout << "Digite um termo para filtrar (Titulo, Autor ou Area)\n";
+    std::cout << "Ou pressione [ENTER] para ver todos os livros: ";
+    
+    std::getline(std::cin, filtro);
+
+    std::vector<Livro*> livrosExibidos;
+    std::string filtroUpper = stringMaiuscula(filtro);
+
+    if (filtro.empty()) {
+        livrosExibidos = acervo; //Copia todos se não tiver filtro
+    } else {
+        for (auto livro : acervo) {
+            if (stringMaiuscula(livro->getTitulo()).find(filtroUpper) != std::string::npos ||
+                stringMaiuscula(livro->getAutor()).find(filtroUpper)  != std::string::npos ||
+                stringMaiuscula(livro->getTipo()).find(filtroUpper)   != std::string::npos) {
+                livrosExibidos.push_back(livro);
+            }
+        }
+    }
+
+    if (livrosExibidos.empty()) {
+        std::cout << "\n❌ Nenhum livro encontrado para o termo: \"" << filtro << "\"\n";
+        std::cout << "Pressione Enter para voltar...";
+        std::cin.get(); 
+        return;
+    }
+
     const int LIVROS_POR_PAGINA = 10;
-    int totalLivros = acervo.size();
+    int totalLivros = livrosExibidos.size();
     int totalPaginas = (totalLivros + LIVROS_POR_PAGINA - 1) / LIVROS_POR_PAGINA;
 
     for (int pagina = 0; pagina < totalPaginas; pagina++) {
         limparTela();
-        std::cout << "\n================ ACERVO DA BIBLIOTECA (Página " << (pagina + 1) << "/" << totalPaginas << ") ================\n";
+        std::cout << "\n============ 📚 RESULTADO DA BUSCA (Pagina " << (pagina + 1) << "/" << totalPaginas << ") ============\n";
+        if (!filtro.empty()) std::cout << "Filtro aplicado: \"" << filtro << "\"\n";
         
-        // Cabeçalho
         std::cout << std::left 
                   << std::setw(4)  << "ID" 
                   << std::setw(40) << "TITULO"
@@ -89,19 +127,17 @@ void Biblioteca::listarLivros(){
                   << std::setw(20) << "AREA"
                   << std::setw(12) << "STATUS"
                   << std::endl;
-
         std::cout << "--------------------------------------------------------------------------------------------\n";
 
         int inicio = pagina * LIVROS_POR_PAGINA;
         int fim = std::min(inicio + LIVROS_POR_PAGINA, totalLivros);
 
         for (int i = inicio; i < fim; i++) {
-            Livro* livro = acervo[i];
-            
+            Livro* livro = livrosExibidos[i];
             std::string status = (livro->getNumExemplaresDisponiveis() > 0) ? "DISPONIVEL" : "ESGOTADO";
-
+            
             std::cout << std::left
-                      << std::setw(4)  << (i + 1) // ID Visual
+                      << std::setw(4)  << (i + 1)
                       << std::setw(40) << corta(livro->getTitulo(), 38)
                       << std::setw(25) << corta(livro->getAutor(), 23)
                       << std::setw(20) << corta(livro->getTipo(), 18)
@@ -111,16 +147,14 @@ void Biblioteca::listarLivros(){
         std::cout << "============================================================================================\n";
 
         if (pagina < totalPaginas - 1) {
-            std::cout << "\n[Enter] Próxima Página  |  [S] Sair da listagem: ";
+            std::cout << "\n[Enter] Proxima Pagina  |  [S] Sair: ";
             std::string opcao;
             std::getline(std::cin, opcao);
-            
-            if (opcao == "S" || opcao == "s") {
-                break;
-            }
+            if (opcao == "S" || opcao == "s") break;
         } else {
             std::cout << "\n(Fim da lista) Pressione Enter para voltar...";
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            char c = std::cin.get();
+            if (c != '\n') std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
 }
