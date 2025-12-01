@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iomanip>
 #include <string>
+#include <iostream>
 
 Biblioteca::Biblioteca(const std::string& _nome) : nome(_nome), acervo() {}
 
@@ -23,7 +24,19 @@ void Biblioteca::setNome(std::string _nome){
 
 void Biblioteca::adicionarLivro(Livro& _livro){
     acervo.push_back(&_livro);
-    // TODO: Adicionar o livro no txt (inicializador.txt) também para não perder depois
+    
+    std::ofstream arquivo("livros.txt", std::ios::app);
+
+    if (arquivo.is_open()) {
+        arquivo << _livro.getTitulo() << ","
+                << _livro.getAutor() << ","
+                << _livro.getTipo() << ","
+                << _livro.getNumExemplaresTotal() << "\n";
+        
+        arquivo.close();
+    } else {
+        std::cerr << "Erro: Não foi possível salvar o livro no banco de dados.\n";
+    }
 }
 
 void Biblioteca::listarLivrosDisponiveis(){
