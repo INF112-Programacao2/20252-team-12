@@ -22,25 +22,6 @@ static void escreveDevagar(const std::string &texto, int ms){
     }
 }
 
-static void pausa(int seg){
-    std::this_thread::sleep_for(std::chrono::seconds(seg));
-}
-
-static std::string getDataAtual() {
-    auto agora = std::chrono::system_clock::now();
-
-    std::time_t tt = std::chrono::system_clock::to_time_t(agora);
-
-    std::tm* data = std::localtime(&tt);
-
-    std::stringstream ss;
-    ss << std::setfill('0') << std::setw(2) << data->tm_mday << "/"
-       << std::setw(2) << data->tm_mon + 1 << "/"
-       << data->tm_year + 1900;
-
-    return ss.str();
-}
-
 static void apagarTerminal(){
     #if defined(_WIN32) || defined(_WIN64)
         std::system("cls");
@@ -73,44 +54,6 @@ static void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mas
         }
     }
 }*/
-
-static bool validaData(const std::string& data) {
-    // aceita D/M/YYYY, DD/MM/YYYY, com '/' como separador
-    auto parts = split(data, '/');
-    if (parts.size() != 3) {
-        throw std::invalid_argument("❌ Formato de data inválido. Use D/M/YYYY ou DD/MM/YYYY");
-    }
-
-    int dia, mes, ano;
-    try {
-        dia = std::stoi(parts[0]);
-        mes = std::stoi(parts[1]);
-        ano = std::stoi(parts[2]);
-    } catch (...) {
-        throw std::invalid_argument("❌ Data contém caracteres inválidos");
-    }
-    time_t agora = time(nullptr);
-    struct tm *tnow = localtime(&agora);
-    int ano_atual = tnow->tm_year + 1900;
-
-    if (ano < 1900 || ano > ano_atual) {
-        throw std::invalid_argument("❌ Ano fora do intervalo válido (1900 - ano atual)");
-    }
-    if (mes < 1 || mes > 12) {
-        throw std::invalid_argument("❌ Mês inválido");
-    }
-
-    int diasPorMes[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    if ((ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0)) {
-        diasPorMes[1] = 29;
-    }
-
-    if (dia < 1 || dia > diasPorMes[mes - 1]) {
-        throw std::invalid_argument("❌ Dia inválido para o mês especificado");
-    }
-
-    return true;
-}
 
 int Administrador::nextID = 1;
 Administrador::Administrador(const std::string& _nome, const std::string &_cpf,const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha):
@@ -237,6 +180,14 @@ void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
             std::cout << "⚠️  CPF inválido. Deve conter exatamente 11 números.\n";
             _cpf = "";
         }
+
+        for (auto est : estudantes) {
+            if (_matricula == est->get_matricula()) {
+                std::cout << "⚠️  Erro: O estudante com esse CPF já está cadastrado.\n";
+                return;
+            }
+        }
+
     } while (_cpf.empty());
 
     std::cout << "--------------------------------------------\n";
@@ -244,7 +195,17 @@ void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
     do {
         std::cout << "-> Data de nascimento (DD/MM/AAAA): ";
         std::getline(std::cin, _data_de_nascimento);
+
+        std::time_t t = std::time(nullptr);
+        std::tm* now = std::localtime(&t);
+        int anoAtual = now->tm_year + 1900;
+
         if (_data_de_nascimento.length() != 10) std::cout << "⚠️  Formato inválido. Use DD/MM/AAAA.\n";
+        if (std::stoi(_data_de_nascimento.substr(_data_de_nascimento.size()-4)) > anoAtual-17 
+         || std::stoi(_data_de_nascimento.substr(_data_de_nascimento.size()-4)) < anoAtual-120) {
+            std::cout << "⚠️  Erro: O estudante não preenche os requisitos de idade para ingressar no ensino superior.\n";
+            return;
+        }
     } while (_data_de_nascimento.length() != 10);
 
     std::cout << "--------------------------------------------\n";
@@ -252,8 +213,8 @@ void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
     do {
         std::cout<<"-> Email: ";
         std::cin>>_email;
-        if (_email.find('@') == std::string::npos || _email.find('.') == std::string::npos) {
-            std::cout << "⚠️  Email inválido (deve conter '@' e '.').\n";
+        if (_email.substr(_email.size()-7) != "@ufv.br" || _email.size() <= 7) {
+            std::cout << "⚠️  Email inválido (Utilize somente email institucional '@ufv.br').\n";
             _email = "";
         }
     } while (_email.empty());
@@ -282,14 +243,19 @@ void Administrador::criarEstudante(std::vector<Estudante*> &estudantes) {
 
         if (apenasNumeros) {
             entradaValida = true;
+
+            for (auto est : estudantes) {
+                if (_matricula == est->get_matricula()) {
+                    std::cout << "⚠️  Erro: Já existe um estudante com essa matrícula.\n";
+                    entradaValida = false;
+                }
+            }
         } else {
             std::cout << "⚠️  Erro: A matrícula deve conter APENAS números (sem letras ou símbolos).\n";
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
 
     } while (!entradaValida);
-
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
@@ -428,13 +394,19 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante*> &estudantes) {
     switch (opcao) {
         case 1:
             do {
+                bool entradaValida = true;
                 std::cout << "-> Novo Nome: ";
                 std::getline(std::cin, novoDado);
                 
                 if (novoDado.length() < 3) {
                     std::cout << "⚠️  Erro: O nome deve ter no mínimo 3 caracteres.\n";
+                    entradaValida = false;
                 }
-            } while (novoDado.length() < 3);
+                if (std::any_of(novoDado.begin(), novoDado.end(), ::isdigit)) {
+                    std::cout << "⚠️  Erro: O nome não deve conter números.\n";
+                    entradaValida = false;
+                }
+            } while (!entradaValida);
             
             estudanteAlvo->setNome(novoDado);
             break;
@@ -443,22 +415,24 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante*> &estudantes) {
             do {
                 std::cout << "-> Novo Email: ";
                 std::cin >> novoDado;
-                
-                if (novoDado.find('@') == std::string::npos || novoDado.find('.') == std::string::npos) {
-                    std::cout << "⚠️  Erro: Email inválido (deve conter '@' e '.'). Tente novamente.\n";
+
+                if (novoDado.substr(novoDado.size()-7) != "@ufv.br" || novoDado.size() <= 7) {
+                    std::cout << "⚠️  Email inválido (Utilize somente email institucional '@ufv.br').\n";
+                    novoDado = "";
                 }
-            } while (novoDado.find('@') == std::string::npos || novoDado.find('.') == std::string::npos);
+            } while (novoDado.empty());
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             
             estudanteAlvo->setEmail(novoDado);
             break;
 
         case 3:
             do {
-                std::cout << "-> Novo Curso (Sigla ou Nome): ";
+                std::cout << "-> Novo Curso (Sigla ou Código): ";
                 std::getline(std::cin, novoDado);
 
-                if (novoDado.empty()) {
-                    std::cout << "⚠️  Erro: O curso não pode estar vazio.\n";
+                if (novoDado.size() != 3) {
+                    std::cout << "⚠️  Erro: Insira o código ou sigla do curso (3 caracteres).\n";
                 }
             } while (novoDado.empty());
 
