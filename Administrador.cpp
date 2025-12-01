@@ -158,8 +158,6 @@ void Administrador::criarLivro(Biblioteca &biblioteca)
     escreveDevagar(novo_livro->getTitulo() + " foi adicionado na Bibilioteca! ✅\n", 50);
 }
 
-// TODO: Consertar a função, não está utilizando os métodos de validação
-// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
 {
 
@@ -195,112 +193,121 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
 
     std::string _nome, _cpf, _data_de_nascimento, _email, _senha, _matricula, _curso;
 
-    do
-    {
-        std::cout << "-> Nome: ";
-        std::getline(std::cin, _nome);
-        if (_nome.length() < 3)
-            std::cout << "⚠️  Nome muito curto. Digite o nome completo.\n";
-    } while (_nome.length() < 3);
-
-    std::cout << "--------------------------------------------\n";
-
-    do
-    {
-        std::cout << "-> CPF (apenas números, 11 dígitos): ";
-        std::getline(std::cin, _cpf);
-        bool apenasNumeros = std::all_of(_cpf.begin(), _cpf.end(), ::isdigit);
-
-        if (_cpf.length() != 11 || !apenasNumeros)
-        {
-            std::cout << "⚠️  CPF inválido. Deve conter exatamente 11 números.\n";
-            _cpf = "";
-        }
-
-        for (auto est : estudantes) {
-            if (_matricula == est->get_matricula()) {
-                std::cout << "⚠️  Erro: O estudante com esse CPF já está cadastrado.\n";
-                return;
-            }
-        }
-
-    } while (_cpf.empty());
-
-    std::cout << "--------------------------------------------\n";
-
-    do
-    {
-        std::cout << "-> Data de nascimento (DD/MM/AAAA): ";
-        std::getline(std::cin, _data_de_nascimento);
-
-        std::time_t t = std::time(nullptr);
-        std::tm* now = std::localtime(&t);
-        int anoAtual = now->tm_year + 1900;
-
-        if (_data_de_nascimento.length() != 10) std::cout << "⚠️  Formato inválido. Use DD/MM/AAAA.\n";
-        if (std::stoi(_data_de_nascimento.substr(_data_de_nascimento.size()-4)) > anoAtual-17 
-         || std::stoi(_data_de_nascimento.substr(_data_de_nascimento.size()-4)) < anoAtual-120) {
-            std::cout << "⚠️  Erro: O estudante não preenche os requisitos de idade para ingressar no ensino superior.\n";
-            return;
-        }
-    } while (_data_de_nascimento.length() != 10);
-
-    std::cout << "--------------------------------------------\n";
-
+    // --- NOME ---
     do {
-        std::cout<<"-> Email: ";
-        std::cin>>_email;
-        if (_email.substr(_email.size()-7) != "@ufv.br" || _email.size() <= 7) {
-            std::cout << "⚠️  Email inválido (Utilize somente email institucional '@ufv.br').\n";
-            _email = "";
+        try {
+            std::cout << "-> Nome: ";
+            std::getline(std::cin, _nome);
+            validarNOME(_nome);
+            break;
+        } catch (const std::exception &e) {
+            std::cout << e.what() << std::endl;
         }
-    } while (_email.empty());
+    } while (true);
+
+    std::cout << "--------------------------------------------\n";
+
+    // --- CPF ---
+    do {
+        try {
+            std::cout << "-> CPF (apenas números): ";
+            std::getline(std::cin, _cpf);
+            validarCPF(_cpf);
+
+            for (auto est : estudantes) {
+                if (_cpf == est->getCpf()) {
+                     throw std::invalid_argument("⚠️  Erro: O estudante com esse CPF já está cadastrado.");
+                }
+            }
+            break;
+        } catch (const std::exception &e) {
+             std::cout << e.what() << std::endl;
+             _cpf = "";
+        }
+    } while (true);
+
+    std::cout << "--------------------------------------------\n";
+
+    // --- DATA NASCIMENTO ---
+    do {
+        try {
+            std::cout << "-> Data de nascimento (DD/MM/AAAA): ";
+            std::getline(std::cin, _data_de_nascimento);
+            validarDATA(_data_de_nascimento);
+            
+            std::time_t t = std::time(nullptr);
+            std::tm* now = std::localtime(&t);
+            int anoAtual = now->tm_year + 1900;
+            int anoNasc = std::stoi(_data_de_nascimento.substr(_data_de_nascimento.size()-4));
+            
+            if (anoNasc > anoAtual - 17) {
+                throw std::invalid_argument("⚠️  Erro: O estudante deve ter no mínimo 17 anos.");
+            }
+            break;
+        } catch (const std::exception &e) {
+            std::cout << e.what() << std::endl;
+        }
+    } while (true);
+
+    std::cout << "--------------------------------------------\n";
+
+    // --- EMAIL ---
+    do {
+        try {
+            std::cout << "-> Email: ";
+            std::cin >> _email;
+            validarEMAIL(_email);
+
+            if (_email.substr(_email.size()-7) != "@ufv.br" || _email.size() <= 7) {
+                throw std::invalid_argument("⚠️  Email inválido (Utilize somente email institucional '@ufv.br').");
+            }
+            break;
+        } catch (const std::exception &e) {
+             std::cout << e.what() << std::endl;
+        }
+    } while (true);
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "--------------------------------------------\n";
 
-    do
-    {
-        std::cout << "-> Senha (min 6 caracteres): ";
-        std::cin >> _senha;
-        if (_senha.length() < 6)
-        {
-            std::cout << "⚠️  Senha muito fraca. Mínimo 6 caracteres.\n";
-            _senha = "";
+    // --- SENHA ---
+    do {
+        try {
+            std::cout << "-> Senha: ";
+            std::cin >> _senha;
+            validarSENHA(_senha);
+            break;
+        } catch (const std::exception &e) {
+            std::cout << e.what() << std::endl;
         }
-    } while (_senha.empty());
+    } while (true);
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "--------------------------------------------\n";
 
-    bool entradaValida = false;
-
-    do
-    {
-        std::cout << "-> Matrícula do aluno: ";
-        std::cin >> _matricula;
-        bool apenasNumeros = !_matricula.empty() && std::all_of(_matricula.begin(), _matricula.end(), ::isdigit);
-
-        if (apenasNumeros)
-        {
-            entradaValida = true;
+    // --- MATRÍCULA ---
+    do {
+        try {
+            std::cout << "-> Matrícula do aluno: ";
+            std::cin >> _matricula;
+            validarMATRICULA(_matricula);
 
             for (auto est : estudantes) {
                 if (_matricula == est->get_matricula()) {
-                    std::cout << "⚠️  Erro: Já existe um estudante com essa matrícula.\n";
-                    entradaValida = false;
+                    throw std::invalid_argument("⚠️  Erro: Já existe um estudante com essa matrícula.");
                 }
             }
-        } else {
-            std::cout << "⚠️  Erro: A matrícula deve conter APENAS números (sem letras ou símbolos).\n";
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            break;
+        } catch (const std::exception &e) {
+             std::cout << e.what() << std::endl;
+             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
         }
-
-    } while (!entradaValida);
-
+    } while (true);
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "--------------------------------------------\n";
+
+    //TODO: validar curso
 
     do
     {
