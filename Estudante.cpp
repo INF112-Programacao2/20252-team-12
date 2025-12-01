@@ -2,6 +2,7 @@
 #include "Estudante.hpp"
 #include "Usuario.hpp"
 #include "Administrador.hpp"
+#include "Validar.hpp"
 #include <limits>
 #include <stdexcept>
 #include <iostream>
@@ -14,88 +15,7 @@
 #include <thread>
 #include <filesystem>
 
-using namespace cimg_library;
-
-std::string getDataAtual() {
-    auto agora = std::chrono::system_clock::now();
-
-    std::time_t tt = std::chrono::system_clock::to_time_t(agora);
-
-    std::tm* data = std::localtime(&tt);
-
-    std::stringstream ss;
-    ss << std::setfill('0') << std::setw(2) << data->tm_mday << "/"
-       << std::setw(2) << data->tm_mon + 1 << "/"
-       << data->tm_year + 1900;
-
-    return ss.str();
-}
-
-std::string addDias(const std::string& data_str, int dias) {
-    int d, m, a;
-    char sep1, sep2;
-
-    std::stringstream ss(data_str);
-    ss >> d >> sep1 >> m >> sep2 >> a;
-
-    std::tm data_tm = {};
-    data_tm.tm_mday = d;
-    data_tm.tm_mon  = m - 1;
-    data_tm.tm_year = a - 1900;
-
-    std::time_t t = std::mktime(&data_tm);
-
-    t += dias * 24 * 60 * 60;
-
-    std::tm* nova_data = std::localtime(&t);
-
-    std::stringstream out;
-    out << std::setfill('0') << std::setw(2) << nova_data->tm_mday << "/"
-        << std::setw(2) << nova_data->tm_mon + 1 << "/"
-        << nova_data->tm_year + 1900;
-
-    return out.str();
-}
-
-// Funcao de comparacao case insensitive para conferir nomes de livros
-bool caseInsensitiveComp(const std::string a, const std::string b) {
-    if (a.size() != b.size())
-        return false;
-
-    for (size_t i = 0; i < a.size(); i++) {
-        if (std::toupper((unsigned char)a[i]) != std::toupper((unsigned char)b[i]))
-            return false;
-    }
-
-    return true;
-}
-
 //funcoes auxiliares para o metodo visualizarCarteirinha
-static void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mask) {
-    cimg_forXY(img, x, y) {
-        if (mask(x, y, 0) > 0 || mask(x, y, 1) > 0 || mask(x, y, 2) > 0) {
-            img(x, y, 0) = 0; // vermelho
-            img(x, y, 1) = 0; // verde
-            img(x, y, 2) = 0; // azul
-        }
-    }
-}
-
-static std::string deixar_maiusculo(std::string &palavra){
-    std::string resultado;
-
-    for(char c: palavra)
-        resultado += toupper(c);
-
-    return resultado;
-}
-
-static void escreveDevagar(const std::string &texto, int ms){
-    for (char c : texto){
-        std::cout << c << std::flush;
-        std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-    }
-}
 
 Estudante::Estudante(const std::string& _nome, const std::string &_cpf, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const std::string& _matricula, const std::string& _curso) : Usuario(_nome,_cpf,_data_de_nascimento, _email, _senha), matricula(_matricula), curso(_curso), emprestimos(){
     this->carteirinha = new Carteirinha();

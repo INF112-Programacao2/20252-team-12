@@ -8,55 +8,7 @@
 #include <cstdlib>
 #include <chrono>
 #include <thread>
-#include "validar.hpp"
-static std::string obterDataHora()
-{
-    std::time_t t = std::time(nullptr);
-    std::tm *now = std::localtime(&t);
-
-    char buffer[100];
-    // Formato: Dia/Mes/Ano Hora:Minuto:Segundo
-    std::strftime(buffer, sizeof(buffer), "%d/%m/%Y %H:%M:%S", now);
-
-    return std::string(buffer);
-}
-
-static void escreveLog(std::string mensagem)
-{
-    std::ofstream fout("actionLog.txt", std::ios::app);
-
-    if (!fout.is_open())
-    {
-        std::cerr << "Erro ao abrir o arquivo de log." << std::endl;
-    }
-
-    fout << "[" << obterDataHora() << "] " << mensagem << std::endl;
-
-    fout.close();
-}
-
-static void apagarTerminal()
-{
-#if defined(_WIN32) || defined(_WIN64)
-    std::system("cls");
-#elif defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
-    std::system("clear");
-#endif
-}
-
-static void escreveDevagar(const std::string &texto, int ms)
-{
-    for (char c : texto)
-    {
-        std::cout << c << std::flush;
-        std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-    }
-}
-
-void pausa(int seg)
-{
-    std::this_thread::sleep_for(std::chrono::seconds(seg));
-}
+#include "Validar.hpp"
 
 Sistema::Sistema() : estudantes()
 {

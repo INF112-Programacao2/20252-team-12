@@ -4,22 +4,8 @@
 #include <string>
 #include <iostream>
 #include <limits>
+#include "Validar.hpp"
 
-static void limparTela(){
-    #if defined(_WIN32) || defined(_WIN64)
-        std::system("cls");
-    #else
-        std::system("clear");
-    #endif
-}
-
-static std::string stringMaiuscula(std::string str) {
-    std::string upper = str;
-    for (char &c : upper) {
-        c = std::toupper(c);
-    }
-    return upper;
-}
 
 Biblioteca::Biblioteca(const std::string& _nome) : nome(_nome), acervo() {}
 
@@ -90,7 +76,7 @@ void Biblioteca::listarLivros() const{
     }
 
     std::string filtro;
-    limparTela();
+    apagarTerminal();
     std::cout << "\n=================== 🔍 CONSULTA AO ACERVO 🔍 ===================\n";
     std::cout << "Digite um termo para filtrar. Ex: Titulo, Autor ou Area\n";
     std::cout << "Ou pressione [ENTER] para ver todos os livros: ";
@@ -124,7 +110,7 @@ void Biblioteca::listarLivros() const{
     int totalPaginas = (totalLivros + LIVROS_POR_PAGINA - 1) / LIVROS_POR_PAGINA;
 
     for (int pagina = 0; pagina < totalPaginas; pagina++) {
-        limparTela();
+        apagarTerminal();
         std::cout << "\n============ 📚 RESULTADO DA BUSCA (Pagina " << (pagina + 1) << "/" << totalPaginas << ") ============\n";
         if (!filtro.empty()) std::cout << "Filtro aplicado: \"" << filtro << "\"\n";
         

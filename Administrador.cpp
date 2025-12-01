@@ -13,59 +13,9 @@
 #include <limits>
 #include "CImg.h"
 #include "Estudante.hpp"
-#include "validar.hpp"
+#include "Validar.hpp"
 
 using namespace cimg_library;
-
-
-static std::string deixar_maiusculo(std::string &palavra)
-{
-    std::string resultado;
-
-    for (char c : palavra)
-        resultado += toupper(c);
-
-    return resultado;
-}
-
-static void escreveDevagar(const std::string &texto, int ms)
-{
-    for (char c : texto)
-    {
-        std::cout << c << std::flush;
-        std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-    }
-}
-
-static void pausa(int seg)
-{
-    std::this_thread::sleep_for(std::chrono::seconds(seg));
-}
-
-static std::string getDataAtual()
-{
-    auto agora = std::chrono::system_clock::now();
-
-    std::time_t tt = std::chrono::system_clock::to_time_t(agora);
-
-    std::tm *data = std::localtime(&tt);
-
-    std::stringstream ss;
-    ss << std::setfill('0') << std::setw(2) << data->tm_mday << "/"
-       << std::setw(2) << data->tm_mon + 1 << "/"
-       << data->tm_year + 1900;
-
-    return ss.str();
-}
-
-static void apagarTerminal()
-{
-#if defined(_WIN32) || defined(_WIN64)
-    std::system("cls");
-#elif defined(__linux__) || defined(__APPLE__) || defined(__MACH__)
-    std::system("clear");
-#endif
-}
 
 int Administrador::nextID = 1;
 Administrador::Administrador(const std::string &_nome, const std::string &_cpf, const std::string &_data_de_nascimento, const std::string &_email, const std::string &_senha) : Usuario(_nome, _cpf, _data_de_nascimento, _email, _senha), id(nextID++) {}
