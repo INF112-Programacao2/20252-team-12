@@ -114,7 +114,6 @@ void Administrador::criarLivro(Biblioteca &biblioteca)
     escreveDevagar(novo_livro->getTitulo() + " foi adicionado na Bibilioteca! ✅\n", 50);
 }
 
-//TODO: checar se já tem um estudante com esse email
 void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
 {
 
@@ -220,6 +219,12 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
 
             if (_email.substr(_email.size()-7) != "@ufv.br" || _email.size() <= 7) {
                 throw std::invalid_argument("⚠️  Email inválido (Utilize somente email institucional '@ufv.br').");
+            }
+
+            for (auto est : estudantes) {
+                if (_email == est->getEmail()) {
+                     throw std::invalid_argument("⚠️  Erro: O estudante com esse e-mail já está cadastrado.");
+                }
             }
             break;
         } catch (const std::exception &e) {
@@ -330,10 +335,8 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
     escreveDevagar("Estudante de matrícula " + _matricula + " foi cadastrado com sucesso! ✅\n", 50);
 }
 
-//TODO: campo de grad/posgrad
 void Administrador::listarEstudante(std::vector<Estudante *> &estudantes)
 {
-
     std::ofstream fout;
     fout.open("ListaEstudantes.txt");
     if (!fout.is_open())
@@ -343,18 +346,36 @@ void Administrador::listarEstudante(std::vector<Estudante *> &estudantes)
 
     fout << "LISTA DE ESTUDANTES CADASTRADOS: " << std::endl
          << std::endl;
+
     fout << std::left
          << std::setw(40) << "NOME"
          << std::setw(25) << "DATA DE NASCIMENTO"
-         << std::setw(12) << "MATRICULA"
-         << std::setw(12) << "CURSO"
-         << "\n----------------------------------------------------------------------------------------------------------------\n";
+         << std::setw(15) << "MATRICULA"
+         << std::setw(15) << "CURSO"
+         << std::setw(15) << "NIVEL" 
+         << "\n----------------------------------------------------------------------------------------------------------------------------------\n";
+    
     for (auto estudante : estudantes)
     {
-        fout << std::setw(40) << estudante->getNome() << std::setw(25) << estudante->getDataDeNascimento() << std::setw(12) << estudante->get_matricula() << std::setw(12) << estudante->get_curso() << std::endl;
+        std::string nivel = "Indefinido";
+
+        if (dynamic_cast<EstudanteGraduacao*>(estudante)) {
+            nivel = "Graduacao";
+        } else if (dynamic_cast<EstudantePosGraduacao*>(estudante)) {
+            nivel = "Pos-Graduacao";
+        }
+
+        fout << std::setw(40) << estudante->getNome() 
+             << std::setw(25) << estudante->getDataDeNascimento() 
+             << std::setw(15) << estudante->get_matricula() 
+             << std::setw(15) << estudante->get_curso()
+             << std::setw(15) << nivel 
+             << std::endl;
     }
+
     escreveDevagar("\nArquivo Lista Estudantes criado com sucesso ✅", 50);
     fout.close();
+    
     if (fout.fail())
     {
         throw std::runtime_error("❌ Não foi possível fechar o arquvivo: ListaEstudantes ");
@@ -445,6 +466,10 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
                 std::cout << "-> Novo Nome: ";
                 std::getline(std::cin, novoDado);
                 validarNOME(novoDado);
+
+                if (novoDado == estudanteAlvo->getNome()) {
+                    throw std::invalid_argument("⚠️  O novo nome não pode ser igual ao atual.");
+                }
                 
                 estudanteAlvo->setNome(novoDado);
                 break;
@@ -465,6 +490,10 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
                      throw std::invalid_argument("⚠️  Email inválido (Utilize somente email institucional '@ufv.br').");
                 }
 
+                if (novoDado == estudanteAlvo->getEmail()) {
+                    throw std::invalid_argument("⚠️  O novo e-mail não pode ser igual ao atual.");
+                }
+
                 estudanteAlvo->setEmail(novoDado);
                 break;
             } catch (const std::exception &e) {
@@ -480,6 +509,10 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
                 std::getline(std::cin, novoDado);
                 
                 // TODO validarCURSO(novoDado);
+
+                if (novoDado == estudanteAlvo->get_curso()) {
+                    throw std::invalid_argument("⚠️  O novo curso não pode ser igual ao atual.");
+                }
                 
                 estudanteAlvo->set_curso(novoDado);
                 break;
@@ -496,6 +529,10 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
                 std::getline(std::cin, novoDado);
                 validarSENHA(novoDado);
                 
+                if (novoDado == estudanteAlvo->getSenha()) {
+                    throw std::invalid_argument("⚠️  A nova senha não pode ser igual à atual.");
+                }
+
                 estudanteAlvo->setSenha(novoDado);
                 break;
             } catch (const std::exception &e) {
