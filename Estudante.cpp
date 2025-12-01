@@ -113,8 +113,10 @@ void Estudante::exibirEmprestimos(){
         emprestimo->exibirInformacoes();
     }
 }
+
+//TODO: aceitar digitar com/sem acentos (ou mudar para emprestimo por ID)
 void Estudante::pegarLivro(const Biblioteca& biblioteca) {
-    std::cout << "Digite o nome do livro que deseja pegar emprestado (sem acentos): ";
+    std::cout << "Digite o nome do livro que deseja pegar emprestado: ";
     Livro* livro_desejado = nullptr;
     
     std::string nome_do_livro;
@@ -150,6 +152,8 @@ void Estudante::pegarLivro(const Biblioteca& biblioteca) {
     Emprestimo* novoEmprestimo = new Emprestimo(*this, *livro_desejado, dataDeEmprestimo, dataDeDevolucao);
     this->emprestimos.push_back(novoEmprestimo);
 }
+
+//TODO: aceitar digitar com/sem acentos (ou mudar para emprestimo por ID)
 void Estudante::devolverLivro(const Biblioteca& biblioteca){
     if (this->get_emprestimos().size() == 0) {
         std::cout << "Nao ha emprestimos pendentes\n";
@@ -164,7 +168,11 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
     
     std::string titulo_livro_devolvido;
     Emprestimo* livro_devolvido = nullptr;
+
     std::getline(std::cin, titulo_livro_devolvido);
+    if (titulo_livro_devolvido.empty()) {
+        std::getline(std::cin, titulo_livro_devolvido);
+    }
 
     try {
         for (auto emprestimo : this->get_emprestimos()) {
