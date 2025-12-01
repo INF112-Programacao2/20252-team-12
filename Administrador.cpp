@@ -42,8 +42,6 @@ void Administrador::criarLivro(Biblioteca &biblioteca)
     std::string _titulo, _autor, _tipo;
     int _numExemplares;
 
-    while ()
-
     do
     {
         std::cout << "-> Titulo: ";
