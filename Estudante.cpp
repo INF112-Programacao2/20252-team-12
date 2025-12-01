@@ -15,8 +15,6 @@
 #include <thread>
 #include <filesystem>
 
-//funcoes auxiliares para o metodo visualizarCarteirinha
-
 Estudante::Estudante(const std::string& _nome, const std::string &_cpf, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const std::string& _matricula, const std::string& _curso) : Usuario(_nome,_cpf,_data_de_nascimento, _email, _senha), matricula(_matricula), curso(_curso), emprestimos(){
     this->carteirinha = new Carteirinha();
 }
@@ -41,19 +39,13 @@ void Estudante::exibirEmprestimos(){
     }
 }
 
-//TODO: aceitar digitar com/sem acentos (ou mudar para emprestimo por ID)
-
 void Estudante::pegarLivro(const Biblioteca& biblioteca) {
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    
     escreveDevagar("\n============================================\n",10);
     escreveDevagar("      📕 BEM-VINDO À BIBLIOTECA 📕 ",50);
     escreveDevagar("\n============================================\n",10);
     Livro* livro_desejado = nullptr;
 
     biblioteca.listarLivros();
-
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
 
     while(true){
         std::cout << "-> Digite o ID do livro: ";
@@ -64,7 +56,7 @@ void Estudante::pegarLivro(const Biblioteca& biblioteca) {
             if (!(std::cin >> id_do_livro)){
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                throw std::invalid_argument("❌ ID inválido \n");
+                throw std::invalid_argument("❌ ID inválido");
             }
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
             
@@ -76,14 +68,14 @@ void Estudante::pegarLivro(const Biblioteca& biblioteca) {
             }
 
             if (livro_desejado == nullptr) {
-                throw std::invalid_argument("❌ O livro escolhido nao foi encontrado! \n");
+                throw std::invalid_argument("❌ O livro escolhido nao foi encontrado!");
             }
             if (livro_desejado->getNumExemplaresDisponiveis() == 0) {
-                throw std::invalid_argument("❌ Nao ha exemplares disponiveis para o livro selecionado! \n");
+                throw std::invalid_argument("❌ Nao ha exemplares disponiveis para o livro selecionado!");
             }
             break;
         } catch (std::invalid_argument &e) {
-            std::cerr << e.what();
+            std::cerr << e.what() << std::endl;
             std::cout << "--------------------------------------------\n";
         }
     }
@@ -97,10 +89,8 @@ void Estudante::pegarLivro(const Biblioteca& biblioteca) {
     Emprestimo* novoEmprestimo = new Emprestimo(*this, *livro_desejado, dataDeEmprestimo, dataDeDevolucao);
     this->emprestimos.push_back(novoEmprestimo);
 
-    escreveDevagar("\n✅ Livro emprestado com sucesso!\n", 50);
+    escreveDevagar("✅ Livro emprestado com sucesso!\n", 50);
 }
-
-//TODO: aceitar digitar com/sem acentos (ou mudar para emprestimo por ID)
 
 void Estudante::devolverLivro(const Biblioteca& biblioteca){
     escreveDevagar("\n============================================\n",10);
@@ -120,7 +110,7 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
     }
     while (1){
         std::cout << "--------------------------------------------\n";
-        std::cout << "Escolha o ID do empréstimo que deseja devolver: ";
+        std::cout << "-> Escolha o ID do empréstimo que deseja devolver: ";
         
         int id_livro_devolvido;
         std::cin >> id_livro_devolvido;
@@ -132,11 +122,11 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
                 }
             }
             if (livro_devolvido == nullptr) {
-                throw std::invalid_argument("❌ O livro escolhido nao esta na sua lista de emprestimos!\n");
+                throw std::invalid_argument("❌ O livro escolhido nao esta na sua lista de emprestimos!");
             }
             break;
         } catch (std::invalid_argument &e) {
-            std::cerr << e.what();
+            std::cerr << e.what() << std::endl;
         }
     }
     
@@ -157,11 +147,11 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
 
                     if (resposta != 'S' && resposta != 'N' &&
                         resposta != 's' && resposta != 'n') 
-                        throw std::invalid_argument("❌ Responda apenas com S para 'sim' ou N para 'nao'\n");
+                        throw std::invalid_argument("❌ Responda apenas com S para 'sim' ou N para 'nao'");
                     
                     break;
                 } catch (std::invalid_argument &e) {
-                    std::cerr << e.what();
+                    std::cerr << e.what() << std::endl;
                 }
             }
 
@@ -186,7 +176,7 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
                     if (!(std::cin >> opcao)) {
                         std::cin.clear();
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                        throw std::invalid_argument("❌ Digite um número válido!\n");
+                        throw std::invalid_argument("❌ Digite um número válido!");
                     }
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
@@ -198,11 +188,11 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
                         this->carteirinha->debitar(livro_devolvido->calculaValorMulta());
                     }
                     else {
-                        throw std::invalid_argument("❌ Digite uma opção válida!\n");
+                        throw std::invalid_argument("❌ Digite uma opção válida!");
                     }
                     break;
                 } catch (std::invalid_argument &e) {
-                    std::cerr << e.what();
+                    std::cerr << e.what() << std::endl;
                 }
             }
         }
@@ -220,7 +210,7 @@ void Estudante::recarregarCarteirinha(){
     double valor;
     
     while(1) {
-        std::cout << "Digite o valor a ser depositado: ";
+        std::cout << "-> Digite o valor a ser depositado: ";
         std::cin >> valor;
 
         try {
@@ -278,7 +268,7 @@ void Estudante::visualizarCarteirinha(){
             break; //caso a entrada e a opcao seja valida
         }
         catch (const std::exception &e) {
-            std::cout<<e.what()<<std::endl<<std::endl;
+            std::cout<<e.what()<<std::endl;
         }
     }
 
@@ -289,13 +279,13 @@ void Estudante::visualizarCarteirinha(){
     try {
         img.assign("images/template.bmp");
     }   catch (const cimg_library::CImgIOException &erro){
-        throw std::runtime_error("❌ Não foi possível carregar template.bmp");
+        throw std::runtime_error("Não foi possível carregar template.bmp");
     }
 
     try {
         barcode.assign("images/codigo_barra.bmp");
     } catch (const cimg_library::CImgIOException &erro) {
-        throw std::runtime_error("❌ Não foi possível carregar barcode.bmp");
+        throw std::runtime_error("Não foi possível carregar barcode.bmp");
     }
 
     //capturar o primeiro nome do estudante
@@ -332,7 +322,7 @@ void Estudante::visualizarCarteirinha(){
     try {
         aluno.assign(nome_foto_aluno.c_str());  //verificar se existe o arquivo da foto do aluno
     } catch (const cimg_library::CImgIOException &erro) {
-        throw std::runtime_error("❌ Não foi possivel carregar o arquivo da foto do aluno: " + nome_foto_aluno); //TODO: a mensagem de erro não está muito atrativa, favor olhar
+        throw std::runtime_error("Não foi possivel carregar o arquivo da foto do aluno: " + nome_foto_aluno); //TODO: a mensagem de erro não está muito atrativa, favor olhar
     }
 
     //colocar a imagem do aluno e do codigo de barra no local certo

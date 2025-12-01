@@ -44,6 +44,18 @@ void aplicarTextoPreto(CImg<unsigned char> &img, CImg<unsigned char> &mask) {
     }
 }
 
+std::string corta(std::string palavra, int n) {
+    std::string saida = palavra;
+    
+    if(saida.size() > (size_t)n)
+        saida = saida.substr(0, n-3) + "...";
+    
+    if(saida.size() < (size_t)n)
+        saida += std::string(n-saida.size(), ' ');
+
+    return saida;
+}
+
 std::string deixar_maiusculo(std::string &palavra){
     std::string resultado;
 
