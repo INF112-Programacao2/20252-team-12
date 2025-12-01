@@ -40,7 +40,7 @@ static void apagarTerminal(){
     #endif
 }
 
-void escreveDevagar(const std::string &texto, int ms){
+static void escreveDevagar(const std::string &texto, int ms){
     for (char c : texto){
         std::cout << c << std::flush;
         std::this_thread::sleep_for(std::chrono::milliseconds(ms));
@@ -401,7 +401,7 @@ void Sistema::iniciarSistema(){
 
                     // Tenta Login como Administrador
                     if (this->admin->getEmail() == email && this->admin->getSenha() == senha) {
-                        escreveDevagar("\n✅ Bem-Vindo " + this->admin->getNome(), 50);
+                        escreveDevagar("✅ Bem-Vindo " + this->admin->getNome(), 50);
                         pausa(1);
                         apagarTerminal();
                         this->menuAdministrador();
@@ -422,7 +422,7 @@ void Sistema::iniciarSistema(){
                     }
                     
                     if (encontrado && this->estudante_logado != nullptr) {
-                        escreveDevagar("\n✅ Bem-Vindo " + this->estudante_logado->getNome(), 50);
+                        escreveDevagar("✅ Bem-Vindo " + this->estudante_logado->getNome(), 50);
                         pausa(1);
                         apagarTerminal();
                         this->menuEstudante();

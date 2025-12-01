@@ -193,9 +193,9 @@ int Emprestimo::getDiasDeAtraso() {
 }
 
 void Emprestimo::exibirInformacoes(){
-    std::cout << "ID: " << this->livro->getId() << std::endl;
+    std::cout << "ID: " << this->id << std::endl;
     std::cout << "TITULO: " << this->livro->getTitulo() << std::endl;
     std::cout << "STATUS: " << ((this->devolvido) ? "Devolvido" : "Não Devolvido") << std::endl;
     std::cout << "DATA DE EMPRÉSTIMO: " << getDataFormatada(this->dataDeEmprestimo) << std::endl;
-    std::cout << "DATA DE DEVOLUÇÃO: " << getDataFormatada(this->dataDeDevolução) << std::endl;
+    std::cout << "DATA DE MÁXIMA DE DEVOLUÇÃO: " << getDataFormatada(this->dataDeDevolução) << std::endl;
 }

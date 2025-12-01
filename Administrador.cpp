@@ -155,7 +155,6 @@ void Administrador::criarLivro(Biblioteca &biblioteca) {
     Livro *novo_livro = new Livro(_titulo,_autor,_tipo,_numExemplares);
     biblioteca.adicionarLivro(*novo_livro);
 
-    // (Escrever devagar)
     escreveDevagar(novo_livro->getTitulo() + " foi adicionado na Bibilioteca! ✅\n", 50);
 }
 
@@ -445,7 +444,7 @@ std::string Administrador::alterarValorRU() {
     std::string gradOuPos;
     char resposta;
     double novo_valor;
-    std::cout << "Escolha o estudante:\n";
+    std::cout << "Escolha o nível do estudante:\n";
     std::cout << "1 - Graduação\n2 - Pós-Graduação\n";
     std::cout << "Opção: ";
     std::cin >> resposta;                                   // TODO: Tratamento de erro resposta

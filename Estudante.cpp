@@ -90,7 +90,7 @@ static std::string deixar_maiusculo(std::string &palavra){
     return resultado;
 }
 
-void EscreveDevagar(const std::string &texto, int ms){
+static void escreveDevagar(const std::string &texto, int ms){
     for (char c : texto){
         std::cout << c << std::flush;
         std::this_thread::sleep_for(std::chrono::milliseconds(ms));
@@ -109,31 +109,46 @@ Estudante::~Estudante(){
 }
 
 void Estudante::exibirEmprestimos(){
+    std::cout << "\n============================================\n";
+    std::cout << "          EMPRÉSTIMOS            ";
+    std::cout << "\n============================================\n";
+    if (this->get_emprestimos().size() == 0) {
+        std::cout << "Nao ha emprestimos pendentes\n";
+        return;
+    }
     for (auto emprestimo : this->emprestimos){
         emprestimo->exibirInformacoes();
     }
 }
 void Estudante::pegarLivro(const Biblioteca& biblioteca) {
-    std::cout << "Digite o nome do livro que deseja pegar emprestado (sem acentos): ";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    escreveDevagar("\n============================================\n",10);
+    escreveDevagar("       📕 BEM-VINDO À BIBLIOTECA 📕 ",50);
+    escreveDevagar("\n============================================\n",10);
     Livro* livro_desejado = nullptr;
-    
-    std::string nome_do_livro;
-    std::getline(std::cin, nome_do_livro);
+    while(1){
+        std::cout << "Digite o nome do livro que deseja pegar emprestado: ";
+        
+        std::string nome_do_livro;
+        std::getline(std::cin, nome_do_livro);
 
-    try {
-        for (Livro* livro : biblioteca.getAcervo()) {
-            if (caseInsensitiveComp(nome_do_livro, livro->getTitulo())) {
-                livro_desejado = livro;
+        try {
+            for (Livro* livro : biblioteca.getAcervo()) {
+                if (caseInsensitiveComp(nome_do_livro, livro->getTitulo())) {
+                    livro_desejado = livro;
+                }
             }
+            if (livro_desejado == nullptr) {
+                throw std::invalid_argument("❌ O livro escolhido nao foi encontrado! \n");
+            }
+            if (livro_desejado->getNumExemplaresDisponiveis() == 0) {
+                throw std::invalid_argument("❌ Nao ha exemplares disponiveis para o livro selecionado! \n");
+            }
+            break;
+        } catch (std::invalid_argument &e) {
+            std::cerr << e.what();
+            std::cout << "--------------------------------------------\n";
         }
-        if (livro_desejado == nullptr) {
-            throw std::invalid_argument("O livro escolhido nao foi encontrado");
-        }
-        if (livro_desejado->getNumExemplaresDisponiveis() == 0) {
-            throw std::invalid_argument("Nao ha exemplares disponiveis para o livro selecionado");
-        }
-    } catch (std::invalid_argument &e) {
-        std::cerr << e.what() << std::endl;
     }
 
     livro_desejado->setNumExemplaresDisponiveis(livro_desejado->getNumExemplaresDisponiveis() - 1);
@@ -144,85 +159,97 @@ void Estudante::pegarLivro(const Biblioteca& biblioteca) {
 
     Emprestimo* novoEmprestimo = new Emprestimo(*this, *livro_desejado, dataDeEmprestimo, dataDeDevolucao);
     this->emprestimos.push_back(novoEmprestimo);
+
+    escreveDevagar("\n✅ Livro emprestado com sucesso!\n", 50);
 }
+
+
+
 void Estudante::devolverLivro(const Biblioteca& biblioteca){
-    if (this->get_emprestimos().size() == 0) {
-        std::cout << "Nao ha emprestimos pendentes\n";
+    escreveDevagar("\n============================================\n",10);
+    escreveDevagar("       📕 BEM-VINDO À BIBLIOTECA 📕 ",50);
+    escreveDevagar("\n============================================\n",10);
+    bool temADevolver = false;
+    for (auto emprestimo : this->get_emprestimos()) {
+        if (!emprestimo->isDevolvido()){
+            emprestimo->exibirInformacoes();
+            temADevolver = true;
+        }
+    }
+    Emprestimo* livro_devolvido = nullptr;
+    if (!temADevolver || this->get_emprestimos().size() == 0){
+        std::cout << "Nao há empréstimos pendentes\n";
         return;
     }
-    
-    for (auto emprestimo : this->get_emprestimos()) {
-        emprestimo->exibirInformacoes();
-    }
-    
-    std::cout << "Escolha qual livro deseja devolver: \n";
-    
-    std::string titulo_livro_devolvido;
-    Emprestimo* livro_devolvido = nullptr;
-    std::getline(std::cin, titulo_livro_devolvido);
+    while (1){
+        std::cout << "--------------------------------------------\n";
+        std::cout << "Escolha o ID do empréstimo que deseja devolver: ";
+        
+        int id_livro_devolvido;
+        std::cin >> id_livro_devolvido;
 
-    try {
-        for (auto emprestimo : this->get_emprestimos()) {
-            if (caseInsensitiveComp(emprestimo->getLivro()->getTitulo(), titulo_livro_devolvido)) {
-                livro_devolvido = emprestimo;
+        try {
+            for (auto emprestimo : this->emprestimos) {
+                if (emprestimo->getId() == id_livro_devolvido && !emprestimo->isDevolvido()) {
+                    livro_devolvido = emprestimo;
+                }
             }
+            if (livro_devolvido == nullptr) {
+                throw std::invalid_argument("❌ O livro escolhido nao esta na sua lista de emprestimos!\n");
+            }
+            break;
+        } catch (std::invalid_argument &e) {
+            std::cerr << e.what();
         }
-        if (livro_devolvido == nullptr) {
-            throw std::invalid_argument("O livro escolhido nao esta na sua lista de emprestimos, confira a ortografia (nao use acentos)");
-        }
-    } catch (std::invalid_argument &e) {
-        std::cerr << e.what() << std::endl;
     }
     
     if (livro_devolvido->calculaValorMulta() > 0.0) {
-        std::cout << "O livro esta atrasado por " << livro_devolvido->getDiasDeAtraso() << 
-        " dias.\nA multa pelo atraso e de R$" << livro_devolvido->calculaValorMulta() << "\n";
+        std::cout << "--------------------------------------------\n";
+        std::ostringstream oss;
+        oss << "O livro esta atrasado por " << livro_devolvido->getDiasDeAtraso() << " dia (s).\nA multa pelo atraso e de R$" << std::fixed << std::setprecision(2) << livro_devolvido->calculaValorMulta() << "\n";
+        escreveDevagar(oss.str(), 50);
 
         if (this->get_carteirinha()->getSaldo() >= livro_devolvido->calculaValorMulta()) {
             char resposta;
             while(1) {
-                std::cout << "Deseja descontar a multa do saldo da carteirinha? (RS" << this->get_carteirinha()->getSaldo() << ") S/N: ";
+                std::cout << "--------------------------------------------\n";
+                std::cout << std::fixed << std::setprecision(2) << "Deseja descontar a multa do saldo da carteirinha? (RS" << this->get_carteirinha()->getSaldo() << ") S/N: ";
                 
                 try {
                     std::cin >> resposta;
 
                     if (resposta != 'S' && resposta != 'N' &&
                         resposta != 's' && resposta != 'n') 
-                        throw std::invalid_argument("Responda apenas com S para 'sim' ou N para 'nao'\n");
+                        throw std::invalid_argument("❌ Responda apenas com S para 'sim' ou N para 'nao'\n");
                     
                     break;
                 } catch (std::invalid_argument &e) {
-                    std::cerr << e.what() << std::endl;
+                    std::cerr << e.what();
                 }
             }
 
             if (resposta == 'S' || resposta == 's') {
                 this->get_carteirinha()->debitar(livro_devolvido->calculaValorMulta());
             }
-            else {
-                std::cout << "Aguarde seu boleto esta sendo gerado\n";
-                /**
-                ...
-                ...
-                ...
-                **/
-            }
         }
         else {
-            std::cout << "Deseja realizar uma recarga? (Valor necessário para o RU: " 
+            std::cout << "--------------------------------------------\n";
+            std::cout << std::fixed << std::setprecision(2) << "Deseja realizar uma recarga? (Valor necessário para o pagamento: " 
             << (livro_devolvido->calculaValorMulta() - this->get_carteirinha()->getSaldo())
             << ")" << std::endl;
 
             while(1) {
                 std::cout << "0 - Não desejo recarregar minha carteirinha (Voltar para o Menu)\n";
                 std::cout << "1 - Sim, desejo recarregar minha carteirinha\n";
+                std::cout << "--------------------------------------------\n";
                 int opcao;
+                std::cout << "-> Opção: ";
 
                 try {
                     if (!(std::cin >> opcao)) {
                         std::cin.clear();
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                        throw std::invalid_argument("Digite um número válido!");
+                        throw std::invalid_argument("❌ Digite um número válido!\n");
                     }
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
@@ -231,11 +258,14 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
                     }
                     else if (opcao == 1) {
                         this->recarregarCarteirinha();
-                    } 
-                    else 
-                        throw std::invalid_argument("Digite uma opção válida!");
+                        this->carteirinha->debitar(livro_devolvido->calculaValorMulta());
+                    }
+                    else {
+                        throw std::invalid_argument("❌ Digite uma opção válida!\n");
+                    }
+                    break;
                 } catch (std::invalid_argument &e) {
-                    std::cerr << e.what() << std::endl;
+                    std::cerr << e.what();
                 }
             }
         }
@@ -243,12 +273,12 @@ void Estudante::devolverLivro(const Biblioteca& biblioteca){
 
     livro_devolvido->setDevolvido(true);
     livro_devolvido->getLivro()->setNumExemplaresDisponiveis(livro_devolvido->getLivro()->getNumExemplaresDisponiveis()+1);
+
+    escreveDevagar("✅ Livro devolvido com sucesso!\n", 50);
 }
 
 void Estudante::recarregarCarteirinha(){
-    std::cout << "--------------------------------------------\n";
     this->consultarSaldo();
-    std::cout << "--------------------------------------------\n";
 
     double valor;
     
@@ -260,10 +290,10 @@ void Estudante::recarregarCarteirinha(){
             if (std::cin.fail()) {
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                throw std::invalid_argument("O valor deve ser um número\n");
+                throw std::invalid_argument("❌ O valor deve ser um número\n");
             }
             if (valor <= 0) {
-                throw std::invalid_argument("O valor deve ser maior que 0\n");
+                throw std::invalid_argument("❌ O valor deve ser maior que 0\n");
             }
             break;
         }
@@ -272,6 +302,7 @@ void Estudante::recarregarCarteirinha(){
         }
     }
     this->carteirinha->depositar(valor);
+    escreveDevagar("✅ Valor depositado com sucesso!\n", 50);
 }
 
 // TODO: (Thales) Implementar a função de gerar carteirinha
@@ -280,22 +311,22 @@ void Estudante::recarregarCarteirinha(){
 // Gera a carteirinha e coloca em uma pasta separada. Ex: 'Carteirinhas'
 // Tenta seguir o padrão das funções quando for pedir algum dado escrito e no UI
 void Estudante::visualizarCarteirinha(){
-    EscreveDevagar("Antes de visualizar a carteirinha, adicione a imagem do estudante na pasta imagens (PRIMEIRONOMEALUNO_MATRICULA_(formato da imagem))",30);
+    escreveDevagar("Antes de visualizar a carteirinha, adicione a imagem do estudante na pasta imagens (PRIMEIRONOMEALUNO_MATRICULA_(formato da imagem))",30);
     std::cout<<std::endl;
-    EscreveDevagar("Selecione qual e a extensao do arquivo adicionado:" ,30);
+    escreveDevagar("Selecione qual e a extensao do arquivo adicionado:" ,30);
     std::cout<<std::endl;
-    EscreveDevagar("1 - .PNG",20);
+    escreveDevagar("1 - .PNG",20);
     std::cout<<std::endl;
-    EscreveDevagar("2 - .JPG/JPEG",20);
+    escreveDevagar("2 - .JPG/JPEG",20);
     std::cout<<std::endl;
-    EscreveDevagar("3 - .BMP",20);
+    escreveDevagar("3 - .BMP",20);
     std::cout<<std::endl;
 
     int opcao;
     
     while (true) {
         try {
-            std::cout<<"Opcao: ";
+            std::cout<<"Opção: ";
 
             if(!(std::cin>>opcao)){ //erro cin -- usuario digitou letra,simbolo,etc
                 std::cin.clear();
@@ -389,11 +420,13 @@ void Estudante::visualizarCarteirinha(){
 
     aplicarTextoPreto(img,mask);
     img.save(nomeArquivo.c_str());
-    EscreveDevagar("Carteirinha criada com sucesso! Verifique a pasta 'Carteirinhas' para visualizar",30);
+    escreveDevagar("✅ Carteirinha criada com sucesso! Verifique a pasta 'Carteirinhas' para visualizar",30);
 }
 
 void Estudante::consultarSaldo(){
-    std::cout << "Seu saldo é de R$" << this->carteirinha->getSaldo() << "\n";
+    std::cout << "--------------------------------------------\n";
+    std::cout << std::fixed << std::setprecision(2) << "Seu saldo é de R$" << this->carteirinha->getSaldo() << "\n";
+    std::cout << "--------------------------------------------\n";
 }
 
 
