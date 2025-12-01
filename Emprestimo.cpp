@@ -18,8 +18,8 @@ Emprestimo::Emprestimo(Estudante& _origem, Livro& _livro, const std::string& _da
     if (validarDATA(_dataDeEmprestimo)){
         this->dataDeEmprestimo = converterStringParaData(_dataDeEmprestimo);
     }
-    if (validarDATA(_dataDeDevolução)){
-        this->dataDeDevolução = converterStringParaData(_dataDeDevolução);
+    if (validarDATA(_dataDeDevolucao)){
+        this->dataDeDevolucao = converterStringParaData(_dataDeDevolucao);
     }
 }
 
@@ -78,9 +78,9 @@ void Emprestimo::setDataDeEmprestimo(std::string _dataDeEmprestimo) {
     }
 }
 
-void Emprestimo::setDataDeDevolução(std::string _dataDeDevolução) {
-    if (validarDATA(_dataDeDevolução)){
-        this->dataDeDevolução = converterStringParaData(_dataDeDevolução);
+void Emprestimo::setDataDeDevolucao(std::string _dataDeDevolucao) {
+    if (validarDATA(_dataDeDevolucao)){
+        this->dataDeDevolucao = converterStringParaData(_dataDeDevolucao);
     }
 }
 

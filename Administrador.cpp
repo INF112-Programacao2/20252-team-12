@@ -240,7 +240,7 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
         try {
             std::cout << "-> Matrícula do aluno: ";
             std::cin >> _matricula;
-            validarMATRICULA(_matricula);
+            // TODO validarMATRICULA(_matricula);
 
             for (auto est : estudantes) {
                 if (_matricula == est->get_matricula()) {
@@ -263,7 +263,7 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
             std::cout << "-> Curso (Nome ou Código): ";
             std::getline(std::cin, _curso);
             
-            validarCURSO(_curso); 
+            // TODO validarCURSO(_curso); 
             
             std::cout << "   (Curso selecionado: " << _curso << ")\n"; 
             break;
@@ -464,7 +464,7 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
                 std::cout << "-> Novo Curso (Sigla ou Nome): ";
                 std::getline(std::cin, novoDado);
                 
-                validarCURSO(novoDado);
+                // TODO validarCURSO(novoDado);
                 
                 estudanteAlvo->set_curso(novoDado);
                 break;
