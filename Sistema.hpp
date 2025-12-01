@@ -16,16 +16,13 @@ private:
     Administrador *admin;
     Biblioteca *biblioteca;
 
-        void carregarLivros();
-        void carregarDados();
-        void salvarDados();
-        void carregarAdmin();
-        void salvarAdmin();
-        void menuAdministrador();
-        void menuEstudante();
-    public:
-        Sistema();
-        ~Sistema();
+    void carregarLivros();
+    void carregarDados();
+    void salvarDados();
+    void carregarAdmin();
+    void salvarAdmin();
+    void menuAdministrador();
+    void menuEstudante();
 
 public:
     Sistema();
@@ -34,7 +31,6 @@ public:
     std::vector<Estudante *> get_estudantes();
     Administrador *get_admin();
 
-    
     void iniciarSistema();
 };
 
