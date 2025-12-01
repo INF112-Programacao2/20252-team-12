@@ -68,6 +68,7 @@ std::string corta(std::string palavra, int n) {
     return saida;
 }
 
+//TODO: ajustar filtro para caso em que não encontra resultado
 void Biblioteca::listarLivros() const{
     if (acervo.empty()) {
         std::cout << "\n❌ Nenhum livro cadastrado no acervo.\n";

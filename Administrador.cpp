@@ -32,6 +32,7 @@ void Administrador::set_id(const int &_id)
     this->id = _id;
 }
 
+//TODO: Autor e tipo não podem conter numeros
 void Administrador::criarLivro(Biblioteca &biblioteca)
 {
 
@@ -108,6 +109,7 @@ void Administrador::criarLivro(Biblioteca &biblioteca)
     escreveDevagar(novo_livro->getTitulo() + " foi adicionado na Bibilioteca! ✅\n", 50);
 }
 
+//TODO: checar se já tem um estudante com esse email
 void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
 {
 
@@ -351,6 +353,8 @@ void Administrador::listarEstudante(std::vector<Estudante *> &estudantes)
     }
 }
 
+//TODO: caso em que o usuario insere o mesmo valor que já havia antes (processamento do arquivo de dados todo novamente desnecessario,
+// então é melhor avisar que não pode ser igual e sair/tentar denovo)
 int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
 {
     std::cout << "\n============================================\n";
@@ -538,6 +542,7 @@ void Administrador::alterarSenhaAdministrador()
     escreveDevagar("✅ Senha alterada com sucesso!", 50);
 }
 
+// TODO: Tirar enter duplo para sair da funcao
 void Administrador::consultarTransacoes(std::vector<Estudante *> &estudantes)
 {
     std::cout << "\n============================================\n";
@@ -639,6 +644,7 @@ void Administrador::consultarTransacoes(std::vector<Estudante *> &estudantes)
     }
 }
 
+// TODO: Tirar enter duplo para sair da funcao
 void Administrador::consultarEmprestimos(std::vector<Estudante *> &estudantes)
 {
     std::cout << "\n============================================\n";
@@ -911,6 +917,7 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
     escreveDevagar("Voltando ao painel de administrador...", 40);
 }
 
+//TODO: pode ser 0?
 std::string Administrador::alterarValorRU()
 {
     std::cout << "\n============================================\n";
