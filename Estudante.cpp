@@ -404,13 +404,13 @@ void Estudante::visualizarCarteirinha(){
         nome_foto_aluno+=".bmp";
 
 
-    std::cout<<"DEBUG : "<<nome_foto_aluno<<std::endl;
+    std::cout<<"Nome do arquivo: "<<nome_foto_aluno<<std::endl;
     CImg<unsigned char> aluno;
 
     try {
         aluno.assign(nome_foto_aluno.c_str());  //verificar se existe o arquivo da foto do aluno
     } catch (const cimg_library::CImgIOException &erro) {
-        throw std::runtime_error("❌ Não foi possivel carregar o arquivo da foto do aluno: " + nome_foto_aluno);
+        throw std::runtime_error("❌ Não foi possivel carregar o arquivo da foto do aluno: " + nome_foto_aluno); //TODO: a mensagem de erro não está muito atrativa, favor olhar
     }
 
     //colocar a imagem do aluno e do codigo de barra no local certo
@@ -440,6 +440,7 @@ void Estudante::visualizarCarteirinha(){
     aplicarTextoPreto(img,mask);
     img.save(nomeArquivo.c_str());
     escreveDevagar("✅ Carteirinha criada com sucesso! Verifique a pasta 'Carteirinhas' para visualizar",30);
+    std::cout<<std::endl<<std::endl;
 }
 
 void Estudante::consultarSaldo(){

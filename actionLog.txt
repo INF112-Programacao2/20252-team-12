@@ -1,1 +1,28 @@
 [01/12/2025 14:29:43] Sistema aberto
+[01/12/2025 15:50:08] Sistema aberto
+[01/12/2025 15:50:22] Administrador Logou no Sistema
+[01/12/2025 15:50:29] Administrador escolheu a opcao: 5 - Visualizar Carteirinha de um Estudante
+[01/12/2025 15:52:12] Sistema aberto
+[01/12/2025 15:52:30] Administrador Logou no Sistema
+[01/12/2025 15:52:36] Administrador escolheu a opcao: 5 - Visualizar Carteirinha de um Estudante
+[01/12/2025 15:52:57] Administrador escolheu a opcao: 5 - Visualizar Carteirinha de um Estudante
+[01/12/2025 15:53:59] Sistema aberto
+[01/12/2025 15:54:11] Administrador Logou no Sistema
+[01/12/2025 15:54:17] Administrador escolheu a opcao: 5 - Visualizar Carteirinha de um Estudante
+[01/12/2025 15:55:21] Sistema aberto
+[01/12/2025 15:55:34] Administrador Logou no Sistema
+[01/12/2025 15:55:40] Administrador escolheu a opcao: 5 - Visualizar Carteirinha de um Estudante
+[01/12/2025 15:58:29] Sistema aberto
+[01/12/2025 15:58:41] Administrador Logou no Sistema
+[01/12/2025 15:59:03] Administrador escolheu a opcao: 5 - Visualizar Carteirinha de um Estudante
+[01/12/2025 15:59:33] Administrador escolheu a opcao: 5 - Visualizar Carteirinha de um Estudante
+[01/12/2025 16:01:32] Sistema aberto
+[01/12/2025 16:01:44] Administrador Logou no Sistema
+[01/12/2025 16:01:50] Administrador escolheu a opcao: 5 - Visualizar Carteirinha de um Estudante
+[01/12/2025 16:03:24] Sistema aberto
+[01/12/2025 16:03:43] Sistema aberto
+[01/12/2025 16:03:53] Estudante 120558 logou no sistema
+[01/12/2025 16:04:08] Estudante Escolheu a Opcao: 3 - Visualizar Carteirinha
+[01/12/2025 16:05:22] Sistema aberto
+[01/12/2025 16:05:48] Estudante 120558 logou no sistema
+[01/12/2025 16:06:05] Estudante Escolheu a Opcao: 3 - Visualizar Carteirinha

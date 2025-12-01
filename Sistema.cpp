@@ -68,7 +68,7 @@ Sistema::Sistema() : estudantes()
     this->carregarDados(); // Carrega os estudantes existentes
     if (estudantes.empty())
     { // Se não houver, cria um padrão (para testes)
-        EstudanteGraduacao *estudante = new EstudanteGraduacao("Luiz Filipe Santos Oliveira", "14422059629", "22/09/2006", "luiz.s.oliveira@ufv.br", "luiz", "120553", "CCP", "SISU");
+        EstudanteGraduacao *estudante = new EstudanteGraduacao("Luiz Filipe Santos Oliveira", "14422059629", "22/09/2006", "luiz.s.oliveira@ufv.br", "luiz", "120553", "141", "SISU");
         this->estudantes.push_back(estudante);
     }
     this->carregarLivros();
@@ -540,7 +540,7 @@ void Sistema::menuEstudante()
                 break;
             case 8:
                 escreveLog("Estudante Escolheu a Opcao: 8 - Devolver Livro");
-                this->estudante_logado->devolverLivro(*this->biblioteca);
+                this->estudante_logado->devolverLivro(*this->biblioteca);  //TODO: se o aluno escrever uma string no "id" do livro a ser devolvido, o terminal entra em loop com mensagem de erro
                 pausa(2);
                 apagarTerminal();
                 break;

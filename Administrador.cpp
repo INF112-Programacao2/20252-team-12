@@ -938,6 +938,7 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
 
     else if (opcao == 2)
     { // visualizar de todos os estudantes
+        std::cout<<std::endl;
         escreveDevagar("Exibindo informações...", 30);
         std::cout << std::endl
                   << std::endl;
@@ -955,8 +956,11 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
                 std::cerr << "❌ Não foi possível gerar a carteirinha de " << estudante->getNome() << ": " << e.what() << std::endl
                           << std::endl;
             }
+            std::cout<<"======================================================"<<std::endl;
         }
     }
+
+    escreveDevagar("Voltando ao painel de administrador...",40);
 }
 
 // TODO: Consertar a função, não está utilizando os métodos de validação
