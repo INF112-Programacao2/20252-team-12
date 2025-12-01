@@ -4,6 +4,14 @@
 #include <string>
 #include <iostream>
 
+static void limparTela(){
+    #if defined(_WIN32) || defined(_WIN64)
+        std::system("cls");
+    #else
+        std::system("clear");
+    #endif
+}
+
 Biblioteca::Biblioteca(const std::string& _nome) : nome(_nome), acervo() {}
 
 Biblioteca::~Biblioteca(){
@@ -59,36 +67,60 @@ std::string corta(std::string palavra, int n) {
     return saida;
 }
 
-// TODO: Organizar os livros no txt
 void Biblioteca::listarLivros(){
+    if (acervo.empty()) {
+        std::cout << "\n❌ Nenhum livro cadastrado no acervo.\n";
+        return;
+    }
 
-    std::ofstream listaLivros;
-    listaLivros.open("ListaLivros.txt");
+    const int LIVROS_POR_PAGINA = 10;
+    int totalLivros = acervo.size();
+    int totalPaginas = (totalLivros + LIVROS_POR_PAGINA - 1) / LIVROS_POR_PAGINA;
 
-    if(!listaLivros.is_open())
-        throw std::runtime_error("❌ Não foi possível abrir o arquvivo: Lista Livros");
+    for (int pagina = 0; pagina < totalPaginas; pagina++) {
+        limparTela();
+        std::cout << "\n================ ACERVO DA BIBLIOTECA (Página " << (pagina + 1) << "/" << totalPaginas << ") ================\n";
+        
+        // Cabeçalho
+        std::cout << std::left 
+                  << std::setw(4)  << "ID" 
+                  << std::setw(40) << "TITULO"
+                  << std::setw(25) << "AUTOR"
+                  << std::setw(20) << "AREA"
+                  << std::setw(12) << "STATUS"
+                  << std::endl;
 
-    listaLivros<<"LISTA DE LIVROS CADASTRADOS: "<<std::endl<<std::endl;
-    listaLivros
-    <<std::left
-    <<std::setw(80)<< "TITULO"
-    <<std::setw(50)<< "AUTOR"
-    <<std::setw(30)<< "TIPO"
-    <<std::right
-    <<std::setw(10)<< "TOTAL"
-    <<std::setw(10)<< "DISPONIVEL"
-    << "\n--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+        std::cout << "--------------------------------------------------------------------------------------------\n";
 
-    for(auto livro: acervo){
-        listaLivros
-        <<std::left<<std::setw(80)<<corta(livro->getTitulo(),80)<<
-        std::left<<std::setw(50)<<corta(livro->getAutor(),50)<<
-        std::left<<std::setw(30)<<corta(livro->getTipo(),30)<<
-        std::right<<std::setw(10)<<livro->getNumExemplaresTotal()<<
-        std::right<<std::setw(10)<<livro->getNumExemplaresDisponiveis()<<std::endl;
-    } 
+        int inicio = pagina * LIVROS_POR_PAGINA;
+        int fim = std::min(inicio + LIVROS_POR_PAGINA, totalLivros);
 
-    listaLivros.close();
-    if(listaLivros.fail())
-        throw std::runtime_error("❌ Não foi possível fechar o arquvivo: Lista Livros");
+        for (int i = inicio; i < fim; i++) {
+            Livro* livro = acervo[i];
+            
+            std::string status = (livro->getNumExemplaresDisponiveis() > 0) ? "DISPONIVEL" : "ESGOTADO";
+
+            std::cout << std::left
+                      << std::setw(4)  << (i + 1) // ID Visual
+                      << std::setw(40) << corta(livro->getTitulo(), 38)
+                      << std::setw(25) << corta(livro->getAutor(), 23)
+                      << std::setw(20) << corta(livro->getTipo(), 18)
+                      << std::setw(12) << status
+                      << std::endl;
+        }
+        std::cout << "============================================================================================\n";
+
+        if (pagina < totalPaginas - 1) {
+            std::cout << "\n[Enter] Próxima Página  |  [S] Sair da listagem: ";
+            std::string opcao;
+            std::getline(std::cin, opcao);
+            
+            if (opcao == "S" || opcao == "s") {
+                break;
+            }
+        } else {
+            std::cout << "\n(Fim da lista) Pressione Enter para voltar...";
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+    }
 }
