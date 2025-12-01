@@ -11,6 +11,7 @@
 #include <limits>
 #include <algorithm>
 #include "CImg.h"
+#include "Estudante.hpp"
 
 using namespace cimg_library;
 
@@ -706,7 +707,73 @@ void Administrador::recarregarCarteirinha(std::vector<Estudante*> &estudantes) {
 // Verificar se existe e trata os erros, exibir erro se algum estudante não colocou a foto na pasta, mas gerar do resto se conseguiu ter
 // Gera a carteirinha e coloca em uma pasta separada. Ex: 'Carteirinhas'
 // Tenta seguir o padrão das funções quando for pedir algum dado escrito e no UI
-void Administrador::visualizarCarteirinhas(std::vector<Estudante*> &estudantes){}
+void Administrador::visualizarCarteirinhas(std::vector<Estudante*> &estudantes){
+    int opcao;
+    escreveDevagar("Por favor, escolha a opção de visualização desejada: ", 30);
+    std::cout<<std::endl;
+    escreveDevagar("1 - Visualizar de um estudante",20);
+    std::cout<<std::endl;
+    escreveDevagar("2  - Visualizar de todos os estudantes",20);
+    std::cout<<std::endl;
+    
+        while (true) {
+        try {
+            std::cout<<"Opção: ";
+
+            if(!(std::cin>>opcao)){ //erro cin -- usuario digitou letra,simbolo,etc
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                throw std::invalid_argument("Entrada invalida! Digite um numero 1 ou 2.");
+            }
+
+            if(opcao < 1 || opcao > 2) {
+                throw std::invalid_argument("Opcao invalida! Digite 1 ou 2.");
+            }
+
+            break; //caso a entrada e a opcao seja valida
+        }
+        catch (const std::exception &e) {
+            std::cout<<e.what()<<std::endl<<std::endl;
+        }
+    }
+
+    if(opcao ==1) { //visualizar de um estudante
+        escreveDevagar("Por favor, preencha o campo abaixo: ",20);
+        std::cout<<std::endl;
+        std::string matricula_aluno;
+        escreveDevagar("Matricula do aluno: ",20);
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::getline(std::cin,matricula_aluno);
+
+        Estudante* aluno_carteirinha = nullptr;
+        for(auto estudante: estudantes){
+            if(estudante->get_matricula() == matricula_aluno){
+                aluno_carteirinha = estudante;
+                break;
+            }
+        }
+
+        if(aluno_carteirinha == nullptr){
+            escreveDevagar("Credenciais invalidas! Não foi possivel localizar o aluno",30);
+        }
+        else {
+            aluno_carteirinha->visualizarCarteirinha();
+        }
+    }
+
+    else if(opcao==2) { //visualizar de todos os estudantes
+        escreveDevagar("Exibindo informações...",30); std::cout<<std::endl<<std::endl;
+        for(auto estudante : estudantes) {
+            escreveDevagar("Exibindo carteirinha de: ",20); 
+            std::cout<<estudante->getNome()<<std::endl<<std::endl;
+            try{
+            estudante->visualizarCarteirinha();
+            } catch (const std::exception &e){
+                std::cerr<<"❌ Não foi possível gerar a carteirinha de "<< estudante->getNome()<< ": "<< e.what()<<std::endl<<std::endl;
+            }
+        }
+    }
+}
 
 std::string Administrador::alterarValorRU() {
 

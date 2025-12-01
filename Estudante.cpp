@@ -315,7 +315,7 @@ void Estudante::recarregarCarteirinha(){
 // Gera a carteirinha e coloca em uma pasta separada. Ex: 'Carteirinhas'
 // Tenta seguir o padrão das funções quando for pedir algum dado escrito e no UI
 void Estudante::visualizarCarteirinha(){
-    escreveDevagar("Antes de visualizar a carteirinha, adicione a imagem do estudante na pasta imagens (PRIMEIRONOMEALUNO_MATRICULA_(formato da imagem))",30);
+    escreveDevagar("Antes de visualizar a carteirinha, adicione a imagem do estudante na pasta images (PRIMEIRONOMEALUNO_MATRICULA_(formato da imagem))",30);
     std::cout<<std::endl;
     escreveDevagar("Selecione qual e a extensao do arquivo adicionado:" ,30);
     std::cout<<std::endl;
@@ -324,7 +324,7 @@ void Estudante::visualizarCarteirinha(){
     escreveDevagar("2 - .JPG/JPEG",20);
     std::cout<<std::endl;
     escreveDevagar("3 - .BMP",20);
-    std::cout<<std::endl;
+    std::cout<<std::endl; 
 
     int opcao;
     
@@ -390,6 +390,8 @@ void Estudante::visualizarCarteirinha(){
     else if (opcao==3)
         nome_foto_aluno+=".bmp";
 
+
+    std::cout<<"DEBUG : "<<nome_foto_aluno<<std::endl;
     CImg<unsigned char> aluno;
 
     try {

@@ -1,0 +1,3 @@
+GRAD;Luiz Filipe Santos Oliveira;14422059629;22/09/2006;luiz.s.oliveira@ufv.br;luiz;120553;CCP;SISU;0
+GRAD;thales;16602866621;22/12/1999;thales.neves@ufv.br;22bonito;120558;141;aluno;0
+GRAD;Agostinho Carrara;12345678912;20/10/1987;agostinho@ufv.br;mariaisabel;150225;135;SISU;0
