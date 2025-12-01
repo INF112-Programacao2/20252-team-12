@@ -7,27 +7,30 @@
 #include <vector>
 #include <fstream>
 
-class Sistema{
-    private:
-        std::ifstream arquivo_livros;
-        std::vector <Estudante*> estudantes;
-        Estudante* estudante_logado;
-        Administrador* admin;
-        Biblioteca* biblioteca;
+class Sistema
+{
+private:
+    std::ifstream arquivo_livros;
+    std::vector<Estudante *> estudantes;
+    Estudante *estudante_logado;
+    Administrador *admin;
+    Biblioteca *biblioteca;
 
-        void carregarLivros();
-        void carregarDados();
-        void salvarDados();
-        void menuAdministrador();
-        void menuEstudante();
-    public:
-        Sistema();
-        ~Sistema();
+    void carregarLivros();
+    void carregarDados();
+    void salvarDados();
+    void menuAdministrador();
+    void menuEstudante();
 
-        std::vector <Estudante*> get_estudantes();
-        Administrador* get_admin();
+public:
+    Sistema();
+    ~Sistema();
 
-        void iniciarSistema();
+    std::vector<Estudante *> get_estudantes();
+    Administrador *get_admin();
+
+    
+    void iniciarSistema();
 };
 
 #endif
