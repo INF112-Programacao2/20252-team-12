@@ -204,16 +204,6 @@ Administrador *Sistema::get_admin()
     return this->admin;
 }
 
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <iostream> // Apenas para debug, remover depois
-
-// Supondo que você tenha esta função definida e acessível (e sem o 'const'):
-void limparString(std::string &s); 
-// Inclua o código dela no seu arquivo .cpp ou .h
-
 void Sistema::carregarAdmin() {
     std::ifstream file("admin_dados.txt");
     
