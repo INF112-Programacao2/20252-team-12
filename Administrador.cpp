@@ -307,15 +307,20 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
 
     std::cout << "--------------------------------------------\n";
 
-    //TODO: validar curso
-
     do
     {
-        std::cout << "-> Curso: ";
-        std::getline(std::cin, _curso);
-        if (_curso.empty())
-            std::cout << "⚠️  Nome do curso obrigatório.\n";
-    } while (_curso.empty());
+        try {
+            std::cout << "-> Curso (Nome ou Código): ";
+            std::getline(std::cin, _curso);
+            
+            validarCURSO(_curso); 
+            
+            std::cout << "   (Curso selecionado: " << _curso << ")\n"; 
+            break;
+        } catch (const std::exception &e) {
+            std::cout << e.what() << std::endl;
+        }
+    } while (true);
 
     std::cout << "--------------------------------------------\n";
 
@@ -505,13 +510,16 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
 
     case 3: // ====== ALTERAR CURSO ======
         do {
-            std::cout << "-> Novo Curso (Sigla ou Nome): ";
-            std::getline(std::cin, novoDado);
-            //TODO: validar curso
-            if (novoDado.empty()) std::cout << "❌ O curso não pode estar vazio.\n";
-            else {
+            try {
+                std::cout << "-> Novo Curso (Sigla ou Nome): ";
+                std::getline(std::cin, novoDado);
+                
+                validarCURSO(novoDado);
+                
                 estudanteAlvo->set_curso(novoDado);
                 break;
+            } catch (const std::exception &e) {
+                std::cout << e.what() << std::endl;
             }
         } while (true);
         break;

@@ -4,6 +4,7 @@
 #include <string>
 #include <cctype> 
 #include <vector>
+#include <fstream>
 
 void limparString(std::string &string){
     auto it_reverso = std::find_if(string.rbegin(), string.rend(), [](int ch) {
@@ -206,6 +207,65 @@ bool validarMATRICULA(const std::string &matricula)
     }
     
     if (matricula.size() != 6) throw std::invalid_argument("❌ Matrícula deve conter 6 dígitos.");
+
+    return true;
+}
+
+static std::string paraMaiusculo(std::string str) {
+    std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+    return str;
+}
+
+bool validarCURSO(std::string &cursoInput)
+{
+    if (cursoInput.empty()) {
+        throw std::invalid_argument("❌ O curso não pode estar vazio.");
+    }
+
+    std::ifstream arquivo("codigo_cursos.txt"); //
+    if (!arquivo.is_open()) {
+        throw std::runtime_error("❌ Erro crítico: Não foi possível abrir o banco de dados de cursos (codigo_cursos.txt).");
+    }
+
+    std::string linha;
+    std::string inputUpper = paraMaiusculo(cursoInput);
+    bool header = true;
+    bool encontrado = false;
+
+    while (std::getline(arquivo, linha)) {
+        if (header) {
+            header = false;
+            continue;
+        }
+
+        if (linha.empty()) continue;
+
+        size_t posEspaco = linha.find(' ');
+        if (posEspaco == std::string::npos) continue;
+
+        std::string codigoArquivo = linha.substr(0, posEspaco);
+        std::string nomeArquivo = linha.substr(posEspaco + 1);
+        
+        limparString(nomeArquivo); 
+
+        if (inputUpper == codigoArquivo) {
+            cursoInput = codigoArquivo;
+            encontrado = true;
+            break;
+        }
+
+        if (inputUpper == paraMaiusculo(nomeArquivo)) {
+            cursoInput = codigoArquivo; //Salva o código no lugar do nome
+            encontrado = true;
+            break;
+        }
+    }
+
+    arquivo.close();
+
+    if (!encontrado) {
+        throw std::invalid_argument("❌ Curso não encontrado! Verifique o código ou nome.");
+    }
 
     return true;
 }
