@@ -1,6 +1,0 @@
-LISTA DE ESTUDANTES CADASTRADOS: 
-
-NOME                                    DATA DE NASCIMENTO       MATRICULA   CURSO       
-----------------------------------------------------------------------------------------------------------------
-Luiz Filipe Santos Oliveira             22/09/2006               120553      CCP         
-Joao                                    28/01/2007               120574      CCP         

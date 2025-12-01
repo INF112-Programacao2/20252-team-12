@@ -6,7 +6,7 @@ CXX = g++
 
 CXXFLAGS = -Wall -std=c++17 -g
 
-TARGET = carteirinha
+TARGET = main
 
 SRCS = main.cpp \
        Sistema.cpp \
@@ -28,7 +28,7 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	@echo "Linkando o executável: $(TARGET)..."
-	@$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
+	@$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) -lX11 -lpthread
 	@echo "Compilação concluída com sucesso!"
 
 %.o: %.cpp
