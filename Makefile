@@ -20,7 +20,7 @@ SRCS = main.cpp \
        Livro.cpp \
        Transacao.cpp \
        Emprestimo.cpp \
-       validar.cpp 
+       Validar.cpp 
 
 OBJS = $(SRCS:.cpp=.o)
 

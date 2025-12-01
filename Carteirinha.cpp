@@ -1,23 +1,10 @@
 #include "Carteirinha.hpp"
+#include "Validar.hpp"
 #include <chrono>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-static std::string getDataAtual() {
-    auto agora = std::chrono::system_clock::now();
-
-    std::time_t tt = std::chrono::system_clock::to_time_t(agora);
-
-    std::tm* data = std::localtime(&tt);
-
-    std::stringstream ss;
-    ss << std::setfill('0') << std::setw(2) << data->tm_mday << "/"
-       << std::setw(2) << data->tm_mon + 1 << "/"
-       << data->tm_year + 1900;
-
-    return ss.str();
-}
 
 // Atributos estáticos da classe para mudar em todas os objetos
 int Carteirinha::nextId = 1;
