@@ -320,6 +320,7 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
     escreveDevagar("Estudante de matrícula " + _matricula + " foi cadastrado com sucesso! ✅\n", 50);
 }
 
+//TODO: campo de grad/posgrad
 void Administrador::listarEstudante(std::vector<Estudante *> &estudantes)
 {
 
@@ -350,8 +351,6 @@ void Administrador::listarEstudante(std::vector<Estudante *> &estudantes)
     }
 }
 
-// TODO: Consertar a função, não está utilizando os métodos de validação
-// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
 {
     std::cout << "\n============================================\n";
@@ -359,47 +358,45 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
     std::cout << "============================================\n";
 
     std::string matricula;
-    bool entradaValida = false;
+    Estudante *estudanteAlvo = nullptr;
 
-    // ====== LEITURA E VALIDAÇÃO DA MATRÍCULA ======
-    do
+    while (true)
     {
-        std::cout << "-> Matrícula do aluno: ";
-        std::cin >> matricula;
-
-        bool apenasNumeros = !matricula.empty() &&
-                             std::all_of(matricula.begin(), matricula.end(), ::isdigit);
-
-        if (apenasNumeros)
+        try 
         {
-            entradaValida = true;
+            std::cout << "-> Matrícula do aluno (ou '0' para sair): ";
+            std::cin >> matricula;
+
+            if (matricula == "0") return 0;
+
+            validarMATRICULA(matricula);
+
+            bool encontrado = false;
+            for (auto *est : estudantes)
+            {
+                if (est->get_matricula() == matricula)
+                {
+                    estudanteAlvo = est;
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (!encontrado) {
+                throw std::invalid_argument("❌ Estudante não encontrado com a matrícula informada.");
+            }
+
+            break; 
         }
-        else
+        catch (const std::exception &e)
         {
-            std::cout << "❌ A matrícula deve conter APENAS números (sem letras ou símbolos).\n";
-            std::cin.clear();
+            std::cout << e.what() << std::endl;
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
-
-    } while (!entradaValida);
-
-    // Busca o estudante pela matrícula
-    Estudante *estudanteAlvo = nullptr;
-    for (auto *est : estudantes)
-    {
-        if (est->get_matricula() == matricula)
-        {
-            estudanteAlvo = est;
-            break;
-        }
     }
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Limpa buffer após cin >>
 
-    if (estudanteAlvo == nullptr)
-    {
-        throw std::invalid_argument("❌ Estudante não encontrado com a matrícula: " + matricula);
-    }
-
-    int opcao;
+    int opcao = 0;
     std::cout << "\nEstudante encontrado: " << estudanteAlvo->getNome() << "\n";
     std::cout << "--------------------------------------------\n";
     std::cout << "1 - Alterar Nome\n";
@@ -409,13 +406,13 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
     std::cout << "5 - Cancelar\n";
     std::cout << "--------------------------------------------\n";
 
-    // ====== LEITURA SEGURA DA OPÇÃO ======
     while (true)
     {
         std::cout << "Opção: ";
         if (std::cin >> opcao)
         {
-            break;
+            if (opcao >= 1 && opcao <= 5) break;
+            std::cout << "❌ Opção inválida. Escolha entre 1 e 5.\n";
         }
         else
         {
@@ -431,116 +428,118 @@ int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
     switch (opcao)
     {
     case 1: // ====== ALTERAR NOME ======
-        do {
+        while (true) {
             try {
                 std::cout << "-> Novo Nome: ";
                 std::getline(std::cin, novoDado);
                 validarNOME(novoDado);
+                
                 estudanteAlvo->setNome(novoDado);
                 break;
             } catch (const std::exception &e) {
                 std::cout << e.what() << std::endl;
             }
-        } while (true);
+        }
         break;
 
     case 2: // ====== ALTERAR EMAIL ======
-        do {
+        while (true) {
             try {
                 std::cout << "-> Novo Email: ";
                 std::getline(std::cin, novoDado);
                 validarEMAIL(novoDado);
+
+                if (novoDado.substr(novoDado.size()-7) != "@ufv.br" || novoDado.size() <= 7) {
+                     throw std::invalid_argument("⚠️  Email inválido (Utilize somente email institucional '@ufv.br').");
+                }
+
                 estudanteAlvo->setEmail(novoDado);
                 break;
             } catch (const std::exception &e) {
                 std::cout << e.what() << std::endl;
             }
-        } while (true);
+        }
         break;
 
     case 3: // ====== ALTERAR CURSO ======
-        do {
+        while (true) {
             try {
                 std::cout << "-> Novo Curso (Sigla ou Nome): ";
                 std::getline(std::cin, novoDado);
                 
-                // TODO validarCURSO(novoDado);
+                validarCURSO(novoDado); 
                 
                 estudanteAlvo->set_curso(novoDado);
                 break;
             } catch (const std::exception &e) {
                 std::cout << e.what() << std::endl;
             }
-        } while (true);
+        }
         break;
 
     case 4: // ====== ALTERAR SENHA ======
-        do {
+        while (true) {
             try {
-                std::cout << "-> Nova Senha: ";
+                std::cout << "-> Nova Senha (min 6 caracteres, letras e números): ";
                 std::getline(std::cin, novoDado);
                 validarSENHA(novoDado);
+                
                 estudanteAlvo->setSenha(novoDado);
                 break;
             } catch (const std::exception &e) {
                 std::cout << e.what() << std::endl;
             }
-        } while (true);
+        }
         break;
 
     case 5:
         std::cout << "Operação cancelada.\n";
         return 5;
-
-    default:
-        std::cout << "❌ Opção inválida selecionada.\n";
-        return 0;
     }
 
     escreveDevagar("\n✅ Dados atualizados com sucesso!\n", 50);
     return opcao;
 }
 
-// TODO: Consertar a função, não está utilizando os métodos de validação
-// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::alterarSenhaAdministrador()
 {
     std::cout << "--------------------------------------------\n";
     std::string nova_senha;
     std::string confirmacao_senha;
 
-    do
+    while (true)
     {
-        std::cout << "-> Digite sua nova senha (min 6 caracteres): ";
-        std::getline(std::cin, nova_senha);
-
-        if (nova_senha.length() < 6)
+        try 
         {
-            std::cout << "⚠️  Erro: A senha é muito curta. Use no mínimo 6 caracteres.\n";
-            continue;
+            std::cout << "-> Digite sua nova senha (min 6 caracteres): ";
+            std::getline(std::cin, nova_senha);
+
+            validarSENHA(nova_senha); 
+
+            std::cout << "-> Confirme a nova senha: ";
+            std::getline(std::cin, confirmacao_senha);
+
+            if (nova_senha != confirmacao_senha)
+            {
+                throw std::invalid_argument("⚠️  Erro: As senhas não coincidem. Tente novamente.");
+            }
+
+            break; 
         }
-
-        std::cout << "-> Confirme a nova senha: ";
-        std::getline(std::cin, confirmacao_senha);
-
-        if (nova_senha != confirmacao_senha)
+        catch (const std::exception &e)
         {
-            std::cout << "⚠️  Erro: As senhas não coincidem. Tente novamente.\n";
+            std::cout << e.what() << std::endl;
             std::cout << "--------------------------------------------\n";
         }
-
-    } while (nova_senha.length() < 6 || nova_senha != confirmacao_senha);
+    }
 
     this->setSenha(nova_senha);
     std::cout << "--------------------------------------------\n";
     escreveDevagar("✅ Senha alterada com sucesso!", 50);
 }
 
-// TODO: Consertar a função, não está utilizando os métodos de validação
-// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::consultarTransacoes(std::vector<Estudante *> &estudantes)
 {
-
     std::cout << "\n============================================\n";
     std::cout << "   📚 MENU DE CONSULTA DE TRANSAÇÕES 📚\n";
     std::cout << "============================================\n";
@@ -551,15 +550,11 @@ void Administrador::consultarTransacoes(std::vector<Estudante *> &estudantes)
     {
         std::cout << "# Deseja visualizar todas as transações? (S/N): ";
         std::cin >> resposta;
-
-        resposta = toupper(resposta);
-
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        if (resposta == 'S' || resposta == 'N')
-        {
-            break;
-        }
+        resposta = toupper(resposta);
+        if (resposta == 'S' || resposta == 'N') break;
+
         std::cout << "⚠️  Opção inválida. Digite apenas S ou N.\n";
     }
 
@@ -589,67 +584,63 @@ void Administrador::consultarTransacoes(std::vector<Estudante *> &estudantes)
     else
     {
         std::string matricula;
+        Estudante* estudanteEncontrado = nullptr;
 
-        bool entradaValida = false;
-
-        do
+        while (true)
         {
-            std::cout << "-> Matrícula do aluno: ";
-            std::cin >> matricula;
-            bool apenasNumeros = !matricula.empty() && std::all_of(matricula.begin(), matricula.end(), ::isdigit);
+            try 
+            {
+                std::cout << "-> Matrícula do aluno (ou '0' para voltar): ";
+                std::cin >> matricula;
 
-            if (apenasNumeros)
-            {
-                entradaValida = true;
+                if (matricula == "0") return;
+
+                validarMATRICULA(matricula);
+
+                bool achou = false;
+                for (auto estudante : estudantes)
+                {
+                    if (estudante->get_matricula() == matricula)
+                    {
+                        estudanteEncontrado = estudante;
+                        achou = true;
+                        break;
+                    }
+                }
+
+                if (!achou) {
+                    throw std::invalid_argument("❌ Erro: Não foi possível localizar o Estudante com a matrícula " + matricula);
+                }
+
+                break;
             }
-            else
+            catch (const std::exception &e)
             {
-                std::cout << "⚠️  Erro: A matrícula deve conter APENAS números (sem letras ou símbolos).\n";
+                std::cout << e.what() << std::endl;
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            }
-
-        } while (!entradaValida);
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        apagarTerminal();
-
-        bool encontrado = false;
-
-        for (auto estudante : estudantes)
-        {
-            if (estudante->get_matricula() == matricula)
-            {
-                std::cout << "--------------------------------------------\n";
-                std::cout << "Aluno: " << estudante->getNome() << " - Matrícula: " << estudante->get_matricula() << std::endl;
-                std::cout << "--------------------------------------------\n";
-
-                if (estudante->get_carteirinha())
-                {
-                    estudante->get_carteirinha()->exibir_extrato();
-                }
-                else
-                {
-                    std::cout << "⚠️  Este aluno não possui carteirinha ativa.\n";
-                }
-
-                encontrado = true;
-                return;
             }
         }
 
-        if (!encontrado)
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        apagarTerminal();
+
+        std::cout << "--------------------------------------------\n";
+        std::cout << "Aluno: " << estudanteEncontrado->getNome() << " - Matrícula: " << estudanteEncontrado->get_matricula() << std::endl;
+        std::cout << "--------------------------------------------\n";
+
+        if (estudanteEncontrado->get_carteirinha())
         {
-            std::cout << "❌ Erro: Não foi possível localizar o Estudante com matrícula " << matricula << "\n";
+            estudanteEncontrado->get_carteirinha()->exibir_extrato();
+        }
+        else
+        {
+            std::cout << "⚠️  Este aluno não possui carteirinha ativa.\n";
         }
     }
 }
 
-// TODO: Consertar a função, não está utilizando os métodos de validação
-// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::consultarEmprestimos(std::vector<Estudante *> &estudantes)
 {
-
     std::cout << "\n============================================\n";
     std::cout << "  📚 MENU DE CONSULTA DE EMPRÉSTIMOS 📚\n";
     std::cout << "============================================\n";
@@ -658,15 +649,26 @@ void Administrador::consultarEmprestimos(std::vector<Estudante *> &estudantes)
 
     while (true)
     {
-        std::cout << "# Deseja visualizar todas os empréstimos? (S/N)" << std::endl;
+        std::cout << "# Deseja visualizar todas os empréstimos? (S/N): ";
         std::cin >> resposta;
-        if (resposta == 'S' || resposta == 's' || resposta == 'N' || resposta == 'n')
-            break;
-        apagarTerminal();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        resposta = toupper(resposta);
+        if (resposta == 'S' || resposta == 'N') break;
+
+        std::cout << "⚠️  Opção inválida. Digite apenas S ou N.\n";
     }
 
-    if (resposta == 'S' || resposta == 's')
+    apagarTerminal();
+
+    if (resposta == 'S')
     {
+        if (estudantes.empty())
+        {
+            std::cout << "⚠️  Nenhum estudante cadastrado.\n";
+            return;
+        }
+
         for (auto estudante : estudantes)
         {
             std::cout << "--------------------------------------------\n";
@@ -678,89 +680,107 @@ void Administrador::consultarEmprestimos(std::vector<Estudante *> &estudantes)
     else
     {
         std::string matricula;
+        Estudante* estudanteEncontrado = nullptr;
 
-        bool entradaValida = false;
-
-        do
+        while (true)
         {
-            std::cout << "-> Matrícula do aluno: ";
-            std::cin >> matricula;
-            bool apenasNumeros = !matricula.empty() && std::all_of(matricula.begin(), matricula.end(), ::isdigit);
+            try
+            {
+                std::cout << "-> Matrícula do aluno (ou '0' para voltar): ";
+                std::cin >> matricula;
 
-            if (apenasNumeros)
-            {
-                entradaValida = true;
+                if (matricula == "0") return;
+
+                validarMATRICULA(matricula);
+
+                bool achou = false;
+                for (auto estudante : estudantes)
+                {
+                    if (estudante->get_matricula() == matricula)
+                    {
+                        estudanteEncontrado = estudante;
+                        achou = true;
+                        break;
+                    }
+                }
+
+                if (!achou) {
+                    throw std::invalid_argument("❌ Erro: Não foi possível localizar o Estudante com matrícula " + matricula);
+                }
+
+                break;
             }
-            else
+            catch (const std::exception &e)
             {
-                std::cout << "⚠️  Erro: A matrícula deve conter APENAS números (sem letras ou símbolos).\n";
+                std::cout << e.what() << std::endl;
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             }
-
-        } while (!entradaValida);
+        }
 
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        apagarTerminal();
-
-        for (auto estudante : estudantes)
-        {
-            if (estudante->get_matricula() == matricula)
-            {
-                std::cout << "--------------------------------------------\n";
-                std::cout << estudante->getNome() << " - " << estudante->get_matricula() << std::endl;
-                std::cout << "--------------------------------------------\n";
-                estudante->exibirEmprestimos();
-                return;
-            }
-        }
-        std::cout << "❌ Não foi possível localizar o Estudante com matrícula " << matricula << "\n";
+        
+        std::cout << "--------------------------------------------\n";
+        std::cout << estudanteEncontrado->getNome() << " - " << estudanteEncontrado->get_matricula() << std::endl;
+        std::cout << "--------------------------------------------\n";
+        estudanteEncontrado->exibirEmprestimos();
     }
 }
 
-// TODO: Consertar a função, não está utilizando os métodos de validação
-// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::recarregarCarteirinha(std::vector<Estudante *> &estudantes)
 {
-
     std::cout << "\n============================================\n";
     std::cout << "  📚 MENU DE CARREGAMENTO DE CARTEIRINHA 📚\n";
     std::cout << "============================================\n";
 
     std::string matricula;
+    Estudante *estudanteAlvo = nullptr;
 
-    bool entradaValida = false;
-
-    do
+    while (true)
     {
-        std::cout << "-> Matrícula do aluno: ";
-        std::cin >> matricula;
-        bool apenasNumeros = !matricula.empty() && std::all_of(matricula.begin(), matricula.end(), ::isdigit);
+        try
+        {
+            std::cout << "-> Matrícula do aluno (ou '0' para sair): ";
+            std::cin >> matricula;
 
-        if (apenasNumeros)
-        {
-            entradaValida = true;
+            if (matricula == "0") return;
+
+            validarMATRICULA(matricula);
+
+            bool encontrado = false;
+            for (auto *est : estudantes)
+            {
+                if (est->get_matricula() == matricula)
+                {
+                    estudanteAlvo = est;
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (!encontrado)
+            {
+                throw std::invalid_argument("❌ Erro: Não foi possível localizar o Estudante com matrícula " + matricula);
+            }
+
+            break;
         }
-        else
+        catch (const std::exception &e)
         {
-            std::cout << "⚠️  Erro: A matrícula deve conter APENAS números (sem letras ou símbolos).\n";
+            std::cout << e.what() << std::endl;
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        }
-
-    } while (!entradaValida);
-
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-    for (auto estudante : estudantes)
-    {
-        if (estudante->get_matricula() == matricula)
-        {
-            estudante->recarregarCarteirinha();
-            return;
         }
     }
 
-    throw std::invalid_argument("❌ Não foi possível localizar o Estudante com matrícula " + matricula);
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    if (estudanteAlvo != nullptr)
+    {
+        try {
+            estudanteAlvo->recarregarCarteirinha();
+        } catch (const std::exception &e) {
+            std::cout << "❌ Falha na recarga: " << e.what() << std::endl;
+        }
+    }
 }
 
 // TODO: (Thales) Implementar a função de gerar carteirinha
@@ -771,8 +791,6 @@ void Administrador::recarregarCarteirinha(std::vector<Estudante *> &estudantes)
 // Tenta seguir o padrão das funções quando for pedir algum dado escrito e no UI
 
 
-// TODO: Consertar a função, não está utilizando os métodos de validação
-// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
 {
     int opcao;
@@ -780,7 +798,7 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
     std::cout << std::endl;
     escreveDevagar("1 - Visualizar de um estudante", 20);
     std::cout << std::endl;
-    escreveDevagar("2  - Visualizar de todos os estudantes", 20);
+    escreveDevagar("2 - Visualizar de todos os estudantes", 20);
     std::cout << std::endl;
 
     while (true)
@@ -788,307 +806,305 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
         try
         {
             std::cout << "Opção: ";
-
             if (!(std::cin >> opcao))
-            { // erro cin -- usuario digitou letra,simbolo,etc
+            {
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                throw std::invalid_argument("Entrada invalida! Digite um numero 1 ou 2.");
+                throw std::invalid_argument("❌ Entrada inválida! Digite um número.");
             }
 
             if (opcao < 1 || opcao > 2)
             {
-                throw std::invalid_argument("Opcao invalida! Digite 1 ou 2.");
+                throw std::invalid_argument("❌ Opção inválida! Digite 1 ou 2.");
             }
 
-            break; // caso a entrada e a opcao seja valida
+            break;
         }
         catch (const std::exception &e)
         {
-            std::cout << e.what() << std::endl
-                      << std::endl;
+            std::cout << e.what() << std::endl << std::endl;
         }
     }
+    
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     if (opcao == 1)
-    { // visualizar de um estudante
-        escreveDevagar("Por favor, preencha o campo abaixo: ", 20);
-        std::cout << std::endl;
+    { 
+        escreveDevagar("Por favor, preencha o campo abaixo: \n", 20);
+        
         std::string matricula_aluno;
-        escreveDevagar("Matricula do aluno: ", 20);
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::getline(std::cin, matricula_aluno);
-
         Estudante *aluno_carteirinha = nullptr;
-        for (auto estudante : estudantes)
+
+        while (true) 
         {
-            if (estudante->get_matricula() == matricula_aluno)
+            try 
             {
-                aluno_carteirinha = estudante;
+                escreveDevagar("Matricula do aluno (ou '0' para voltar): ", 20);
+                std::cin >> matricula_aluno;
+
+                if (matricula_aluno == "0") return;
+
+                validarMATRICULA(matricula_aluno);
+
+                bool encontrado = false;
+                for (auto estudante : estudantes)
+                {
+                    if (estudante->get_matricula() == matricula_aluno)
+                    {
+                        aluno_carteirinha = estudante;
+                        encontrado = true;
+                        break;
+                    }
+                }
+
+                if (!encontrado)
+                {
+                    throw std::invalid_argument("❌ Credenciais inválidas! Não foi possível localizar o aluno com essa matrícula.");
+                }
+
                 break;
             }
+            catch (const std::exception &e)
+            {
+                std::cout << "\n" << e.what() << std::endl << std::endl;
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Limpa buffer em caso de erro
+            }
         }
+        
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
 
-        if (aluno_carteirinha == nullptr)
+        if (aluno_carteirinha != nullptr) 
         {
-            escreveDevagar("Credenciais invalidas! Não foi possivel localizar o aluno", 30);
-        }
-        else
-        {
-            aluno_carteirinha->visualizarCarteirinha();
+            try {
+                aluno_carteirinha->visualizarCarteirinha();
+            } catch (const std::exception &e) {
+                std::cout << "❌ Erro ao visualizar carteirinha: " << e.what() << std::endl;
+            }
         }
     }
-
     else if (opcao == 2)
-    { // visualizar de todos os estudantes
-        std::cout<<std::endl;
+    { 
+        std::cout << std::endl;
         escreveDevagar("Exibindo informações...", 30);
-        std::cout << std::endl
-                  << std::endl;
+        std::cout << "\n\n";
+        
+        if (estudantes.empty()) {
+            std::cout << "⚠️  Nenhum estudante cadastrado.\n";
+        }
+
         for (auto estudante : estudantes)
         {
             escreveDevagar("Exibindo carteirinha de: ", 20);
-            std::cout << estudante->getNome() << std::endl
-                      << std::endl;
+            std::cout << estudante->getNome() << " (" << estudante->get_matricula() << ")\n\n";
             try
             {
                 estudante->visualizarCarteirinha();
             }
             catch (const std::exception &e)
             {
-                std::cerr << "❌ Não foi possível gerar a carteirinha de " << estudante->getNome() << ": " << e.what() << std::endl
-                          << std::endl;
+                std::cerr << "❌ Não foi possível gerar a carteirinha de " << estudante->getNome() << ": " << e.what() << std::endl << std::endl;
             }
-            std::cout<<"======================================================"<<std::endl;
+            std::cout << "======================================================\n";
         }
     }
 
-    escreveDevagar("Voltando ao painel de administrador...",40);
+    escreveDevagar("Voltando ao painel de administrador...", 40);
 }
 
-// TODO: Consertar a função, não está utilizando os métodos de validação
-// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 std::string Administrador::alterarValorRU()
 {
-
     std::cout << "\n============================================\n";
     std::cout << "   📚 MENU DE ALTERAÇÃO DE VALOR RU 📚\n";
     std::cout << "============================================\n";
 
-    std::string gradOuPos;
-    char resposta;
-    double novo_valor;
     std::cout << "Escolha o nível do estudante:\n";
     std::cout << "1 - Graduação\n2 - Pós-Graduação\n";
-    std::cout << "Opção: ";
+
+    char resposta;
+    double novo_valor;
 
     while (true)
     {
-        std::cin >> resposta;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        if (resposta == '1' || resposta == '2')
+        try
         {
+            std::cout << "Opção: ";
+            std::cin >> resposta;
+            
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+            if (resposta != '1' && resposta != '2')
+            {
+                throw std::invalid_argument("❌ Opção inválida. Digite 1 ou 2.");
+            }
+
             break;
         }
-        std::cout << "❌ Opção inválida. Digite 1 ou 2: ";
+        catch (const std::exception &e)
+        {
+            std::cout << e.what() << std::endl;
+        }
     }
-
-    std::cout << "-> Novo valor: ";
-
     while (true)
     {
-        std::cin >> novo_valor;
+        try
+        {
+            std::cout << "-> Novo valor (R$): ";
+            
+            if (!(std::cin >> novo_valor))
+            {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                throw std::invalid_argument("❌ Entrada inválida. Digite um número real (ex: 5.90).");
+            }
 
-        if (std::cin.fail() || novo_valor < 0)
-        {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "❌ Valor inválido. Digite um número positivo: ";
-        }
-        else
-        {
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            if (novo_valor < 0)
+            {
+                throw std::invalid_argument("❌ O valor não pode ser negativo.");
+            }
+
             break;
         }
+        catch (const std::exception &e)
+        {
+            std::cout << e.what() << std::endl;
+        }
     }
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::string gradOuPos;
 
     if (resposta == '1')
     {
         EstudanteGraduacao::set_valorRU(novo_valor);
         gradOuPos = "Graduação";
     }
-    else if (resposta == '2')
+    else
     {
         EstudantePosGraduacao::set_valorRU(novo_valor);
         gradOuPos = "Pós-Graduação";
     }
 
-    escreveDevagar("\nValor alterado com sucesso! ✅", 50);
+    escreveDevagar("\n✅ Valor alterado com sucesso para " + gradOuPos + "! \n", 50);
     return gradOuPos;
 }
 
-// TODO: Consertar a função, não está utilizando os métodos de validação
-// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::alterarValorMulta()
 {
-
     std::cout << "\n=================================================================================\n";
     std::cout << "   📚 MENU DE ALTERAÇÃO DE VALOR NA MULTA DE EMPRÉSTIMO 📚\n";
     std::cout << "=================================================================================\n";
 
     double novo_valor;
-    std::cout << "-> Valor da nova multa: ";
 
     while (true)
     {
-        std::cin >> novo_valor;
+        try
+        {
+            std::cout << "-> Valor da nova multa: ";
+            
+            if (!(std::cin >> novo_valor))
+            {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                throw std::invalid_argument("❌ Entrada inválida. Digite um número positivo.");
+            }
 
-        if (std::cin.fail() || novo_valor < 0)
-        {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "❌ Valor inválido. Digite um número positivo: ";
-        }
-        else
-        {
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            if (novo_valor < 0)
+            {
+                throw std::invalid_argument("❌ O valor da multa não pode ser negativo.");
+            }
+
             break;
         }
+        catch (const std::exception &e)
+        {
+            std::cout << e.what() << std::endl;
+        }
     }
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     Emprestimo::setMulta(novo_valor);
     escreveDevagar("✅ Valor da multa alterado com sucesso!", 50);
 }
 
-// TODO: Consertar a função, não está utilizando os métodos de validação
-// Os erros não devem ser impressos devem usar o throw, utilizar a lógica de while a entrada não for valida, nao mandar o throw la pra fora
 void Administrador::mobilidadeAcademica(std::vector<Estudante *> &estudantes)
 {
+    std::cout << "\n============================================\n";
+    std::cout << "   📚 MENU DE MOBILIDADE ACADÊMICA 📚\n";
+    std::cout << "============================================\n";
 
-    std::ifstream leitura;
-    leitura.open("codigo_cursos.txt");
-
-    // Verifica se o arquivo abriu antes de pedir dados ao usuário
-    if (!leitura.is_open())
-    {
-        std::cout << "❌ Erro crítico: Não foi possível abrir o banco de dados de cursos (codigo_cursos.txt).\n";
-        return;
-    }
-
-    std::string matricula_aluno, parametro;
+    std::string matricula_aluno;
+    Estudante *estudanteAlvo = nullptr;
 
     while (true)
     {
-        std::cout << "Matricula do Aluno: ";
-        std::getline(std::cin, matricula_aluno);
-
-        if (matricula_aluno.empty())
+        try
         {
-            std::cout << "Entrada vazia. Digite novamente." << std::endl;
-            continue;
-        }
+            std::cout << "-> Matrícula do aluno (ou '0' para sair): ";
+            std::cin >> matricula_aluno;
 
-        bool numero = true;
+            if (matricula_aluno == "0") return;
 
-        for (char c : matricula_aluno)
-        {
-            if (!isdigit(c))
+            validarMATRICULA(matricula_aluno);
+
+            bool encontrado = false;
+            for (auto *est : estudantes)
             {
-                numero = false;
-                break;
+                if (est->get_matricula() == matricula_aluno)
+                {
+                    estudanteAlvo = est;
+                    encontrado = true;
+                    break;
+                }
             }
-        }
 
-        if (!numero)
+            if (!encontrado)
+            {
+                throw std::invalid_argument("❌ Erro: Aluno não encontrado com a matrícula " + matricula_aluno);
+            }
+
+            break; 
+        }
+        catch (const std::exception &e)
         {
-            std::cout << "A matricula deve conter apenas numeros." << std::endl;
-            continue;
-        }
-
-        break;
-    }
-
-    Estudante *estudante = nullptr;
-    for (auto aluno : estudantes)
-    {
-        if (aluno->get_matricula() == matricula_aluno)
-        {
-            estudante = aluno;
-            break;
+            std::cout << e.what() << std::endl;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
+    
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    if (estudante == nullptr)
-    {
-        std::cout << "❌ Aluno não encontrado com a matrícula " << matricula_aluno << ".\n";
-        leitura.close();
-        return;
-    }
-
-    std::cout << "Aluno selecionado: " << estudante->getNome() << "\n";
+    std::cout << "\nAluno selecionado: " << estudanteAlvo->getNome() << "\n";
+    std::cout << "Curso atual: " << estudanteAlvo->get_curso() << "\n";
     std::cout << "--------------------------------------------\n";
 
+    std::string novoCurso;
+
     while (true)
     {
-        std::cout << "Novo curso (digite o CODIGO ou o NOME): ";
-        std::getline(std::cin, parametro);
+        try 
+        {
+            std::cout << "-> Novo curso (Código ou Nome): ";
+            std::getline(std::cin, novoCurso);
 
-        if (!parametro.empty())
+            validarCURSO(novoCurso); 
+
+            if (novoCurso == estudanteAlvo->get_curso()) {
+                 throw std::invalid_argument("⚠️  O aluno já está matriculado neste curso.");
+            }
+
             break;
-        std::cout << "⚠️  O campo não pode ser vazio.\n";
-    }
-
-    bool numerico = std::all_of(parametro.begin(), parametro.end(), ::isdigit);
-
-    if (!numerico)                               // se o parametro for pelo nome do curso
-        parametro = deixar_maiusculo(parametro); // deixamos o parametro todo em maisculo para procurar no .txt
-
-    std::string linha;
-    bool aux = true;
-    std::string nome_curso, codigo_curso;
-    bool encontrou = false;
-
-    while (std::getline(leitura, linha))
-    {
-        if (aux)
-        { // ignorar a primeira linha (lixo)
-            aux = false;
-            continue;
         }
-
-        auto pos = linha.find(' '); // acha o espaço -- antes do espaço (codigo numerico) e depois do espaço (nome do curso)
-        codigo_curso = linha.substr(0, pos);
-        nome_curso = linha.substr(pos + 1);
-
-        if (numerico)
-        { // se o parametro passado para mobilidade é o codigo da disciplina
-            if (codigo_curso == parametro)
-            {
-                encontrou = true;
-                break; // nao precisamos mais ler o arquivo
-            }
-        }
-        else
-        { // se o parametro passado para mobilidade é o nome da disciplina
-            if (nome_curso == parametro)
-            {
-                encontrou = true;
-                break;
-            }
+        catch (const std::exception &e)
+        {
+            std::cout << e.what() << std::endl;
         }
     }
 
-    leitura.close();
-
-    if (!encontrou)
-    {
-        std::cout << "❌ Curso não encontrado! Verifique se digitou o código ou nome corretamente.\n";
-        return;
-    }
-
-    estudante->set_curso(codigo_curso); // altera o curso que o aluno está fazendo
-    escreveDevagar("✅ Mobilidade realizada! O aluno agora pertence ao curso: " + codigo_curso + "\n", 50);
+    estudanteAlvo->set_curso(novoCurso); 
+    escreveDevagar("\n✅ Mobilidade realizada com sucesso! O aluno agora pertence ao curso: " + novoCurso + "\n", 50);
 }
 
 std::string Administrador::procurar_curso_por_codigo(std::string codigo)
