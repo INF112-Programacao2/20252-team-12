@@ -45,3 +45,4 @@
 [01/12/2025 18:32:21] Estudante Escolheu a Opcao: 8 - Devolver Livro
 [01/12/2025 18:34:15] Logout realizado
 [01/12/2025 18:50:14] Sistema aberto
+[01/12/2025 18:57:22] Sistema aberto

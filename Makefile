@@ -3,7 +3,6 @@
 # ==========================================
 
 CXX = g++
-
 CXXFLAGS = -Wall -std=c++17 -g
 
 TARGET = main
@@ -28,16 +27,16 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	@echo "Linkando o executável: $(TARGET)..."
-	@$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) -lpthread
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
 	@echo "Compilação concluída com sucesso!"
 
 %.o: %.cpp
 	@echo "Compilando $<..."
-	@$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	@echo "Limpando arquivos temporários..."
-	rm -f $(OBJS) $(TARGET) $(TARGET).exe
+	del /Q $(OBJS) $(TARGET).exe 2>nul || true
 
 run: $(TARGET)
 	@echo "Executando o programa..."
