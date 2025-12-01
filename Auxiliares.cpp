@@ -221,7 +221,6 @@ bool validarNOME(const std::string &nome)
     if ((int)nome.size() < 2)
     {
         throw std::invalid_argument("❌ Nome muito curto.\n");
-        return false;
     }
 
     for (unsigned char c : nome)
@@ -385,7 +384,6 @@ bool validarMATRICULA(const std::string &matricula)
     if (matricula.size() != 6)
     {
         throw std::invalid_argument("❌ Matrícula deve conter exatamente 6 dígitos.\n");
-        return false;
     }
 
     // Verifica se todos são números
@@ -394,7 +392,6 @@ bool validarMATRICULA(const std::string &matricula)
         if (!isdigit((unsigned char)c))
         {
             throw std::invalid_argument("❌ Matrícula deve conter APENAS números.\n");
-            return false;
         }
     }
 
