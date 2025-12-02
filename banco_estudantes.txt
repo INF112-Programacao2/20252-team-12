@@ -1,2 +1,4 @@
 GRAD;Luiz Filipe Santos Oliveira;14422059629;22/09/2006;luiz.s.oliveira@ufv.br;luiz;120553;141;SISU;0
-POS;Joao;11122233300;28/01/2007;joao@ufv.br;joaovmc;120574;141;Mestrado;IA;0
+POS;João Victor Moreira Carvalho;15383104858;28/01/2007;joao.m.carvalho@ufv.br;joao;120574;141;Mestrado;IA;0
+GRAD;Paulo Henrique de Souza Castro;02319643664;27/04/2006;paulo.s.castro@ufv.br;paulo;120582;141;SISU;0
+POS;Thales Rodrigues Neves;16602866621;22/12/2006;thales.neves@ufv.br;thales;120558;150;Doutorado;Saudade da Computação;0

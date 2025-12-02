@@ -609,6 +609,7 @@ void Sistema::menuEstudante()
                 break;
             case 5:
                 escreveLog("Estudante Escolheu a Opção: 5 - Buscar Livro no Acervo");
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 this->biblioteca->listarLivros();
                 apagarTerminal();
                 break;
@@ -623,6 +624,7 @@ void Sistema::menuEstudante()
             case 7:
                 escreveLog("Estudante Escolheu a Opcao: 7 - Pegar Livro Emprestado");
                 apagarTerminal();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 this->estudante_logado->pegarLivro(*this->biblioteca);
                 pausa(2);
                 apagarTerminal();
