@@ -481,12 +481,12 @@ bool validarTIPOPOS(const std::string &tipopos)
 {
     std::string t = stringMaiuscula(tipopos);
 
-    if (t == "MEST" || t == "DOUT")
+    if (t == "MESTRADO" || t == "DOUTORADO")
     {
         return true;
     }
 
-    throw std::invalid_argument("❌ Tipo de pós-graduação inválido. As opções permitidas são: MEST ou DOUT.");
+    throw std::invalid_argument("❌ Tipo de pós-graduação inválido. As opções permitidas são: Mestrado ou Doutorado.");
 }
 
 bool validarTITULO(const std::string &titulo)
@@ -536,4 +536,3 @@ bool validarTITULO(const std::string &titulo)
 
     return true;
 }
-// fazer validaTIPO
