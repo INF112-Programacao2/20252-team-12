@@ -9,7 +9,7 @@
 double EstudanteGraduacao::valorRU = 5.40;
 int EstudanteGraduacao::prazoDeDevolucao = 7;
 
-EstudanteGraduacao::EstudanteGraduacao(const std::string& _nome, const std::string &_cpf,const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const std::string &_matricula, const std::string &_curso,const std::string& _modalidade):
+EstudanteGraduacao::EstudanteGraduacao(const std::string& _nome, const std::string &_cpf,std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha, const std::string &_matricula, const std::string &_curso,const std::string& _modalidade):
     Estudante(_nome, _cpf,_data_de_nascimento, _email, _senha,_matricula, _curso), modalidade(_modalidade){}
 
 EstudanteGraduacao::~EstudanteGraduacao(){}

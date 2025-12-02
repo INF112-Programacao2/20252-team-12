@@ -10,7 +10,7 @@
 int Emprestimo::nextId = 1;
 double Emprestimo::multa = 10.0; // Pode ser modificado em todos os objetos
 
-Emprestimo::Emprestimo(Estudante &_origem, Livro &_livro, const std::string &_dataDeEmprestimo, const std::string &_dataDeDevolucao)
+Emprestimo::Emprestimo(Estudante &_origem, Livro &_livro, std::string &_dataDeEmprestimo, std::string &_dataDeDevolucao)
 {
     this->id = nextId++;
     this->origem = &_origem;

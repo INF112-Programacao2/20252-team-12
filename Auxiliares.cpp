@@ -118,7 +118,7 @@ std::vector<std::string> split(const std::string &s, char delim)
     return elems;
 }
 
-std::string getDataFormatada(const time_t &data)
+std::string getDataFormatada(time_t &data)
 {
     char buffer[80];
     std::tm timeinfo;
@@ -148,7 +148,7 @@ std::string stringMaiuscula(std::string str)
     return upper;
 }
 
-time_t converterStringParaData(const std::string &dataStr)
+time_t converterStringParaData(std::string &dataStr)
 {
     struct tm tm = {0};
     if (sscanf(dataStr.c_str(), "%d/%d/%d", &tm.tm_mday, &tm.tm_mon, &tm.tm_year) != 3)
@@ -331,11 +331,10 @@ bool validarSENHA(const std::string &senha)
     return true;
 }
 
-// TODO: Não esta colocando 0 antes de 22/9/2006 - Luiz
-bool validarDATA(const std::string &data)
+bool validarDATA(std::string &data)
 {
-    // aceita D/M/YYYY, DD/MM/YYYY, com '/' como separador
-    auto parts = split(data, '/');
+    auto parts = split(data, '/'); 
+
     if (parts.size() != 3)
     {
         throw std::invalid_argument("❌ Formato de data inválido. Use D/M/YYYY ou DD/MM/YYYY");
@@ -350,8 +349,9 @@ bool validarDATA(const std::string &data)
     }
     catch (...)
     {
-        throw std::invalid_argument("❌ Data contém caracteres inválidos");
+        throw std::invalid_argument("❌ Data contém caracteres inválidos (não são números inteiros)");
     }
+    
     time_t agora = time(nullptr);
     struct tm *tnow = localtime(&agora);
     int ano_atual = tnow->tm_year + 1900;
@@ -362,7 +362,7 @@ bool validarDATA(const std::string &data)
     }
     if (mes < 1 || mes > 12)
     {
-        throw std::invalid_argument("❌ Mês inválido");
+        throw std::invalid_argument("❌ Mês inválido (deve ser entre 1 e 12)");
     }
 
     int diasPorMes[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -375,6 +375,12 @@ bool validarDATA(const std::string &data)
     {
         throw std::invalid_argument("❌ Dia inválido para o mês especificado");
     }
+
+    std::stringstream ss;
+    
+    ss << std::setfill('0') << std::setw(2) << dia << "/" << std::setfill('0') << std::setw(2) << mes << "/" << ano;
+
+    data = ss.str(); 
 
     return true;
 }

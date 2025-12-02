@@ -36,13 +36,15 @@ void Carteirinha::setSaldo(double _saldo){
 }
 
 void Carteirinha::depositar(double _valor){
-    Transacao* nova_transacao = new Transacao("Crédito", _valor, getDataAtual());
+    std::string data_atual = getDataAtual();
+    Transacao* nova_transacao = new Transacao("Crédito", _valor, data_atual);
     this->extrato.push_back(nova_transacao);
     this->setSaldo(this->getSaldo() + _valor);
 }
 
 void Carteirinha::debitar(double _valor){
-    Transacao* nova_transacao = new Transacao("Débito", _valor, getDataAtual());
+    std::string data_atual = getDataAtual();
+    Transacao* nova_transacao = new Transacao("Débito", _valor, data_atual);
     this->extrato.push_back(nova_transacao);
     this->setSaldo(this->getSaldo() - _valor);
 }

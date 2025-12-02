@@ -6,7 +6,7 @@
 int Transacao::nextID = 1;
 
 
-Transacao::Transacao(const std::string &_tipo, const double &_valor, const std::string& _data):
+Transacao::Transacao(const std::string &_tipo, const double &_valor, std::string& _data):
     id(nextID++), tipo(_tipo), valor(_valor){
         if (validarDATA(_data)){
             this->data = _data;
@@ -32,7 +32,7 @@ Estudante* Transacao::get_origem_transacao() const {
     return this->origem;
 }
 
-std::string Transacao::get_data() const{
+std::string Transacao::get_data(){
     return this->data;
 }
 
