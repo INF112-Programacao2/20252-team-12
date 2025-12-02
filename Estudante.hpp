@@ -30,6 +30,7 @@ public:
     void recarregarCarteirinha();
     void visualizarCarteirinha();
     virtual void comerRU() = 0;
+    void adicionarEmprestimo(Emprestimo *e);
 
     //(thales) vou adicionar os getters e setters dos atributos de estudante
 

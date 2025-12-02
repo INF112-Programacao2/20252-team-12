@@ -14,7 +14,7 @@ private:
 public:
     EstudantePosGraduacao(const std::string &_nome, const std::string &_cpf, const std::string &_data_de_nascimento, const std::string &_email, const std::string &_senha, const std::string &_matricula, const std::string &_curso, const std::string &_tipoPos, const std::string &_linhaDePesquisa);
     ~EstudantePosGraduacao();
-    double get_valorRU() const;
+    static double get_valorRU();
     std::string get_tipoPos() const;
     std::string get_linhaDePesquisa() const;
     int get_prazoDeDevolucao() const override;

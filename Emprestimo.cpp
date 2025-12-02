@@ -35,7 +35,7 @@ int Emprestimo::getId()
 
 double Emprestimo::getMulta()
 {
-    return this->multa;
+    return multa;
 }
 
 bool Emprestimo::isDevolvido()

@@ -24,7 +24,7 @@ public:
 
     int getId();
     int getDiasDeAtraso();
-    double getMulta();
+    static double getMulta();
     bool isDevolvido();
     Estudante *getOrigem();
     Livro *getLivro();

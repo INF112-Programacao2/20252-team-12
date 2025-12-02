@@ -23,6 +23,8 @@ private:
     void salvarAdmin();
     void menuAdministrador();
     void menuEstudante();
+    void carregarEmprestimos();
+    void salvarEmprestimos();
 
 public:
     Sistema();
