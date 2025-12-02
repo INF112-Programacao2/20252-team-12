@@ -241,7 +241,6 @@ bool validarNOME(const std::string &nome)
 bool validarEMAIL(const std::string &email)
 {
     int arroba = email.find('@');
-    int ponto = email.rfind('.');
 
     // precisa ter algo antes do @
     if (arroba < 1)
@@ -412,9 +411,7 @@ bool validarMATRICULA(std::string &matricula)
 }
 
 
-// TODO: Não pode aceitar caracter alfabetico
-// Esta aceitando o caracter 'a'
-//alterado
+// TODO: Aceitar apenas dentro da lista
 bool validarCURSO(std::string &cursoInput)
 {
     if (cursoInput.empty())

@@ -152,6 +152,9 @@ void Sistema::carregarDados()
     }
 }
 
+// TODO: salvarTransações
+// TODO: carregarTransações
+
 void Sistema::salvarEmprestimos()
 {
     std::ofstream file("banco_emprestimos.txt");
