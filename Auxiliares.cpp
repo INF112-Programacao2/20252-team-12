@@ -587,7 +587,7 @@ bool validarMATRICULA(std::string &matricula)
         matricula = std::string(6 - matricula.size(), '0') + matricula; // adiciona na frente da matricula
 
     // caso a matricula supere o limite para matriculas
-    if (matricula.size() > 6)
+    if (matricula.size() > 6){
         throw std::invalid_argument("❌ Matrícula deve ter no máximo 6 dígitos.");
     }
 
@@ -787,8 +787,6 @@ std::string removerACENTO(std::string texto)
             // UTF-8 de 2 bytes
             if (i + 1 < texto.size())
             {
-                unsigned char c2 = texto[i + 1];
-
                 std::string seq = texto.substr(i, 2);
 
                 char convertido = '\0';
