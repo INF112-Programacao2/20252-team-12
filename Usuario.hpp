@@ -12,7 +12,7 @@
 // Validações (como formato de data) são realizadas na implementação (.cpp)
 class Usuario {
 
-private:
+protected:
     std::string nome;                 // Nome completo do usuário
     std::string cpf;                  // CPF (número identificador)
     std::string data_de_nascimento;   // Data de nascimento (string, ex: "DD/MM/YYYY")
