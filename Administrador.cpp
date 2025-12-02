@@ -450,8 +450,6 @@ void Administrador::listarEstudante(std::vector<Estudante *> &estudantes)
     }
 }
 
-// TODO: caso em que o usuario insere o mesmo valor que já havia antes (processamento do arquivo de dados todo novamente desnecessario,
-//  então é melhor avisar que não pode ser igual e sair/tentar denovo)
 int Administrador::alterarDadosEstudante(std::vector<Estudante *> &estudantes)
 {
     std::cout << "\n============================================\n";
@@ -1047,7 +1045,6 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
     escreveDevagar("Voltando ao painel de administrador...", 40);
 }
 
-// TODO: salvar em admin_dados.txt
 std::string Administrador::alterarValorRU()
 {
     std::cout << "\n============================================\n";
@@ -1126,7 +1123,6 @@ std::string Administrador::alterarValorRU()
     return gradOuPos;
 }
 
-// TODO: salvar em admin_dados.txt
 void Administrador::alterarValorMulta()
 {
     std::cout << "\n=================================================================================\n";
