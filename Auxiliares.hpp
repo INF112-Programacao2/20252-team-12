@@ -182,3 +182,4 @@ bool validarCURSO(std::string &cursoInput);
 // Retorno: true se válido
 // Exceção: std::invalid_argument se título for inválido
 bool validarTITULO(const std::string &titulo);
+std::string removerACENTO(std::string nome);
