@@ -20,6 +20,7 @@ public:
 
     double getSaldo();
     std::vector<Transacao *> getExtrato();
+    void adicionarTransacao(Transacao* t);
     void setSaldo(double _saldo);
 
     void depositar(double _valor);

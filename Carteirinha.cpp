@@ -31,6 +31,10 @@ std::vector<Transacao*> Carteirinha::getExtrato(){
     return this->extrato;
 }
 
+void Carteirinha::adicionarTransacao(Transacao* t) {
+    this->extrato.push_back(t);
+}
+
 void Carteirinha::setSaldo(double _saldo){
     this->saldo = _saldo;
 }
