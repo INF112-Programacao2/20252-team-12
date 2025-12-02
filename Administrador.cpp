@@ -87,18 +87,28 @@ void Administrador::criarLivro(Biblioteca &biblioteca)
     {
         try{
             std::cout << "-> Numero de exemplares: ";
-            std::cin >> _numExemplares;
-
-            if (std::cin.fail() || _numExemplares <= 0)
+            
+            if (!(std::cin >> _numExemplares))
             {
-                throw std::invalid_argument("❌ Digite um numero inteiro valido e maior que zero.");
-
-                std::cin.clear();
+                std::cin.clear(); 
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                throw std::invalid_argument("❌ Entrada inválida! Digite apenas números.");
             }
+
+            if (_numExemplares <= 0)
+            {
+                throw std::invalid_argument("❌ O número deve ser maior que zero.");
+            }
+
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             break;
+
         } catch (std::exception &e){
             std::cerr << e.what() << std::endl;
+            if (std::cin.fail()) {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            }
         }
     }
 
