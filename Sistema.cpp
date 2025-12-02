@@ -1,43 +1,75 @@
 #include "Sistema.hpp"
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <fstream>
-#include <limits>
-#include <stdexcept>
-#include <cstdlib>
-#include <chrono>
-#include <thread>
-#include "Auxiliares.hpp"
+#include <iostream>                  // Para entrada/saída padrão
+#include <string>                    // Para std::string
+#include <sstream>                   // Para stringstream (parsing de CSV)
+#include <fstream>                   // Para ifstream, ofstream (operações com arquivos)
+#include <limits>                    // Para std::numeric_limits
+#include <stdexcept>                 // Para exceções padrão
+#include <cstdlib>                   // Para funções C (system, etc)
+#include <chrono>                    // Para operações com tempo
+#include <thread>                    // Para threads (se necessário)
+#include "Auxiliares.hpp"            // Funções utilitárias (escreveLog, apagarTerminal, etc)
 
+// ========== CONSTRUTOR ==========
+// Inicializa o sistema completo:
+//   1. Cria biblioteca vazia
+//   2. Define valores padrão de RU e multa
+//   3. Carrega dados persistidos do disco:
+//      - Dados do administrador
+//      - Estudantes cadastrados
+//      - Livros do acervo
+//      - Empréstimos pendentes
+//      - Histórico de transações
 Sistema::Sistema() : estudantes()
 {
-    this->biblioteca = new Biblioteca("Biblioteca UFV");
-    this->estudante_logado = nullptr;
-    EstudanteGraduacao::set_valorRU(5.4);
-    EstudantePosGraduacao::set_valorRU(2.7);
-    this->carregarAdmin();
-    this->carregarDados(); // Carrega os estudantes existentes
-    this->carregarLivros();
-    this->carregarEmprestimos();
-    this->carregarTransacoes();
+    this->biblioteca = new Biblioteca("Biblioteca UFV");  // Aloca nova biblioteca
+    this->estudante_logado = nullptr;                      // Nenhum estudante logado inicialmente
+    
+    // Define valores padrão de RU
+    EstudanteGraduacao::set_valorRU(5.4);                 // R$ 5,40 para graduação
+    EstudantePosGraduacao::set_valorRU(2.7);              // R$ 2,70 para pós-graduação
+    
+    // Carrega dados do disco
+    this->carregarAdmin();           // Carrega dados do administrador
+    this->carregarDados();           // Carrega estudantes existentes
+    this->carregarLivros();          // Carrega acervo de livros
+    this->carregarEmprestimos();     // Carrega empréstimos pendentes
+    this->carregarTransacoes();      // Carrega histórico de transações
 }
 
+// ========== DESTRUTOR ==========
+// Libera memória e salva dados no disco antes de encerrar
+// Funcionamento:
+//   1. Salva todos os dados persistidos
+//   2. Deleta ponteiros alocados dinamicamente
+//   3. Evita vazamento de memória
 Sistema::~Sistema()
 {
+    // Salva dados no disco
     this->salvarAdmin();
     this->salvarDados();
     this->salvarEmprestimos();
     this->salvarTransacoes();
 
+    // Libera memória alocada
     for (auto estudante : this->estudantes)
     {
-        delete estudante;
+        delete estudante;           // Deleta cada estudante
     }
-    delete this->admin;
-    delete this->biblioteca;
+    delete this->admin;             // Deleta administrador
+    delete this->biblioteca;        // Deleta biblioteca
 }
 
+// ========== SALVAR DADOS DOS ESTUDANTES ==========
+// Salva todos os estudantes em arquivo CSV "banco_estudantes.txt"
+// Formato: TIPO;NOME;CPF;DATA;EMAIL;SENHA;MATRICULA;CURSO;[ESPECÍFICO];SALDO
+//   - GRAD: TIPO;...;MODALIDADE;SALDO
+//   - POS: TIPO;...;TIPO_POS;LINHA_PESQUISA;SALDO
+// Funcionamento:
+//   1. Abre arquivo em modo escrita (sobrescreve conteúdo anterior)
+//   2. Para cada estudante, identifica tipo (GRAD ou POS) usando dynamic_cast
+//   3. Escreve dados formatados em CSV
+//   4. Fechade arquivo e registra em log
 void Sistema::salvarDados()
 {
     std::ofstream file("banco_estudantes.txt");
@@ -47,12 +79,15 @@ void Sistema::salvarDados()
         return;
     }
 
+    // Itera sobre todos os estudantes
     for (Estudante *est : this->estudantes)
     {
+        // Tenta converter para EstudanteGraduacao
         EstudanteGraduacao *grad = dynamic_cast<EstudanteGraduacao *>(est);
+        // Tenta converter para EstudantePosGraduacao
         EstudantePosGraduacao *pos = dynamic_cast<EstudantePosGraduacao *>(est);
 
-        // Formato: TIPO;NOME;CPF;DATA;EMAIL;SENHA;MATRICULA;CURSO;[ESPECIFICO];SALDO
+        // Se é estudante de graduação
         if (grad)
         {
             file << "GRAD;"
@@ -66,6 +101,7 @@ void Sistema::salvarDados()
                  << grad->get_modalidade() << ";"
                  << grad->get_carteirinha()->getSaldo() << "\n";
         }
+        // Se é estudante de pós-graduação
         else if (pos)
         {
             file << "POS;"
@@ -86,29 +122,43 @@ void Sistema::salvarDados()
     escreveLog("Dados salvos com sucesso!");
 }
 
+// ========== CARREGAR DADOS DOS ESTUDANTES ==========
+// Carrega todos os estudantes do arquivo "banco_estudantes.txt"
+// Formato esperado: TIPO;NOME;CPF;DATA;EMAIL;SENHA;MATRICULA;CURSO;[ESPECÍFICO];SALDO
+// Funcionamento:
+//   1. Tenta abrir arquivo (se não existir, assume primeira execução)
+//   2. Para cada linha, faz parsing CSV separando por ";"
+//   3. Identifica tipo (GRAD ou POS) e cria instância apropriada
+//   4. Restaura saldo da carteirinha
+//   5. Se arquivo vazio, cria estudante padrão
+// Exceção: se arquivo não existir, registra em log e continua
 void Sistema::carregarDados()
 {
     std::ifstream file("banco_estudantes.txt");
     if (!file.is_open())
     {
-        escreveLog("banco_estudantes.txt ainda não existe, sem dados para carregar."); // Pode ser a primeira execução do sistema
+        escreveLog("banco_estudantes.txt ainda não existe, sem dados para carregar.");
         return;
     }
 
     std::string linha;
+    // Lê cada linha do arquivo
     while (std::getline(file, linha))
     {
         std::stringstream ss(linha);
         std::string segmento;
         std::vector<std::string> dados;
 
+        // Parse CSV: separa por ";"
         while (std::getline(ss, segmento, ';'))
         {
             dados.push_back(segmento);
         }
 
+        // Validação: deve ter no mínimo 9 campos
         if (dados.size() >= 9)
         {
+            // Extrai dados comuns
             std::string tipo = dados[0];
             std::string nome = dados[1];
             std::string cpf = dados[2];
@@ -120,6 +170,7 @@ void Sistema::carregarDados()
 
             Estudante *novoEstudante = nullptr;
 
+            // Se é graduação
             if (tipo == "GRAD")
             {
                 std::string modalidade = dados[8];
@@ -128,6 +179,7 @@ void Sistema::carregarDados()
                 novoEstudante = new EstudanteGraduacao(nome, cpf, data, email, senha, matricula, curso, modalidade);
                 novoEstudante->get_carteirinha()->setSaldo(saldo);
             }
+            // Se é pós-graduação
             else if (tipo == "POS")
             {
                 std::string tipoPos = dados[8];
@@ -138,6 +190,7 @@ void Sistema::carregarDados()
                 novoEstudante->get_carteirinha()->setSaldo(saldo);
             }
 
+            // Adiciona ao vetor se criado com sucesso
             if (novoEstudante != nullptr)
             {
                 this->estudantes.push_back(novoEstudante);
@@ -145,6 +198,8 @@ void Sistema::carregarDados()
         }
     }
     file.close();
+
+    // Se nenhum estudante foi carregado, cria um padrão
     if (this->estudantes.empty())
     {
         std::string data = "22/09/2006";
@@ -154,9 +209,17 @@ void Sistema::carregarDados()
     }
 }
 
+// ========== SALVAR TRANSAÇÕES ==========
+// Salva histórico de todas as transações de todas as carteirinhas em "banco_transacoes.txt"
+// Formato: MATRICULA;TIPO;VALOR;DATA
+// Funcionamento:
+//   1. Abre arquivo em modo escrita
+//   2. Para cada estudante, percorre seu extrato
+//   3. Escreve cada transação em formato CSV
+//   4. Registra conclusão em log
 void Sistema::salvarTransacoes()
 {
-    std::ofstream file("banco_transacoes.txt"); 
+    std::ofstream file("banco_transacoes.txt");
 
     if (!file.is_open())
     {
@@ -164,11 +227,13 @@ void Sistema::salvarTransacoes()
         return;
     }
 
-    // Formato: MATRICULA;TIPO;VALOR;DATA
+    // Itera sobre cada estudante
     for (Estudante *est : this->estudantes)
     {
-        if (est->get_carteirinha()) 
+        // Se carteirinha existe
+        if (est->get_carteirinha())
         {
+            // Para cada transação no extrato
             for (Transacao *t : est->get_carteirinha()->getExtrato())
             {
                 file << est->get_matricula() << ";"
@@ -182,6 +247,15 @@ void Sistema::salvarTransacoes()
     escreveLog("Log de transações salvo com sucesso.");
 }
 
+// ========== CARREGAR TRANSAÇÕES ==========
+// Carrega histórico de transações do arquivo "banco_transacoes.txt"
+// Formato esperado: MATRICULA;TIPO;VALOR;DATA
+// Funcionamento:
+//   1. Tenta abrir arquivo (se não existir, apenas registra em log)
+//   2. Para cada linha, faz parsing CSV
+//   3. Localiza estudante pela matrícula
+//   4. Cria nova transação e adiciona ao extrato
+// Exceção: se arquivo não existir, registra em log e continua
 void Sistema::carregarTransacoes()
 {
     std::ifstream file("banco_transacoes.txt");
@@ -198,21 +272,27 @@ void Sistema::carregarTransacoes()
         std::string segmento;
         std::vector<std::string> dados;
 
+        // Parse CSV: separa por ";"
         while (std::getline(ss, segmento, ';'))
         {
             dados.push_back(segmento);
         }
 
+        // Validação: deve ter 4 campos
         if (dados.size() >= 4)
         {
             std::string matricula = dados[0];
             std::string tipo = dados[1];
             double valor;
+            
+            // Tenta converter valor para double
             try {
                 valor = std::stod(dados[2]);
-            } catch (...) { continue; }
+            } catch (...) { continue; }  // Se falhar, pula linha
+            
             std::string data = dados[3];
 
+            // Procura estudante pela matrícula
             Estudante *estudanteAlvo = nullptr;
             for (auto est : this->estudantes)
             {
@@ -223,12 +303,15 @@ void Sistema::carregarTransacoes()
                 }
             }
 
+            // Se encontrou estudante e carteirinha existe
             if (estudanteAlvo != nullptr && estudanteAlvo->get_carteirinha() != nullptr)
             {
+                // Cria nova transação
                 Transacao *novaTransacao = new Transacao(tipo, valor, data);
-                
+
                 novaTransacao->set_origem(*estudanteAlvo);
 
+                // Adiciona ao extrato
                 estudanteAlvo->get_carteirinha()->adicionarTransacao(novaTransacao);
             }
         }
@@ -236,6 +319,15 @@ void Sistema::carregarTransacoes()
     file.close();
 }
 
+// ========== SALVAR EMPRÉSTIMOS ==========
+// Salva todos os empréstimos pendentes em "banco_emprestimos.txt"
+// Formato: MATRICULA;TITULO_LIVRO;DATA_EMPRESTIMO;DATA_DEVOLUCAO
+// Nota: apenas salva empréstimos não devolvidos (isDevolvido() == false)
+// Funcionamento:
+//   1. Abre arquivo em modo escrita
+//   2. Para cada estudante, percorre seus empréstimos
+//   3. Escreve apenas os não devolvidos em formato CSV
+//   4. Registra conclusão em log
 void Sistema::salvarEmprestimos()
 {
     std::ofstream file("banco_emprestimos.txt");
@@ -245,13 +337,15 @@ void Sistema::salvarEmprestimos()
         return;
     }
 
+    // Para cada estudante
     for (Estudante *est : this->estudantes)
     {
+        // Para cada empréstimo do estudante
         for (Emprestimo *emp : est->get_emprestimos())
         {
+            // Se ainda não foi devolvido
             if (!emp->isDevolvido())
             {
-                // Formato: MATRICULA;TITULO_LIVRO;DATA_EMPRESTIMO;DATA_DEVOLUCAO
                 file << est->get_matricula() << ";"
                      << emp->getLivro()->getTitulo() << ";"
                      << emp->getDataDeEmprestimo() << ";"
@@ -263,6 +357,16 @@ void Sistema::salvarEmprestimos()
     escreveLog("Empréstimos pendentes salvos com sucesso.");
 }
 
+// ========== CARREGAR EMPRÉSTIMOS ==========
+// Carrega todos os empréstimos pendentes do arquivo "banco_emprestimos.txt"
+// Formato esperado: MATRICULA;TITULO_LIVRO;DATA_EMPRESTIMO;DATA_DEVOLUCAO
+// Funcionamento:
+//   1. Tenta abrir arquivo (se não existir, apenas registra em log)
+//   2. Para cada linha, faz parsing CSV
+//   3. Localiza estudante pela matrícula e livro pelo título
+//   4. Cria novo empréstimo e marca como não devolvido
+//   5. Reduz exemplares disponíveis do livro
+// Exceção: se arquivo não existir, registra em log e continua
 void Sistema::carregarEmprestimos()
 {
     std::ifstream file("banco_emprestimos.txt");
@@ -279,11 +383,13 @@ void Sistema::carregarEmprestimos()
         std::string segmento;
         std::vector<std::string> dados;
 
+        // Parse CSV: separa por ";"
         while (std::getline(ss, segmento, ';'))
         {
             dados.push_back(segmento);
         }
 
+        // Validação: deve ter 4 campos
         if (dados.size() >= 4)
         {
             std::string matricula = dados[0];
@@ -291,6 +397,7 @@ void Sistema::carregarEmprestimos()
             std::string dataEmp = dados[2];
             std::string dataDev = dados[3];
 
+            // Procura estudante pela matrícula
             Estudante *estudanteAlvo = nullptr;
             for (auto est : this->estudantes)
             {
@@ -301,9 +408,9 @@ void Sistema::carregarEmprestimos()
                 }
             }
 
+            // Procura livro pelo título
             Livro *livroAlvo = nullptr;
-            
-            for (auto livro : this->biblioteca->getAcervo()) 
+            for (auto livro : this->biblioteca->getAcervo())
             {
                 if (livro->getTitulo() == tituloLivro)
                 {
@@ -312,33 +419,50 @@ void Sistema::carregarEmprestimos()
                 }
             }
 
+            // Se encontrou ambos
             if (estudanteAlvo != nullptr && livroAlvo != nullptr)
             {
+                // Cria novo empréstimo
                 Emprestimo *novoEmprestimo = new Emprestimo(*estudanteAlvo, *livroAlvo, dataEmp, dataDev);
-                
+
                 novoEmprestimo->setDataDeEmprestimo(dataEmp);
                 novoEmprestimo->setDataDeDevolucao(dataDev);
                 novoEmprestimo->setDevolvido(false);
 
+                // Adiciona ao estudante
                 estudanteAlvo->adicionarEmprestimo(novoEmprestimo);
 
-                livroAlvo->setNumExemplaresDisponiveis(livroAlvo->getNumExemplaresDisponiveis()-1); 
+                // Reduz exemplares disponíveis
+                livroAlvo->setNumExemplaresDisponiveis(livroAlvo->getNumExemplaresDisponiveis() - 1);
             }
         }
     }
     file.close();
 }
 
+// ========== GETTERS ==========
+
+// Retorna vetor de todos os estudantes
 std::vector<Estudante *> Sistema::get_estudantes()
 {
     return this->estudantes;
 }
 
+// Retorna ponteiro para administrador
 Administrador *Sistema::get_admin()
 {
     return this->admin;
 }
 
+// ========== CARREGAR ADMINISTRADOR ==========
+// Carrega dados do administrador do arquivo "admin_dados.txt"
+// Formato: NOME;CPF;DATA;EMAIL;SENHA;VALOR_RU_GRAD;VALOR_RU_POS;VALOR_MULTA
+// Funcionamento:
+//   1. Tenta abrir arquivo
+//   2. Se existe, parse primeira linha e restaura dados
+//   3. Restaura valores de RU e multa
+//   4. Se não existe, cria administrador padrão e salva
+// Exceção: exceções são capturadas e registradas em log
 void Sistema::carregarAdmin()
 {
     try
@@ -349,24 +473,34 @@ void Sistema::carregarAdmin()
         {
             std::string linha;
 
+            // Lê primeira linha
             if (std::getline(file, linha))
             {
                 std::stringstream ss(linha);
                 std::string segmento;
                 std::vector<std::string> dados;
 
+                // Parse CSV: separa por ";"
                 while (std::getline(ss, segmento, ';'))
                 {
                     limparString(segmento);
                     dados.push_back(segmento);
                 }
 
+                // Validação: deve ter no mínimo 5 campos (nome, cpf, data, email, senha)
                 if (dados.size() >= 5)
                 {
+                    // Cria administrador com dados
                     this->admin = new Administrador(dados[0], dados[1], dados[2], dados[3], dados[4]);
-                    EstudanteGraduacao::set_valorRU(std::stod(dados[5]));
-                    EstudantePosGraduacao::set_valorRU(std::stod(dados[6]));
-                    Emprestimo::setMulta(std::stod(dados[7]));
+                    
+                    // Restaura valores globais
+                    if (dados.size() > 5)
+                        EstudanteGraduacao::set_valorRU(std::stod(dados[5]));
+                    if (dados.size() > 6)
+                        EstudantePosGraduacao::set_valorRU(std::stod(dados[6]));
+                    if (dados.size() > 7)
+                        Emprestimo::setMulta(std::stod(dados[7]));
+                    
                     file.close();
                     return;
                 }
@@ -374,6 +508,7 @@ void Sistema::carregarAdmin()
             file.close();
         }
 
+        // Se não conseguiu carregar, cria padrão
         escreveLog("Arquivo de admin não encontrado ou inválido. Criando admin padrão.");
 
         std::string dataAdmin = "23/04/1988";
@@ -387,6 +522,14 @@ void Sistema::carregarAdmin()
     }
 }
 
+// ========== SALVAR ADMINISTRADOR ==========
+// Salva dados do administrador em arquivo "admin_dados.txt"
+// Formato: NOME;CPF;DATA;EMAIL;SENHA;VALOR_RU_GRAD;VALOR_RU_POS;VALOR_MULTA
+// Funcionamento:
+//   1. Abre arquivo em modo escrita
+//   2. Escreve dados do admin e valores globais
+//   3. Fecha arquivo e registra em log
+// Exceção: exceções são capturadas e registradas
 void Sistema::salvarAdmin()
 {
     try
@@ -399,7 +542,7 @@ void Sistema::salvarAdmin()
             return;
         }
 
-        // Salvando no formato: NOME;CPF;DATA;EMAIL;SENHA;VALOR_RU_GRAD;VALOR_RU_POS_GRAD;VALOR_MULTA
+        // Salva no formato: NOME;CPF;DATA;EMAIL;SENHA;VALOR_RU_GRAD;VALOR_RU_POS_GRAD;VALOR_MULTA
         file << admin->getNome() << ";"
              << admin->getCpf() << ";"
              << admin->getDataDeNascimento() << ";"
@@ -419,6 +562,15 @@ void Sistema::salvarAdmin()
     }
 }
 
+// ========== CARREGAR LIVROS ==========
+// Carrega todos os livros do arquivo "livros.txt"
+// Formato esperado: TITULO,AUTOR,TIPO,NUM_EXEMPLARES
+// Funcionamento:
+//   1. Abre arquivo em modo leitura
+//   2. Para cada linha, faz parsing CSV separando por ","
+//   3. Cria novo livro e adiciona à biblioteca
+//   4. Se linha malformada, registra aviso e pula
+// Exceção: se arquivo não existir, lança exceção capturada
 void Sistema::carregarLivros()
 {
     try
@@ -431,6 +583,7 @@ void Sistema::carregarLivros()
         }
 
         std::string linha;
+        // Lê cada linha do arquivo
         while (std::getline(fin, linha))
         {
             std::stringstream ss(linha);
@@ -441,16 +594,20 @@ void Sistema::carregarLivros()
 
             std::vector<std::string> campos;
 
+            // Parse CSV: separa por ","
             while (std::getline(ss, campo, ','))
             {
                 campos.push_back(campo);
             }
+
+            // Validação: deve ter exatamente 4 campos
             if (campos.size() == 4)
             {
                 titulo = campos[0];
                 autor = campos[1];
                 tipo = campos[2];
 
+                // Tenta converter número de exemplares
                 try
                 {
                     numExemplaresTotal = std::stoi(campos[3]);
@@ -461,6 +618,7 @@ void Sistema::carregarLivros()
                     continue;
                 }
 
+                // Cria novo livro e adiciona à biblioteca
                 Livro *novoLivro = new Livro(titulo, autor, tipo, numExemplaresTotal);
                 this->biblioteca->adicionarLivro(*novoLivro);
             }
@@ -477,15 +635,41 @@ void Sistema::carregarLivros()
     }
 }
 
+// ========== MENU DO ADMINISTRADOR ==========
+// Exibe menu principal do administrador com 14 opções de gerenciamento
+// Opções:
+//   1. Criar Livro
+//   2. Cadastrar Estudante
+//   3. Listar Estudantes
+//   4. Listar Livros
+//   5. Visualizar Carteirinha de um Estudante
+//   6. Alterar Dados de um Estudante
+//   7. Alterar Sua Senha
+//   8. Consultar Transações
+//   9. Consultar Empréstimos
+//   10. Recarregar Uma Carteirinha
+//   11. Alterar o Valor do RU
+//   12. Alterar o Valor da Multa do Empréstimo
+//   13. Realizar Reopção de Curso (mobilidade acadêmica)
+//   14. Sair
+// Funcionamento:
+//   1. Exibe menu em loop
+//   2. Lê opção do usuário
+//   3. Executa operação correspondente
+//   4. Salva dados após cada operação
 void Sistema::menuAdministrador()
 {
     escreveLog("Administrador Logou no Sistema");
     int opcao;
+    
     while (1)
     {
+        // --- CABEÇALHO ---
         escreveDevagar("\n============================================\n", 10);
         escreveDevagar("👨 BEM-VINDO AO PAINEL DE ADMINISTRADOR 👨 \n", 50);
         escreveDevagar("--------------------------------------------\n", 10);
+        
+        // --- OPÇÕES DO MENU ---
         std::cout << "1 - Criar Livro\n";
         std::cout << "2 - Cadastrar Estudante\n";
         std::cout << "3 - Listar Estudantes\n";
@@ -505,6 +689,7 @@ void Sistema::menuAdministrador()
 
         try
         {
+            // --- LEITURA DA OPÇÃO ---
             if (!(std::cin >> opcao))
             {
                 std::cin.clear();
@@ -514,6 +699,7 @@ void Sistema::menuAdministrador()
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             apagarTerminal();
 
+            // --- SWITCH COM OPÇÕES ---
             switch (opcao)
             {
             case 1:
@@ -610,11 +796,13 @@ void Sistema::menuAdministrador()
                 escreveDevagar("📤 Fazendo logout...\n", 50);
                 pausa(2);
                 apagarTerminal();
-                return;
+                return;  // Sai do menu
             default:
                 throw std::invalid_argument("Digite um número válido!");
                 break;
             }
+            
+            // --- SALVA DADOS APÓS OPERAÇÃO ---
             this->salvarDados();
             this->salvarEmprestimos();
             this->salvarAdmin();
@@ -628,15 +816,36 @@ void Sistema::menuAdministrador()
     }
 }
 
+// ========== MENU DO ESTUDANTE ==========
+// Exibe menu principal do estudante com 10 opções
+// Opções:
+//   1. Consultar Saldo
+//   2. Recarregar Carteirinha
+//   3. Visualizar Carteirinha
+//   4. Ver Extrato Financeiro
+//   5. Buscar Livro no Acervo
+//   6. Ver Meus Empréstimos
+//   7. Pegar Livro Emprestado
+//   8. Devolver Livro
+//   9. Comer no RU
+//   10. Sair
+// Funcionamento:
+//   1. Exibe menu em loop
+//   2. Lê opção do usuário
+//   3. Executa operação correspondente
+//   4. Salva dados após cada operação
 void Sistema::menuEstudante()
 {
     int opcao;
     while (true)
     {
+        // --- CABEÇALHO ---
         escreveDevagar("\n============================================\n", 10);
         escreveDevagar("🎓 BEM-VINDO AO PAINEL DO ESTUDANTE 🎓 \n", 50);
         escreveDevagar("============================================\n", 10);
         escreveDevagar("    Bem-vindo, " + this->estudante_logado->getNome() + "\n", 50);
+        
+        // --- OPÇÕES DO MENU ---
         std::cout << "--------------------------------------------\n";
         std::cout << "1 - Consultar Saldo\n";
         std::cout << "2 - Recarregar Carteirinha\n";
@@ -653,6 +862,7 @@ void Sistema::menuEstudante()
 
         try
         {
+            // --- LEITURA DA OPÇÃO ---
             if (!(std::cin >> opcao))
             {
                 std::cin.clear();
@@ -661,6 +871,7 @@ void Sistema::menuEstudante()
             }
             apagarTerminal();
 
+            // --- SWITCH COM OPÇÕES ---
             switch (opcao)
             {
             case 1:
@@ -728,11 +939,13 @@ void Sistema::menuEstudante()
                 pausa(2);
                 apagarTerminal();
                 this->estudante_logado = nullptr;
-                return;
+                return;  // Sai do menu
             default:
                 throw std::invalid_argument("Digite um número válido!");
                 break;
             }
+            
+            // --- SALVA DADOS APÓS OPERAÇÃO ---
             this->salvarDados();
             this->salvarEmprestimos();
             this->salvarTransacoes();
@@ -745,6 +958,16 @@ void Sistema::menuEstudante()
     }
 }
 
+// ========== INICIAR SISTEMA ==========
+// Função principal que inicia o loop de login e menus
+// Funcionamento:
+//   1. Exibe tela inicial de boas-vindas
+//   2. Loop de autenticação:
+//      - Lê email e senha
+//      - Valida contra administrador ou estudantes
+//      - Chama menu correspondente se autenticado
+//      - Repete se falha autenticação
+//   3. Saída segura (volta a menu inicial)
 void Sistema::iniciarSistema()
 {
     escreveLog("Sistema aberto");
@@ -753,6 +976,7 @@ void Sistema::iniciarSistema()
 
     while (1)
     {
+        // --- TELA INICIAL ---
         escreveDevagar("\n============================================\n", 10);
         escreveDevagar("      📚 BEM-VINDO AO SISTEMA-UFV 📚\n", 50);
         escreveDevagar("--------------------------------------------\n", 10);
@@ -763,6 +987,7 @@ void Sistema::iniciarSistema()
 
         try
         {
+            // --- LEITURA DA OPÇÃO ---
             if (!(std::cin >> opcao))
             {
                 std::cin.clear();
@@ -772,25 +997,28 @@ void Sistema::iniciarSistema()
 
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
+            // --- OPÇÃO 2: SAIR ---
             if (opcao == 2)
             {
-                escreveDevagar("👋 Obrigado por usar o SISTEMA-UFV. Até logo!\n",80);
+                escreveDevagar("👋 Obrigado por usar o SISTEMA-UFV. Até logo!\n", 80);
                 break;
             }
+            // --- OPÇÃO 1: FAZER LOGIN ---
             else if (opcao == 1)
             {
                 bool logado = false;
 
+                // --- LOOP DE AUTENTICAÇÃO ---
                 while (!logado)
                 {
                     std::string email, senha;
 
-                    // ====== LEITURA DO EMAIL ======
+                    // --- LEITURA DO EMAIL ---
                     std::cout << "--------------------------------------------\n";
                     std::cout << "Email: ";
                     std::getline(std::cin, email);
 
-                    // ====== LEITURA DA SENHA ======
+                    // --- LEITURA DA SENHA ---
                     std::cout << "--------------------------------------------\n";
                     std::cout << "Senha: ";
                     std::getline(std::cin, senha);
@@ -800,7 +1028,7 @@ void Sistema::iniciarSistema()
                     limparString(senha);
                     limparString(email);
 
-                    // Tenta Login como Administrador
+                    // --- VALIDAÇÃO 1: ADMINISTRADOR ---
                     if (this->admin->getSenha() == senha && this->admin->getEmail() == email)
                     {
                         escreveDevagar("✅ Bem-Vindo " + this->admin->getNome(), 50);
@@ -812,7 +1040,7 @@ void Sistema::iniciarSistema()
                         break;
                     }
 
-                    // Tenta Login como Estudante
+                    // --- VALIDAÇÃO 2: ESTUDANTE ---
                     bool encontrado = false;
                     for (auto estudante : this->estudantes)
                     {
@@ -825,6 +1053,7 @@ void Sistema::iniciarSistema()
                         }
                     }
 
+                    // Se encontrou estudante e logado com sucesso
                     if (encontrado && this->estudante_logado != nullptr)
                     {
                         escreveDevagar("✅ Bem-Vindo " + this->estudante_logado->getNome(), 50);
@@ -834,12 +1063,14 @@ void Sistema::iniciarSistema()
                         logado = true;
                         break;
                     }
+                    // Se não encontrou ninguém com essas credenciais
                     else
                     {
                         throw std::invalid_argument("\n❌ Credenciais inválidas. Tente novamente.\n");
                     }
                 }
             }
+            // --- OPÇÃO INVÁLIDA ---
             else
             {
                 throw std::invalid_argument("❌ Opção inválida. Por favor, escolha 1 ou 2.");

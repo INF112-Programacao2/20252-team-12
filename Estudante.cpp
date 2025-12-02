@@ -1,70 +1,112 @@
 #define cimg_display 0
 #include "Estudante.hpp"
-#include "Usuario.hpp"
-#include "Administrador.hpp"
-#include "Auxiliares.hpp"
-#include <limits>
-#include <stdexcept>
-#include <iostream>
-#include <ctime>
-#include <sstream>
-#include <chrono>
-#include <iomanip>
-#include "CImg.h"
-#include <chrono>
-#include <thread>
-#include <filesystem>
+#include "Usuario.hpp"                 // Classe base de Estudante
+#include "Administrador.hpp"           // Para procurar_curso_por_codigo()
+#include "Auxiliares.hpp"              // Funções utilitárias (getDataAtual, addDias, etc)
+#include <limits>                      // Para std::numeric_limits
+#include <stdexcept>                   // Para exceções padrão
+#include <iostream>                    // Para entrada/saída padrão
+#include <ctime>                       // Para operações com tempo
+#include <sstream>                     // Para stringstream (conversão)
+#include <chrono>                      // Para operações com tempo (chrono)
+#include <iomanip>                     // Para formatação de saída (setprecision, fixed)
+#include "CImg.h"                      // Biblioteca CImg para manipulação de imagens
+#include <chrono>                      // Duplicado (pode ser removido)
+#include <thread>                      // Para threads (se necessário)
+#include <filesystem>                  // Para operações com diretórios (create_directory, exists)
 
-Estudante::Estudante(const std::string &_nome, const std::string &_cpf, std::string &_data_de_nascimento, const std::string &_email, const std::string &_senha, const std::string &_matricula, const std::string &_curso) : Usuario(_nome, _cpf, _data_de_nascimento, _email, _senha), matricula(_matricula), curso(_curso), emprestimos()
+// ========== CONSTRUTOR ==========
+// Inicializa um estudante herdando dados do Usuario e criando automaticamente uma carteirinha
+// Parâmetros:
+//   _nome: nome completo do estudante
+//   _cpf: CPF do estudante
+//   _data_de_nascimento: data de nascimento (DD/MM/YYYY)
+//   _email: email institucional UFV
+//   _senha: senha de acesso
+//   _matricula: matrícula universitária (6 dígitos)
+//   _curso: código do curso (ex: 101, 102)
+// Efeito colateral: cria automaticamente uma Carteirinha nova (saldo zerado)
+Estudante::Estudante(const std::string &_nome, const std::string &_cpf, std::string &_data_de_nascimento,
+                     const std::string &_email, const std::string &_senha, const std::string &_matricula,
+                     const std::string &_curso)
+    : Usuario(_nome, _cpf, _data_de_nascimento, _email, _senha), matricula(_matricula), curso(_curso), emprestimos()
 {
-    this->carteirinha = new Carteirinha();
+    this->carteirinha = new Carteirinha();  // Aloca nova carteirinha com saldo 0
 }
 
+// ========== DESTRUTOR ==========
+// Libera memória alocada dinamicamente (empréstimos e carteirinha)
+// Percorre vetor de empréstimos deletando cada ponteiro
+// Depois deleta a carteirinha
 Estudante::~Estudante()
 {
+    // Deleta todos os empréstimos
     for (auto emprestimo : this->emprestimos)
     {
         delete emprestimo;
     }
+    // Deleta a carteirinha
     delete this->carteirinha;
 }
 
+// ========== ADICIONAR EMPRÉSTIMO ==========
+// Adiciona um empréstimo já criado ao vetor de empréstimos do estudante
+// Parâmetro:
+//   e: ponteiro para um Emprestimo já alocado
 void Estudante::adicionarEmprestimo(Emprestimo *e) {
     this->emprestimos.push_back(e);
 }
 
+// ========== EXIBIR EMPRÉSTIMOS ==========
+// Lista todos os empréstimos ativos do estudante com informações formatadas
+// Se não houver empréstimos, exibe mensagem informativa
 void Estudante::exibirEmprestimos()
 {
     std::cout << "\n============================================\n";
     std::cout << "          EMPRÉSTIMOS            ";
     std::cout << "\n============================================\n";
+
+    // Verifica se há empréstimos pendentes
     if (this->get_emprestimos().size() == 0)
     {
         std::cout << "Nao ha emprestimos pendentes\n";
         return;
     }
+
+    // Exibe informações de cada empréstimo
     for (auto emprestimo : this->emprestimos)
     {
         emprestimo->exibirInformacoes();
     }
 }
 
+// ========== PEGAR LIVRO EMPRESTADO ==========
+// Realiza todo o processo de empréstimo de um livro:
+//   1. Lista livros disponíveis na biblioteca
+//   2. Solicita escolha do livro por ID
+//   3. Valida disponibilidade
+//   4. Cria registro de empréstimo com datas
+//   5. Reduz quantidade disponível
+// Parâmetro:
+//   biblioteca: referência à Biblioteca (para listar e buscar livros)
+// Exceções: tratadas com try-catch para validação de entrada e disponibilidade
 void Estudante::pegarLivro(const Biblioteca &biblioteca)
 {
     escreveDevagar("\n============================================\n", 10);
     escreveDevagar("      📕 BEM-VINDO À BIBLIOTECA 📕 ", 50);
     escreveDevagar("\n============================================\n", 10);
+
     Livro *livro_desejado = nullptr;
+    biblioteca.listarLivros();  // Exibe livros com filtro e paginação
 
-    biblioteca.listarLivros();
-
+    // --- SELEÇÃO DO LIVRO COM VALIDAÇÃO ---
     while(1){
         std::cout << "-> Digite o ID do livro: ";
-
         int id_do_livro;
 
         try
         {
+            // Lê ID com validação
             if (!(std::cin >> id_do_livro))
             {
                 std::cin.clear();
@@ -73,6 +115,7 @@ void Estudante::pegarLivro(const Biblioteca &biblioteca)
             }
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
+            // Busca livro no acervo pelo ID
             for (Livro *livro : biblioteca.getAcervo())
             {
                 if (id_do_livro == livro->getId())
@@ -82,14 +125,13 @@ void Estudante::pegarLivro(const Biblioteca &biblioteca)
                 }
             }
 
-            if (livro_desejado == nullptr)
-            {
-                throw std::invalid_argument("❌ O livro escolhido nao foi encontrado!");
-            }
+            // Validações
+            if (!livro_desejado)
+                throw std::invalid_argument("❌ O livro escolhido não foi encontrado!");
+
             if (livro_desejado->getNumExemplaresDisponiveis() == 0)
-            {
-                throw std::invalid_argument("❌ Nao ha exemplares disponiveis para o livro selecionado!");
-            }
+                throw std::invalid_argument("❌ Não há exemplares disponíveis!");
+
             break;
         }
         catch (std::invalid_argument &e)
@@ -99,24 +141,40 @@ void Estudante::pegarLivro(const Biblioteca &biblioteca)
         }
     }
 
+    // --- REGISTRO DO EMPRÉSTIMO ---
+    // Reduz quantidade disponível
     livro_desejado->setNumExemplaresDisponiveis(livro_desejado->getNumExemplaresDisponiveis() - 1);
 
-    std::string dataDeEmprestimo = getDataAtual();
+    // Calcula datas do empréstimo
+    std::string dataDeEmprestimo = getDataAtual();                                   // Data de hoje
+    std::string dataDeDevolucao = addDias(dataDeEmprestimo, this->get_prazoDeDevolucao());  // Data limite
 
-    std::string dataDeDevolucao = addDias(dataDeEmprestimo, this->get_prazoDeDevolucao());
-
+    // Cria objeto Emprestimo e adiciona ao vetor
     Emprestimo *novoEmprestimo = new Emprestimo(*this, *livro_desejado, dataDeEmprestimo, dataDeDevolucao);
     this->emprestimos.push_back(novoEmprestimo);
 
     escreveDevagar("✅ Livro emprestado com sucesso!\n", 50);
 }
 
+// ========== DEVOLVER LIVRO ==========
+// Realiza todo o processo de devolução de um livro:
+//   1. Lista empréstimos não devolvidos
+//   2. Solicita qual empréstimo devolver
+//   3. Verifica atraso e calcula multa
+//   4. Se atrasado, cobra multa (com opção de pagamento)
+//   5. Marca como devolvido e reintegra livro ao acervo
+// Parâmetro:
+//   biblioteca: referência à Biblioteca (usada para contexto)
 void Estudante::devolverLivro(const Biblioteca &biblioteca)
 {
     escreveDevagar("\n============================================\n", 10);
     escreveDevagar("       📕 BEM-VINDO À BIBLIOTECA 📕 ", 50);
     escreveDevagar("\n============================================\n", 10);
+
     bool temADevolver = false;
+
+    // --- LISTAR EMPRÉSTIMOS NÃO DEVOLVIDOS ---
+    // Exibe apenas empréstimos pendentes (ainda não devolvidos)
     for (auto emprestimo : this->get_emprestimos())
     {
         if (!emprestimo->isDevolvido())
@@ -125,16 +183,21 @@ void Estudante::devolverLivro(const Biblioteca &biblioteca)
             temADevolver = true;
         }
     }
+
     Emprestimo *livro_devolvido = nullptr;
-    if (!temADevolver || this->get_emprestimos().size() == 0)
+
+    // Se não há nada a devolver, interrompe
+    if (!temADevolver)
     {
         std::cout << "Nao há empréstimos pendentes\n";
         return;
     }
+
+    // --- SELEÇÃO DO EMPRÉSTIMO A DEVOLVER ---
     while (1)
     {
         std::cout << "--------------------------------------------\n";
-        std::cout << "-> Escolha o ID do empréstimo que deseja devolver: ";
+        std::cout << "-> Escolha o ID do empréstimo: ";
 
         int id_livro_devolvido;
 
@@ -144,25 +207,19 @@ void Estudante::devolverLivro(const Biblioteca &biblioteca)
             {
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                throw std::invalid_argument("❌ Entrada inválida! Digite um número.");
+                throw std::invalid_argument("❌ Entrada inválida!");
             }
 
-            if (id_livro_devolvido < 1 || id_livro_devolvido > this->emprestimos.size())
-            {
-                throw std::invalid_argument("❌ Opção inválida! Digite 1 ou 2.");
-            }
-
+            // Busca empréstimo pelo ID
             for (auto emprestimo : this->emprestimos)
             {
                 if (emprestimo->getId() == id_livro_devolvido && !emprestimo->isDevolvido())
-                {
                     livro_devolvido = emprestimo;
-                }
             }
-            if (livro_devolvido == nullptr)
-            {
-                throw std::invalid_argument("❌ O livro escolhido nao esta na sua lista de emprestimos!");
-            }
+
+            if (!livro_devolvido)
+                throw std::invalid_argument("❌ O empréstimo não foi encontrado!");
+
             break;
         }
         catch (std::invalid_argument &e)
@@ -171,56 +228,62 @@ void Estudante::devolverLivro(const Biblioteca &biblioteca)
         }
     }
 
+    // --- VERIFICAÇÃO DE ATRASO E MULTA ---
+    // Se há atraso, calcula multa e oferece opcões de pagamento
     if (livro_devolvido->calculaValorMulta() > 0.0)
     {
         std::cout << "--------------------------------------------\n";
+
+        // Formata mensagem com dias de atraso e valor da multa
         std::ostringstream oss;
-        oss << "O livro esta atrasado por " << livro_devolvido->getDiasDeAtraso() << " dia (s).\nA multa pelo atraso e de R$" << std::fixed << std::setprecision(2) << livro_devolvido->calculaValorMulta() << "\n";
+        oss << "O livro está atrasado por " << livro_devolvido->getDiasDeAtraso()
+            << " dia(s).\nMulta: R$"
+            << std::fixed << std::setprecision(2)
+            << livro_devolvido->calculaValorMulta() << "\n";
+
         escreveDevagar(oss.str(), 50);
 
+        // --- VERIFICAÇÃO DE SALDO ---
+        // Se tem saldo suficiente, pergunta se deseja pagar
         if (this->get_carteirinha()->getSaldo() >= livro_devolvido->calculaValorMulta())
         {
             char resposta;
+
             while (1)
             {
                 std::cout << "--------------------------------------------\n";
-                std::cout << std::fixed << std::setprecision(2) << "Deseja descontar a multa do saldo da carteirinha? (RS" << this->get_carteirinha()->getSaldo() << ") S/N: ";
+                std::cout << "Deseja descontar a multa do saldo? (S/N): ";
 
                 try
                 {
                     std::cin >> resposta;
 
-                    if (resposta != 'S' && resposta != 'N' &&
-                        resposta != 's' && resposta != 'n')
-                        throw std::invalid_argument("❌ Responda apenas com S para 'sim' ou N para 'nao'");
+                    if (resposta != 'S' && resposta != 'N' && resposta != 's' && resposta != 'n')
+                        throw std::invalid_argument("❌ Digite S ou N!");
 
                     break;
                 }
-                catch (std::invalid_argument &e)
+                catch (...)
                 {
-                    std::cerr << e.what() << std::endl;
+                    std::cout << "❌ Entrada inválida.\n";
                 }
             }
 
+            // Se confirmar, debita a multa
             if (resposta == 'S' || resposta == 's')
-            {
                 this->get_carteirinha()->debitar(livro_devolvido->calculaValorMulta());
-            }
         }
+        // --- SALDO INSUFICIENTE ---
+        // Oferece opção de recarregar carteirinha
         else
         {
             std::cout << "--------------------------------------------\n";
-            std::cout << std::fixed << std::setprecision(2) << "Deseja realizar uma recarga? (Valor necessário para o pagamento: "
-                      << (livro_devolvido->calculaValorMulta() - this->get_carteirinha()->getSaldo())
-                      << ")" << std::endl;
+            std::cout << "Saldo insuficiente. Deseja recarregar?\n";
 
             while (1)
             {
-                std::cout << "0 - Não desejo recarregar minha carteirinha (Voltar para o Menu)\n";
-                std::cout << "1 - Sim, desejo recarregar minha carteirinha\n";
-                std::cout << "--------------------------------------------\n";
+                std::cout << "0 - Não\n1 - Sim\nOpção: ";
                 int opcao;
-                std::cout << "-> Opção: ";
 
                 try
                 {
@@ -228,47 +291,58 @@ void Estudante::devolverLivro(const Biblioteca &biblioteca)
                     {
                         std::cin.clear();
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                        throw std::invalid_argument("❌ Digite um número válido!");
+                        throw std::invalid_argument("❌ Entrada inválida!");
                     }
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
                     if (opcao == 0)
-                    {
-                        return;
-                    }
+                        return;                            // Cancela devolução
+
                     else if (opcao == 1)
                     {
-                        this->recarregarCarteirinha();
-                        this->carteirinha->debitar(livro_devolvido->calculaValorMulta());
+                        this->recarregarCarteirinha();    // Recarrega
+                        this->carteirinha->debitar(livro_devolvido->calculaValorMulta());  // Cobra multa
                     }
                     else
                     {
-                        throw std::invalid_argument("❌ Digite uma opção válida!");
+                        throw std::invalid_argument("❌ Opção inválida!");
                     }
+
                     break;
                 }
-                catch (std::invalid_argument &e)
+                catch (...)
                 {
-                    std::cerr << e.what() << std::endl;
+                    std::cout << "❌ Erro na entrada.\n";
                 }
             }
         }
     }
 
+    // --- FINALIZAÇÃO DA DEVOLUÇÃO ---
+    // Marca como devolvido e reintegra livro ao acervo
     livro_devolvido->setDevolvido(true);
-    livro_devolvido->getLivro()->setNumExemplaresDisponiveis(livro_devolvido->getLivro()->getNumExemplaresDisponiveis() + 1);
+    livro_devolvido->getLivro()->setNumExemplaresDisponiveis(
+        livro_devolvido->getLivro()->getNumExemplaresDisponiveis() + 1);
+
     std::cout << "--------------------------------------------\n";
     escreveDevagar("✅ Livro devolvido com sucesso!\n", 50);
 }
 
+// ========== RECARREGAR CARTEIRINHA ==========
+// Permite ao estudante depositar dinheiro na carteirinha
+// Funcionamento:
+//   1. Exibe saldo atual
+//   2. Solicita valor a depositar (aceita vírgula ou ponto decimal)
+//   3. Valida se valor é positivo
+//   4. Deposita na carteirinha
 void Estudante::recarregarCarteirinha()
 {
-    this->consultarSaldo();
-
+    this->consultarSaldo();         // Exibe saldo atual
     double valor = 0.0;
     std::string input;
 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    // --- LEITURA E VALIDAÇÃO DO VALOR ---
     while (1)
     {
         std::cout << "-> Digite o valor a ser depositado: R$";
@@ -276,200 +350,154 @@ void Estudante::recarregarCarteirinha()
 
         try
         {
+            // Aceita vírgula como separador decimal (Brasil)
             size_t pos = input.find(',');
-            if (pos != std::string::npos) {
-                input.replace(pos, 1, ".");
-            }
-            valor = std::stod(input);
+            if (pos != std::string::npos)
+                input.replace(pos, 1, ".");   // Converte vírgula para ponto
+
+            valor = std::stod(input);         // Converte para double
 
             if (valor <= 0.0)
-            {
-                throw std::invalid_argument("❌ O valor deve ser maior que R$ 0.00.");
-            }
-            
-            break; 
+                throw std::invalid_argument("❌ Valor deve ser maior que zero.");
+
+            break;
         }
-        catch (const std::invalid_argument &e)
+        catch (...)
         {
-            std::cerr << e.what() << std::endl;
+            std::cout << "❌ Entrada inválida.\n";
         }
     }
+
+    // Deposita na carteirinha
     this->carteirinha->depositar(valor);
     escreveDevagar("✅ Valor depositado com sucesso!\n", 50);
 }
 
+// ========== VISUALIZAR CARTEIRINHA ==========
+// Gera arquivo de imagem da carteirinha com foto e dados do aluno
+// Funcionamento:
+//   1. Solicita extensão da foto (PNG, JPG, BMP)
+//   2. Carrega template de carteirinha
+//   3. Carrega foto do aluno (nome_matricula_foto.ext)
+//   4. Insere foto e código de barras
+//   5. Adiciona textos (nome, curso, matrícula, CPF, validade, data emissão)
+//   6. Salva em carteirinhas/nome_matricula_CARTEIRINHA.bmp
+// Exceções: lança std::runtime_error se não conseguir carregar arquivos de imagem
 void Estudante::visualizarCarteirinha()
 {
-
     std::cout << "\n============================================\n";
     std::cout << "  📚 VISUALIZAÇÃO DE CARTEIRINHA 📚\n";
     std::cout << "============================================\n";
 
-    escreveDevagar("Antes de visualizar a carteirinha, adicione a imagem do estudante na pasta images (PRIMEIRONOMEALUNO_MATRICULA_(formato da imagem))", 30);
-    std::cout << std::endl;
-    std::cout << "--------------------------------------------\n";
-    escreveDevagar("Selecione qual e a extensao do arquivo adicionado:", 30);
-    std::cout << std::endl;
-    std::cout << "--------------------------------------------\n";
-    escreveDevagar("1 - .PNG", 20);
-    std::cout << std::endl;
-    std::cout << "--------------------------------------------\n";
-    escreveDevagar("2 - .JPG/JPEG", 20);
-    std::cout << std::endl;
-    std::cout << "--------------------------------------------\n";
-    escreveDevagar("3 - .BMP", 20);
-    std::cout << std::endl;
-    std::cout << "--------------------------------------------\n";
+    escreveDevagar("Antes de visualizar, adicione a imagem do aluno na pasta images.", 30);
+    std::cout << "\n--------------------------------------------\n";
+
+    std::cout << "Selecione a extensão da imagem:\n";
+    std::cout << "1 - .PNG\n2 - .JPG/JPEG\n3 - .BMP\n--------------------------------------------\n";
 
     int opcao;
 
-    while (true)
+    // --- SELEÇÃO DA EXTENSÃO DA IMAGEM ---
+    while (1)
     {
         try
         {
             std::cout << "-> Opção: ";
-
             if (!(std::cin >> opcao))
-            { // erro cin -- usuario digitou letra,simbolo,etc
+            {
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                throw std::invalid_argument("❌ Entrada invalida! Digite um numero 1,2 ou 3.");
+                throw std::invalid_argument("❌ Entrada inválida!");
             }
 
             if (opcao < 1 || opcao > 3)
-            {
-                throw std::invalid_argument("❌ Opcao invalida! Digite 1, 2 ou 3.");
-            }
+                throw std::invalid_argument("❌ Opção inválida!");
 
-            break; // caso a entrada e a opcao seja valida
+            break;
         }
-        catch (const std::exception &e)
+        catch (std::exception &e)
         {
-            std::cout << e.what() << std::endl;
+            std::cout << e.what() << "\n";
         }
     }
 
-    // carregar as imagens de template base
+    // --- CARREGAMENTO DE ARQUIVOS DE IMAGEM ---
     CImg<unsigned char> img;
     CImg<unsigned char> barcode;
 
-    try
-    {
-        img.assign("images/template.bmp");
-    }
-    catch (const cimg_library::CImgIOException &erro)
-    {
-        throw std::runtime_error("❌ Não foi possível carregar template.bmp");
-    }
+    try { img.assign("images/template.bmp"); }
+    catch (...) { throw std::runtime_error("❌ Não foi possível carregar template.bmp"); }
 
-    try
-    {
-        barcode.assign("images/codigo_barra.bmp");
-    }
-    catch (const cimg_library::CImgIOException &erro)
-    {
-        throw std::runtime_error("❌ Não foi possível carregar barcode.bmp");
-    }
+    try { barcode.assign("images/codigo_barra.bmp"); }
+    catch (...) { throw std::runtime_error("❌ Não foi possível carregar barcode.bmp"); }
 
-    // capturar o primeiro nome do estudante
+    // --- PREPARAÇÃO DE DADOS ---
+    // Extrai primeiro nome do estudante
     std::string aux = getNome();
     auto pos = aux.find(" ");
-    std::string primeiroNome;
-    if (pos == std::string::npos)
-        primeiroNome = aux;
-    else
-        primeiroNome = aux.substr(0, pos);
-
+    std::string primeiroNome = (pos == std::string::npos ? aux : aux.substr(0, pos));
     primeiroNome = deixar_maiusculo(primeiroNome);
 
-    // procurar uma foto que é salva no formato "PRIMEIRONOMEALUNO_MATRICULA_foto.bmp" - ex: para Julio Soares dos Reis "JULIO_3213131_foto.bmp"
-    std::string nome_foto_aluno = "images/";
-    nome_foto_aluno += primeiroNome;
-    nome_foto_aluno += "_";
-    nome_foto_aluno += get_matricula();
-    nome_foto_aluno += "_foto";
-
-    if (opcao == 1)
-        nome_foto_aluno += ".png";
-    else if (opcao == 2)
-        nome_foto_aluno += ".jpg";
-    else if (opcao == 3)
-        nome_foto_aluno += ".bmp";
+    // Monta caminho do arquivo da foto do aluno
+    std::string nome_foto = "images/" + primeiroNome + "_" + get_matricula() + "_foto";
+    nome_foto += (opcao == 1 ? ".png" : (opcao == 2 ? ".jpg" : ".bmp"));
 
     CImg<unsigned char> aluno;
 
-    try
-    {
-        aluno.assign(nome_foto_aluno.c_str()); // verificar se existe o arquivo da foto do aluno
-    }
-    catch (const cimg_library::CImgIOException &erro)
-    {
-        throw std::runtime_error("❌ Não foi possivel carregar o arquivo da foto do aluno: " + nome_foto_aluno);
-    }
+    try { aluno.assign(nome_foto.c_str()); }
+    catch (...) { throw std::runtime_error("❌ Não foi possível carregar " + nome_foto); }
 
-    // colocar a imagem do aluno e do codigo de barra no local certo
-    aluno.resize(350, 525);
-    img.draw_image(33, 314, aluno);
+    // --- REDIMENSIONAMENTO E INSERÇÃO DE ELEMENTOS ---
+    aluno.resize(350, 525);        // Redimensiona foto para caber na carteirinha
+    img.draw_image(33, 314, aluno);  // Insere foto no template
 
-    barcode.resize(998, 192);
-    img.draw_image(397, 749, barcode);
+    barcode.resize(998, 192);      // Redimensiona código de barras
+    img.draw_image(397, 749, barcode);  // Insere barcode
 
-    // criar mascara RGB para por o texto
+    // --- CRIAÇÃO DE MÁSCARA E ADIÇÃO DE TEXTOS ---
     CImg<unsigned char> mask(img.width(), img.height(), 1, 3, 0);
     unsigned char branco[] = {255, 255, 255};
 
-    // desenha o texto na mascara
-    mask.draw_text(520, 321, getNome().c_str(), branco, 0, 255, 30, false); //.c_str() converte string para const char
-    mask.draw_text(523, 404, Administrador::procurar_curso_por_codigo(get_curso()).c_str(), branco, 0, 255, 30, false);
-    mask.draw_text(577, 488, get_matricula().c_str(), branco, 0, 255, 30, false);
-    mask.draw_text(475, 572, getCpf().c_str(), branco, 0, 255, 30, false);
-    mask.draw_text(564, 655, "06/2026", branco, 0, 255, 30, false);
-    mask.draw_text(1173, 720, getDataAtual().c_str(), branco, 0, 255, 30, false);
+    // Adiciona informações do aluno na máscara
+    mask.draw_text(520, 321, getNome().c_str(), branco, 0, 255, 30);
+    mask.draw_text(523, 404, Administrador::procurar_curso_por_codigo(get_curso()).c_str(), branco, 0, 255, 30);
+    mask.draw_text(577, 488, get_matricula().c_str(), branco, 0, 255, 30);
+    mask.draw_text(475, 572, getCpf().c_str(), branco, 0, 255, 30);
+    mask.draw_text(564, 655, "06/2026", branco, 0, 255, 30);
+    mask.draw_text(1173, 720, getDataAtual().c_str(), branco, 0, 255, 30);
 
-    if (!std::filesystem::exists("carteirinhas"))          // caso nao haja uma pasta chamada 'carteirinhas' -- segurança extra
-        std::filesystem::create_directory("carteirinhas"); // cria a pasta
+    // Criação da pasta carteirinhas, se não existir
+    if (!std::filesystem::exists("carteirinhas"))
+        std::filesystem::create_directory("carteirinhas");
 
-    std::string nomeArquivo = "carteirinhas/" + primeiroNome + "_" + get_matricula() + "_CARTEIRINHA.bmp"; // salvar a carteirinha com nome personalizado conforme o primeiro nome  e a matricula do aluno
+    // Salva carteirinha personalizada
+    std::string nomeArquivo = "carteirinhas/" + primeiroNome + "_" + get_matricula() + "_CARTEIRINHA.bmp";
 
     aplicarTextoPreto(img, mask);
     img.save(nomeArquivo.c_str());
+
     std::cout << "--------------------------------------------\n";
-    escreveDevagar("✅ Carteirinha criada com sucesso! Verifique a pasta 'Carteirinhas' para visualizar\n", 30);
+    escreveDevagar("✅ Carteirinha criada com sucesso!\n", 30);
 }
 
+// ========== CONSULTAR SALDO ==========
+// Exibe o saldo atual da carteirinha formatado como moeda
 void Estudante::consultarSaldo()
 {
     std::cout << "--------------------------------------------\n";
-    std::cout << std::fixed << std::setprecision(2) << "Seu saldo é de R$" << this->carteirinha->getSaldo() << "\n";
+    std::cout << std::fixed << std::setprecision(2)
+              << "Seu saldo é de R$" << this->carteirinha->getSaldo() << "\n";
     std::cout << "--------------------------------------------\n";
 }
 
-std::string Estudante::get_matricula() const
-{
-    return this->matricula;
-}
+// ========== GETTERS E SETTERS ==========
+// Métodos de acesso (getters) e modificação (setters) para atributos privados
+// Getters simples
+std::string Estudante::get_matricula() const { return this->matricula; }
+std::string Estudante::get_curso() const { return this->curso; }
+Carteirinha *Estudante::get_carteirinha() const { return this->carteirinha; }
+std::vector<Emprestimo *> Estudante::get_emprestimos() const { return this->emprestimos; }
 
-std::string Estudante::get_curso() const
-{
-    return this->curso;
-}
-
-Carteirinha *Estudante::get_carteirinha() const
-{
-    return this->carteirinha;
-}
-
-std::vector<Emprestimo *> Estudante::get_emprestimos() const
-{
-    return this->emprestimos;
-}
-
-void Estudante::set_matricula(std::string _matricula)
-{
-    this->matricula = _matricula;
-}
-
-void Estudante::set_curso(std::string _curso)
-{
-    this->curso = _curso;
-}
+// Setters simples
+void Estudante::set_matricula(std::string _matricula) { this->matricula = _matricula; }
+void Estudante::set_curso(std::string _curso) { this->curso = _curso; }
