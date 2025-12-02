@@ -20,7 +20,7 @@ protected: // alterei private para protected --- atributor passados por herança
     int prazoDeDevolucao;
 
 public:
-    Estudante(const std::string &_nome, const std::string &_cpf, const std::string &_data_de_nascimento, const std::string &_email, const std::string &_senha, const std::string &_matricula, const std::string &_curso);
+    Estudante(const std::string &_nome, const std::string &_cpf, std::string &_data_de_nascimento, const std::string &_email, const std::string &_senha, const std::string &_matricula, const std::string &_curso);
     virtual ~Estudante(); // override porque irá chamar o destrutor das subclasses (thales)
 
     void exibirEmprestimos();

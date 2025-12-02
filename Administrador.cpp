@@ -18,7 +18,7 @@
 using namespace cimg_library;
 
 int Administrador::nextID = 1;
-Administrador::Administrador(const std::string &_nome, const std::string &_cpf, const std::string &_data_de_nascimento, const std::string &_email, const std::string &_senha) : Usuario(_nome, _cpf, _data_de_nascimento, _email, _senha), id(nextID++) {}
+Administrador::Administrador(const std::string &_nome, const std::string &_cpf, std::string &_data_de_nascimento, const std::string &_email, const std::string &_senha) : Usuario(_nome, _cpf, _data_de_nascimento, _email, _senha), id(nextID++) {}
 
 Administrador::~Administrador() {}
 
@@ -287,7 +287,6 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
     std::cout << "--------------------------------------------\n";
 
     // --- MATRÍCULA ---
-    // TODO: Não pode ter mesma matrícula de outro - Luiz
     while (1)
     {
         try
@@ -296,6 +295,11 @@ void Administrador::criarEstudante(std::vector<Estudante *> &estudantes)
             std::getline(std::cin, _matricula);
             if (validarMATRICULA(_matricula))
             {
+                for (auto estudante : estudantes){
+                    if (estudante->get_matricula() == _matricula){
+                        throw std::invalid_argument("❌ Já existe um estudante com essa matrícula");
+                    }
+                }
                 break;
             }
         }

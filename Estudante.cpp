@@ -15,7 +15,7 @@
 #include <thread>
 #include <filesystem>
 
-Estudante::Estudante(const std::string &_nome, const std::string &_cpf, const std::string &_data_de_nascimento, const std::string &_email, const std::string &_senha, const std::string &_matricula, const std::string &_curso) : Usuario(_nome, _cpf, _data_de_nascimento, _email, _senha), matricula(_matricula), curso(_curso), emprestimos()
+Estudante::Estudante(const std::string &_nome, const std::string &_cpf, std::string &_data_de_nascimento, const std::string &_email, const std::string &_senha, const std::string &_matricula, const std::string &_curso) : Usuario(_nome, _cpf, _data_de_nascimento, _email, _senha), matricula(_matricula), curso(_curso), emprestimos()
 {
     this->carteirinha = new Carteirinha();
 }
@@ -261,33 +261,35 @@ void Estudante::devolverLivro(const Biblioteca &biblioteca)
     escreveDevagar("✅ Livro devolvido com sucesso!\n", 50);
 }
 
-// TODO: Não pode aceitar virgula - Luiz
 void Estudante::recarregarCarteirinha()
 {
     this->consultarSaldo();
 
-    double valor;
+    double valor = 0.0;
+    std::string input;
 
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     while (1)
     {
         std::cout << "-> Digite o valor a ser depositado: R$";
-        std::cin >> valor;
+        std::getline(std::cin, input);
 
         try
         {
-            if (std::cin.fail())
-            {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                throw std::invalid_argument("❌ O valor deve ser um número");
+            size_t pos = input.find(',');
+            if (pos != std::string::npos) {
+                input.replace(pos, 1, ".");
             }
-            if (valor <= 0)
+            valor = std::stod(input);
+
+            if (valor <= 0.0)
             {
-                throw std::invalid_argument("❌ O valor deve ser maior que 0");
+                throw std::invalid_argument("❌ O valor deve ser maior que R$ 0.00.");
             }
-            break;
+            
+            break; 
         }
-        catch (std::invalid_argument &e)
+        catch (const std::invalid_argument &e)
         {
             std::cerr << e.what() << std::endl;
         }

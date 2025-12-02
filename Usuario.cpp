@@ -4,7 +4,7 @@
 #include "Usuario.hpp"
 
 
-Usuario::Usuario(const std::string& _nome, const std::string &_cpf,const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha) : nome(_nome), cpf(_cpf),email(_email), senha(_senha) {
+Usuario::Usuario(const std::string& _nome, const std::string &_cpf, std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha) : nome(_nome), cpf(_cpf),email(_email), senha(_senha) {
     if (validarDATA(_data_de_nascimento)){
         this->data_de_nascimento = _data_de_nascimento;
     }

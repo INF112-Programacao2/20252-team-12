@@ -145,7 +145,8 @@ void Sistema::carregarDados()
     file.close();
     if (this->estudantes.empty())
     {
-        EstudanteGraduacao *estudante = new EstudanteGraduacao("Luiz Filipe Santos Oliveira", "14422059629", "22/09/2006", "luiz.s.oliveira@ufv.br", "luiz", "120553", "141", "SISU");
+        std::string data = "22/09/2006";
+        EstudanteGraduacao *estudante = new EstudanteGraduacao("Luiz Filipe Santos Oliveira", "14422059629", data, "luiz.s.oliveira@ufv.br", "luiz", "120553", "141", "SISU");
         this->estudantes.push_back(estudante);
         return;
     }
@@ -291,7 +292,8 @@ void Sistema::carregarAdmin()
 
         escreveLog("Arquivo de admin não encontrado ou inválido. Criando admin padrão.");
 
-        this->admin = new Administrador("Julio Cesar Soares dos Reis", "49588826691", "23/04/1988", "jreis@ufv.br", "admin10");
+        std::string dataAdmin = "23/04/1988";
+        this->admin = new Administrador("Julio Cesar Soares dos Reis", "49588826691", dataAdmin, "jreis@ufv.br", "admin10");
 
         this->salvarAdmin();
     }
@@ -695,12 +697,12 @@ void Sistema::iniciarSistema()
                 {
                     std::string email, senha;
 
-                    // ====== LEITURA DO EMAIL ====== TODO: TRATAMENTO DE ERRO - Luiz
+                    // ====== LEITURA DO EMAIL ======
                     std::cout << "--------------------------------------------\n";
                     std::cout << "Email: ";
                     std::getline(std::cin, email);
 
-                    // ====== LEITURA DA SENHA ====== TODO: TRATAMENTO DE ERRO - Luiz
+                    // ====== LEITURA DA SENHA ======
                     std::cout << "--------------------------------------------\n";
                     std::cout << "Senha: ";
                     std::getline(std::cin, senha);

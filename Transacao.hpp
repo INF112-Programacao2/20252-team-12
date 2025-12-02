@@ -16,14 +16,14 @@ class Transacao {
         Estudante* origem;
         std::string data;
     public:
-        Transacao(const std::string &_tipo, const double &_valor, const std::string& _data);
+        Transacao(const std::string &_tipo, const double &_valor, std::string& _data);
         ~Transacao();
 
         int get_id() const;
         std::string get_tipo_transacao() const;
         double get_valor_transacao() const;
         Estudante* get_origem_transacao() const;
-        std::string get_data() const;
+        std::string get_data();
 
         void set_id(const int &_id);
         void set_tipo_transacao(const std::string &_tipo_transacao);

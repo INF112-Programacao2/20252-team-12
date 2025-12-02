@@ -9,14 +9,14 @@
 class Usuario{
 
     private:
-        std::string nome;                      // Lembrar de ler nome como uma linha inteira
+        std::string nome;
         std::string cpf;
-        std::string data_de_nascimento;             // e dar cin.ignore() depois.
+        std::string data_de_nascimento;
         std::string email;
         std::string senha;        
 
     public:
-        Usuario(const std::string& _nome, const std::string &_cpf, const std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha);
+        Usuario(const std::string& _nome, const std::string &_cpf, std::string& _data_de_nascimento, const std::string& _email, const std::string& _senha);
         ~Usuario();
 
         std::string getNome();

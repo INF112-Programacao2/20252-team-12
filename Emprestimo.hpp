@@ -19,7 +19,7 @@ private:
     time_t dataDeDevolucao;
 
 public:
-    Emprestimo(Estudante &_origem, Livro &_livro, const std::string &_dataDeEmprestimo, const std::string &_dataDeDevolucao);
+    Emprestimo(Estudante &_origem, Livro &_livro, std::string &_dataDeEmprestimo, std::string &_dataDeDevolucao);
     ~Emprestimo();
 
     int getId();

@@ -25,7 +25,7 @@ private:
     int id;
 
 public:
-    Administrador(const std::string &_nome, const std::string &_cpf, const std::string &_data_de_nascimento, const std::string &_email, const std::string &_senha);
+    Administrador(const std::string &_nome, const std::string &_cpf, std::string &_data_de_nascimento, const std::string &_email, const std::string &_senha);
     ~Administrador();
 
     int get_id() const;
@@ -43,9 +43,7 @@ public:
     std::string alterarValorRU(); // Retorna qual valor foi alterado (Graduação ou Pós-Graduação)
     void alterarValorMulta();
     void mobilidadeAcademica(std::vector<Estudante *> &estudantes);
-    static std::string procurar_curso_por_codigo(std::string codigo);
-    void gerarCarteirinha(Estudante *estudante);
-    
+    static std::string procurar_curso_por_codigo(std::string codigo);   
 };
 
 #endif
