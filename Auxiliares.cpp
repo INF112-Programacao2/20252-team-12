@@ -423,6 +423,11 @@ bool validarCURSO(std::string &cursoInput)
         if(!isdigit((unsigned char) c))
             throw std::invalid_argument("❌ O código do curso deve conter APENAS números.");
     }
+        
+    int numero_curso = std::stoi(cursoInput);
+
+    if(numero_curso < 101 || numero_curso > 150)
+        throw std::invalid_argument("❌ O código informado deve ser válido.");
     
     std::ifstream arquivo("codigo_cursos.txt"); //
     if (!arquivo.is_open())
