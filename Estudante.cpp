@@ -417,9 +417,10 @@ void Estudante::visualizarCarteirinha()
     // criar mascara RGB para por o texto
     CImg<unsigned char> mask(img.width(), img.height(), 1, 3, 0);
     unsigned char branco[] = {255, 255, 255};
-
+    std::string aux;
     // desenha o texto na mascara
-    mask.draw_text(520, 321, getNome().c_str(), branco, 0, 255, 30, false); //.c_str() converte string para const char
+    aux = removerACENTO(getNome());
+    mask.draw_text(520, 321, aux.c_str(), branco, 0, 255, 30, false); //.c_str() converte string para const char
     mask.draw_text(523, 404, Administrador::procurar_curso_por_codigo(get_curso()).c_str(), branco, 0, 255, 30, false);
     mask.draw_text(577, 488, get_matricula().c_str(), branco, 0, 255, 30, false);
     mask.draw_text(475, 572, getCpf().c_str(), branco, 0, 255, 30, false);

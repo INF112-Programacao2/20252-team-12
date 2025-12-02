@@ -332,7 +332,7 @@ bool validarSENHA(const std::string &senha)
 
 bool validarDATA(std::string &data)
 {
-    auto parts = split(data, '/'); 
+    auto parts = split(data, '/');
 
     if (parts.size() != 3)
     {
@@ -350,7 +350,7 @@ bool validarDATA(std::string &data)
     {
         throw std::invalid_argument("❌ Data contém caracteres inválidos (não são números inteiros)");
     }
-    
+
     time_t agora = time(nullptr);
     struct tm *tnow = localtime(&agora);
     int ano_atual = tnow->tm_year + 1900;
@@ -376,26 +376,26 @@ bool validarDATA(std::string &data)
     }
 
     std::stringstream ss;
-    
+
     ss << std::setfill('0') << std::setw(2) << dia << "/" << std::setfill('0') << std::setw(2) << mes << "/" << ano;
 
-    data = ss.str(); 
+    data = ss.str();
 
     return true;
 }
 
 bool validarMATRICULA(std::string &matricula)
 {
-    //preencher com zeros a esquerda até inteirar os 6 digitos
-    if(matricula.size() < 6)
-    matricula = std::string(6-matricula.size(), '0') + matricula; //adiciona na frente da matricula 
-    
-    //caso a matricula supere o limite para matriculas
+    // preencher com zeros a esquerda até inteirar os 6 digitos
+    if (matricula.size() < 6)
+        matricula = std::string(6 - matricula.size(), '0') + matricula; // adiciona na frente da matricula
+
+    // caso a matricula supere o limite para matriculas
     if (matricula.size() > 6)
     {
         throw std::invalid_argument("❌ Matrícula deve ter no máximo 6 dígitos.");
     }
-    
+
     // Verifica se todos são números
     for (char c : matricula)
     {
@@ -415,16 +415,17 @@ bool validarCURSO(std::string &cursoInput)
         throw std::invalid_argument("❌ O curso não pode estar vazio.");
     }
 
-    for(char c: cursoInput){ //contra entrada de caracter alfabetico
-        if(!isdigit((unsigned char) c))
+    for (char c : cursoInput)
+    { // contra entrada de caracter alfabetico
+        if (!isdigit((unsigned char)c))
             throw std::invalid_argument("❌ O código do curso deve conter APENAS números.");
     }
-        
+
     int numero_curso = std::stoi(cursoInput);
 
-    if(numero_curso < 101 || numero_curso > 150)
+    if (numero_curso < 101 || numero_curso > 150)
         throw std::invalid_argument("❌ O código informado deve ser válido.");
-    
+
     std::ifstream arquivo("codigo_cursos.txt"); //
     if (!arquivo.is_open())
     {
@@ -539,4 +540,88 @@ bool validarTITULO(const std::string &titulo)
     }
 
     return true;
+}
+
+std::string removerACENTO(std::string texto)
+{
+    std::string resultado;
+
+    for (size_t i = 0; i < texto.size();)
+    {
+        unsigned char c = texto[i];
+
+        // ASCII normal
+        if (c < 128)
+        {
+            resultado.push_back(c);
+            i++;
+        }
+        else
+        {
+            // UTF-8 de 2 bytes
+            if (i + 1 < texto.size())
+            {
+                unsigned char c2 = texto[i + 1];
+
+                std::string seq = texto.substr(i, 2);
+
+                char convertido = '\0';
+
+                // ============================
+                //   Tabela de conversões
+                // ============================
+                if (seq == "á" || seq == "à" || seq == "ã" || seq == "â" || seq == "ä")
+                    convertido = 'a';
+                else if (seq == "Á" || seq == "À" || seq == "Ã" || seq == "Â" || seq == "Ä")
+                    convertido = 'A';
+
+                else if (seq == "é" || seq == "è" || seq == "ê" || seq == "ë")
+                    convertido = 'e';
+                else if (seq == "É" || seq == "È" || seq == "Ê" || seq == "Ë")
+                    convertido = 'E';
+
+                else if (seq == "í" || seq == "ì" || seq == "î" || seq == "ï")
+                    convertido = 'i';
+                else if (seq == "Í" || seq == "Ì" || seq == "Î" || seq == "Ï")
+                    convertido = 'I';
+
+                else if (seq == "ó" || seq == "ò" || seq == "õ" || seq == "ô" || seq == "ö")
+                    convertido = 'o';
+                else if (seq == "Ó" || seq == "Ò" || seq == "Õ" || seq == "Ô" || seq == "Ö")
+                    convertido = 'O';
+
+                else if (seq == "ú" || seq == "ù" || seq == "û" || seq == "ü")
+                    convertido = 'u';
+                else if (seq == "Ú" || seq == "Ù" || seq == "Û" || seq == "Ü")
+                    convertido = 'U';
+
+                else if (seq == "ç")
+                    convertido = 'c';
+                else if (seq == "Ç")
+                    convertido = 'C';
+
+                // ============================
+
+                if (convertido != '\0')
+                {
+                    resultado.push_back(convertido);
+                }
+                else
+                {
+                    // não reconhecido: copia os 2 bytes
+                    resultado += seq;
+                }
+
+                i += 2;
+            }
+            else
+            {
+                // byte inválido no final
+                resultado.push_back(c);
+                i++;
+            }
+        }
+    }
+
+    return resultado;
 }
