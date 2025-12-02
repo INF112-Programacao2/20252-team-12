@@ -18,8 +18,8 @@ std::string EstudanteGraduacao::get_modalidade() const{
     return this->modalidade;
 }
 
-double EstudanteGraduacao::get_valorRU() const {
-    return this->valorRU;
+double EstudanteGraduacao::get_valorRU() {
+    return valorRU;
 }
 
 int EstudanteGraduacao::get_prazoDeDevolucao() const {

@@ -29,6 +29,10 @@ Estudante::~Estudante()
     delete this->carteirinha;
 }
 
+void Estudante::adicionarEmprestimo(Emprestimo *e) {
+    this->emprestimos.push_back(e);
+}
+
 void Estudante::exibirEmprestimos()
 {
     std::cout << "\n============================================\n";

@@ -12,9 +12,9 @@ EstudantePosGraduacao::EstudantePosGraduacao(const std::string &_nome, const std
 
 EstudantePosGraduacao::~EstudantePosGraduacao() {}
 
-double EstudantePosGraduacao::get_valorRU() const
+double EstudantePosGraduacao::get_valorRU()
 {
-    return this->valorRU;
+    return valorRU;
 }
 
 std::string EstudantePosGraduacao::get_tipoPos() const

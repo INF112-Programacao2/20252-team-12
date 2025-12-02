@@ -14,13 +14,20 @@ Sistema::Sistema() : estudantes()
 {
     this->biblioteca = new Biblioteca("Biblioteca UFV");
     this->estudante_logado = nullptr;
+    EstudanteGraduacao::set_valorRU(5.4);
+    EstudantePosGraduacao::set_valorRU(2.7);
     this->carregarAdmin();
     this->carregarDados(); // Carrega os estudantes existentes
     this->carregarLivros();
+    this->carregarEmprestimos();
 }
 
 Sistema::~Sistema()
 {
+    this->salvarAdmin();
+    this->salvarDados();
+    this->salvarEmprestimos();
+
     for (auto estudante : this->estudantes)
     {
         delete estudante;
@@ -77,7 +84,6 @@ void Sistema::salvarDados()
     escreveLog("Dados salvos com sucesso!");
 }
 
-// TODO: ler RU e Multa
 void Sistema::carregarDados()
 {
     std::ifstream file("banco_estudantes.txt");
@@ -145,6 +151,99 @@ void Sistema::carregarDados()
     }
 }
 
+void Sistema::salvarEmprestimos()
+{
+    std::ofstream file("banco_emprestimos.txt");
+    if (!file.is_open())
+    {
+        escreveLog("Erro ao salvar empréstimos!");
+        return;
+    }
+
+    for (Estudante *est : this->estudantes)
+    {
+        for (Emprestimo *emp : est->get_emprestimos())
+        {
+            if (!emp->isDevolvido())
+            {
+                // Formato: MATRICULA;TITULO_LIVRO;DATA_EMPRESTIMO;DATA_DEVOLUCAO
+                file << est->get_matricula() << ";"
+                     << emp->getLivro()->getTitulo() << ";"
+                     << emp->getDataDeEmprestimo() << ";"
+                     << emp->getDataDeDevolucao() << "\n";
+            }
+        }
+    }
+    file.close();
+    escreveLog("Empréstimos pendentes salvos com sucesso.");
+}
+
+void Sistema::carregarEmprestimos()
+{
+    std::ifstream file("banco_emprestimos.txt");
+    if (!file.is_open())
+    {
+        escreveLog("Arquivo banco_emprestimos.txt não encontrado. Nenhum empréstimo carregado.");
+        return;
+    }
+
+    std::string linha;
+    while (std::getline(file, linha))
+    {
+        std::stringstream ss(linha);
+        std::string segmento;
+        std::vector<std::string> dados;
+
+        while (std::getline(ss, segmento, ';'))
+        {
+            dados.push_back(segmento);
+        }
+
+        if (dados.size() >= 4)
+        {
+            std::string matricula = dados[0];
+            std::string tituloLivro = dados[1];
+            std::string dataEmp = dados[2];
+            std::string dataDev = dados[3];
+
+            Estudante *estudanteAlvo = nullptr;
+            for (auto est : this->estudantes)
+            {
+                if (est->get_matricula() == matricula)
+                {
+                    estudanteAlvo = est;
+                    break;
+                }
+            }
+
+            Livro *livroAlvo = nullptr;
+            
+            for (auto livro : this->biblioteca->getAcervo()) 
+            {
+                if (livro->getTitulo() == tituloLivro)
+                {
+                    livroAlvo = livro;
+                    break;
+                }
+            }
+
+            if (estudanteAlvo != nullptr && livroAlvo != nullptr)
+            {
+                Emprestimo *novoEmprestimo = new Emprestimo(*estudanteAlvo, *livroAlvo, dataEmp, dataDev);
+                
+                novoEmprestimo->setDataDeEmprestimo(dataEmp);
+                novoEmprestimo->setDataDeDevolucao(dataDev);
+                novoEmprestimo->setDevolvido(false);
+
+                estudanteAlvo->adicionarEmprestimo(novoEmprestimo);
+
+                livroAlvo->setNumExemplaresDisponiveis(livroAlvo->getNumExemplaresDisponiveis()-1); 
+            }
+        }
+    }
+    file.close();
+}
+
 std::vector<Estudante *> Sistema::get_estudantes()
 {
     return this->estudantes;
@@ -180,6 +279,9 @@ void Sistema::carregarAdmin()
                 if (dados.size() >= 5)
                 {
                     this->admin = new Administrador(dados[0], dados[1], dados[2], dados[3], dados[4]);
+                    EstudanteGraduacao::set_valorRU(std::stod(dados[5]));
+                    EstudantePosGraduacao::set_valorRU(std::stod(dados[6]));
+                    Emprestimo::setMulta(std::stod(dados[7]));
                     file.close();
                     return;
                 }
@@ -210,12 +312,16 @@ void Sistema::salvarAdmin()
             std::cerr << "❌ Erro ao salvar dados do administrador.\n";
             return;
         }
-        // Salvando no formato: NOME;CPF;DATA;EMAIL;SENHA
+
+        // Salvando no formato: NOME;CPF;DATA;EMAIL;SENHA;VALOR_RU_GRAD;VALOR_RU_POS_GRAD;VALOR_MULTA
         file << admin->getNome() << ";"
              << admin->getCpf() << ";"
              << admin->getDataDeNascimento() << ";"
              << admin->getEmail() << ";"
-             << admin->getSenha() << "\n";
+             << admin->getSenha() << ";"
+             << EstudanteGraduacao::get_valorRU() << ";"
+             << EstudantePosGraduacao::get_valorRU() << ";"
+             << Emprestimo::getMulta() << "\n";
 
         file.close();
 
@@ -424,6 +530,8 @@ void Sistema::menuAdministrador()
                 break;
             }
             this->salvarDados();
+            this->salvarEmprestimos();
+            this->salvarAdmin();
         }
         catch (const std::exception &e)
         {
@@ -514,7 +622,6 @@ void Sistema::menuEstudante()
                 apagarTerminal();
                 break;
             case 8:
-                // TODO: salvar emprestimos em um arquivo, porque do jeito que está não tem como mostrar a logica de multas
                 escreveLog("Estudante Escolheu a Opcao: 8 - Devolver Livro");
                 this->estudante_logado->devolverLivro(*this->biblioteca);
                 pausa(2);
@@ -537,6 +644,7 @@ void Sistema::menuEstudante()
                 break;
             }
             this->salvarDados();
+            this->salvarEmprestimos();
         }
         catch (const std::exception &e)
         {

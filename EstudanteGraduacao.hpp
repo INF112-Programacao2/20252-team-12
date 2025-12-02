@@ -15,7 +15,7 @@ public:
     ~EstudanteGraduacao();
 
     std::string get_modalidade() const;
-    double get_valorRU() const;
+    static double get_valorRU();
     int get_prazoDeDevolucao() const override;
 
     void set_modalidade(std::string _modalidade);
