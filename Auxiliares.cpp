@@ -380,16 +380,20 @@ bool validarDATA(const std::string &data)
 }
 
 // TODO: Tratar para menos de 6 caracteres
-bool validarMATRICULA(const std::string &matricula)
+//alterado
+bool validarMATRICULA(std::string &matricula)
 {
-    // Deve ter exatamente 6 caracteres
-    if (matricula.size() != 6)
+    //preencher com zeros a esquerda até inteirar os 6 digitos
+    if(matricula.size() < 6)
+    matricula = std::string(6-matricula.size(), '0') + matricula; //adiciona na frente da matricula 
+    
+    //caso a matricula supere o limite para matriculas
+    if (matricula.size() > 6)
     {
-        throw std::invalid_argument("❌ Matrícula deve conter exatamente 6 dígitos.");
+        throw std::invalid_argument("❌ Matrícula deve ter no máximo 6 dígitos.");
     }
-
+    
     // Verifica se todos são números
-
     for (char c : matricula)
     {
         if (!isdigit((unsigned char)c))
@@ -401,8 +405,10 @@ bool validarMATRICULA(const std::string &matricula)
     return true;
 }
 
+
 // TODO: Não pode aceitar caracter alfabetico
 // Esta aceitando o caracter 'a'
+//alterado
 bool validarCURSO(std::string &cursoInput)
 {
     if (cursoInput.empty())
@@ -410,6 +416,11 @@ bool validarCURSO(std::string &cursoInput)
         throw std::invalid_argument("❌ O curso não pode estar vazio.");
     }
 
+    for(char c: cursoInput){ //contra entrada de caracter alfabetico
+        if(!isdigit((unsigned char) c))
+            throw std::invalid_argument("❌ O código do curso deve conter APENAS números.");
+    }
+    
     std::ifstream arquivo("codigo_cursos.txt"); //
     if (!arquivo.is_open())
     {
@@ -454,6 +465,7 @@ bool validarCURSO(std::string &cursoInput)
     }
     return true;
 }
+
 bool validarMODALIDADE(const std::string &modalidade)
 {
     std::string t = stringMaiuscula(modalidade);
