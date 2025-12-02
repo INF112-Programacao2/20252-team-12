@@ -535,3 +535,4 @@ bool validarTITULO(const std::string &titulo)
 
     return true;
 }
+//fazer validaTIPO

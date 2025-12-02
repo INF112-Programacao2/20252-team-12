@@ -80,29 +80,27 @@ void Administrador::criarLivro(Biblioteca &biblioteca)
     }
 
     std::cout << "--------------------------------------------\n";
-    
+
     while (1)
     {
         try
         {
             std::cout << "-> Tipo: ";
             std::getline(std::cin, _tipo);
-            
+
             if (validarNOME(_tipo))
             {
                 break;
             }
-            break;
         }
         catch (std::exception &e)
         {
             std::cerr << e.what() << std::endl;
         }
     }
-    
+
     std::cout << "--------------------------------------------\n";
-    
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+
     while (1)
     {
         try
@@ -117,6 +115,8 @@ void Administrador::criarLivro(Biblioteca &biblioteca)
             {
                 throw std::invalid_argument("❌ Digite um numero inteiro valido e maior que zero.");
             }
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            break;
         }
         catch (std::exception &e)
         {
