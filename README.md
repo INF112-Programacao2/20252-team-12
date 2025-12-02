@@ -1,105 +1,94 @@
 # 🎓 Carteirinha Digital Universitária
 
-Sistema de carteirinha digital desenvolvido em C++, com foco em gerenciamento de usuários (estudantes e administradores) e controle de saldo para uso em serviços da universidade (restaurante, cópias, transporte, biblioteca, etc).
+Sistema de carteirinha digital desenvolvido em C++, focado no gerenciamento de usuários (estudantes e administradores), controle de saldo, acesso a serviços da universidade (RU, Biblioteca) e persistência de dados.
 
 ---
 
 ## 📘 Visão Geral
 
-Este projeto simula o funcionamento de uma **carteirinha universitária digital**, permitindo que **estudantes** consultem e recarreguem seus saldos, enquanto **administradores** podem visualizar e ajustar as carteirinhas de todos os estudantes.  
+Este projeto simula o ecossistema de uma **universidade digital**. O sistema é orquestrado pela classe **Sistema**, que gerencia o fluxo de navegação, menus e salvamento de dados.
+Os **Estudantes** podem utilizar a carteirinha para comer no Restaurante Universitário (RU), pegar livros emprestados e consultar saldo/extrato.
+Os **Administradores** possuem controle total para gerenciar usuários, configurar valores (RU, multas), realizar auditorias e promover mobilidade acadêmica.
 Além disso, o sistema integra **bibliotecas**, **livros** e **transações** digitais, permitindo controle de acesso e empréstimos conforme o tipo de estudante (graduação ou pós-graduação).
 
 ---
 
 ## 🧩 Estrutura de Classes
 
-### 🧍 Pessoa
-Classe base que representa uma pessoa genérica no sistema.  
-Contém informações básicas de identificação e autenticação.
+### ⚙️ Sistema
+A classe principal que orquestra a execução do programa.
 
 **Principais responsabilidades:**
-- Armazenar dados pessoais (nome, matrícula, e-mail).
-- Fornecer identificação para as subclasses.
+- Gerenciar o login e os menus (Estudante e Administrador).
+- Carregar e salvar dados em arquivos (`txt`, `csv`, etc.).
+- Centralizar as listas de estudantes, livros e o administrador.
 
----
-
-### 🎓 Estudante (herda de Pessoa)
-Representa um aluno que possui uma carteirinha digital.
-
-**Principais responsabilidades:**
-- Consultar o saldo da sua carteirinha.
-- Recarregar o saldo através de meios permitidos.
-- Acessar serviços da universidade (como biblioteca e restaurante).
-
----
-
-### 🧑‍💼 Administrador (herda de Pessoa)
-Usuário com privilégios administrativos no sistema.
+### 🛠️ Auxiliares
+Módulo de funções estáticas e utilitárias.
 
 **Principais responsabilidades:**
-- Consultar e modificar o saldo de carteirinhas.
-- Gerenciar usuários (criar, desativar, redefinir senha).
-- Visualizar histórico de transações dos estudantes.
-- Gerenciar livros e bibliotecas.
+- Validação de dados (CPF, E-mail, Matrícula, Senha).
+- Manipulação de datas e strings.
+- Processamento de imagens (via biblioteca `CImg`) para visualização da carteirinha.
 
----
+### 👤 Usuario (Base)
+Substitui a antiga classe `Pessoa`. Representa um usuário genérico.
+
+**Principais responsabilidades:**
+- Armazenar credenciais (CPF, Senha) e dados pessoais.
+- Fornecer a base para autenticação no sistema.
+
+### 🎓 Estudante (herda de Usuario)
+Representa o aluno portador da carteirinha.
+
+**Principais responsabilidades:**
+- Realizar operações de empréstimo e devolução de livros.
+- Utilizar o Restaurante Universitário (`comerRU`).
+- Consultar saldo, extrato e visualizar a carteirinha digital.
+
+### 🧑‍💼 Administrador (herda de Usuario)
+Usuário com privilégios de gestão.
+
+**Principais responsabilidades:**
+- Cadastrar estudantes e livros.
+- Alterar configurações globais (Valor do RU, Valor da Multa).
+- Gerenciar mobilidade acadêmica (mudança de curso/status).
+- Visualizar carteirinhas e transações de qualquer aluno.
 
 ### 💳 Carteirinha
-Entidade que armazena e gerencia o saldo digital do estudante.
+Gerencia o aspecto financeiro do estudante.
 
 **Principais responsabilidades:**
-- Manter o saldo atualizado.
-- Validar operações e impedir saldo negativo.
-- Servir como autorização para entrada na biblioteca.
-
----
+- Manter o saldo e o histórico de transações (extrato).
+- Processar depósitos e débitos.
 
 ### 💰 Transação
-Representa uma operação que altera o saldo da carteirinha (crédito ou débito).
+Registra cada movimentação financeira.
 
 **Principais responsabilidades:**
-- Registrar, validar e aplicar alterações de saldo.
-- Garantir integridade e rastreabilidade das operações.
-- Permitir auditoria por administradores.
+- Armazenar tipo, valor, data e origem da operação.
+- Garantir histórico auditável.
 
----
-
-### 📚 Biblioteca
-Entidade que valida o acesso de estudantes e gerencia empréstimos.
+### 📚 Biblioteca & 📖 Livro
+Gerenciam o acervo físico.
 
 **Principais responsabilidades:**
-- Validar acesso de estudantes por carteirinha.
-- Verificar situação do estudante (regular ou com pendências).
-- Gerenciar empréstimos e devoluções de livros.
+- Controle de exemplares disponíveis e totais.
+- Organização por título, autor e gênero.
 
----
-
-### 📖 Livro
-Representa um livro do acervo da biblioteca.
+### 🤝 Emprestimo
+Representa o vínculo entre um estudante e um livro.
 
 **Principais responsabilidades:**
-- Armazenar informações bibliográficas.
-- Controlar disponibilidade para empréstimo.
-- Registrar datas de empréstimo e devolução.
+- Controlar datas de empréstimo e devolução.
+- Calcular multas por atraso automaticamente.
 
----
+### 🎓 EstudanteGraduacao & EstudantePosGraduacao
+Especializações de estudante.
 
-### 🎓 Graduação (herda de Estudante)
-Representa um estudante de curso de graduação.
-
-**Principais responsabilidades:**
-- Consultar e recarregar saldo da carteirinha.
-- Realizar empréstimos de livros conforme regras da graduação.
-
----
-
-### 🎓 Pós-Graduação (herda de Estudante)
-Representa um estudante de pós-graduação.
-
-**Principais responsabilidades:**
-- Consultar e recarregar saldo da carteirinha.
-- Realizar empréstimos com prazos diferenciados.
-- Acessar serviços avançados da universidade.
+**Diferenciações:**
+- **Graduação:** Possui modalidade específica e regras padrão de RU.
+- **Pós-Graduação:** Possui linha de pesquisa, tipo de pós e regras diferenciadas (prazos de devolução maiores).
 
 ---
 
@@ -107,58 +96,168 @@ Representa um estudante de pós-graduação.
 
 | Classe | Responsabilidades | Colaborações |
 |--------|--------------------|--------------|
-| Pessoa | Identificação e autenticação | Estudante, Administrador |
-| Estudante | Consultar e recarregar saldo | Pessoa, Carteirinha |
-| Administrador | Gerenciar carteirinhas, usuários e livros | Pessoa, Estudante, Carteirinha, Biblioteca |
-| Carteirinha | Controlar saldo e acesso | Estudante, Administrador, Biblioteca |
-| Transação | Registrar e validar operações financeiras | Carteirinha, Estudante, Administrador |
-| Biblioteca | Validar acesso e empréstimos | Carteirinha, Estudante, Livro |
-| Livro | Armazenar e gerenciar disponibilidade | Biblioteca, Estudante |
-| Graduação | Regras específicas de estudantes de graduação | Biblioteca, Transação |
-| Pós-Graduação | Regras específicas de pós-graduação | Biblioteca, Transação |
+| **Sistema** | Controle de fluxo, I/O de arquivos, Menus | Usuario, Administrador, Estudante, Biblioteca |
+| **Auxiliares** | Validações, Datas, Imagem, Logs | Todas as classes |
+| **Usuario** | Identificação base | Sistema |
+| **Estudante** | Uso de serviços (RU, Biblio), Saldo | Carteirinha, Emprestimo, Sistema |
+| **Administrador** | Gestão global, Configuração de valores | Sistema, Estudante, Livro |
+| **Carteirinha** | Saldo e Extrato | Estudante, Transacao |
+| **Emprestimo** | Regras de devolução e Multa | Estudante, Livro |
+| **Biblioteca** | Acervo de livros | Livro, Sistema |
 
 ---
 
-## 🧾 User Stories
+## 📋 User Stories - Carteirinha Digital Universitária
 
-- **Pessoa:**  
-  _Como pessoa, quero registrar meus dados básicos (nome, e-mail, data de nascimento), para que o sistema possa me identificar de forma única._
+### 👤 Ator: Usuário (Genérico)
+_Funcionalidades comuns a Estudantes e Administradores._
 
-- **Estudante:**  
-  _Como estudante, quero consultar e recarregar o saldo da minha carteirinha digital, para que eu possa utilizá-la para pagamentos e serviços dentro da universidade._
+- [ ] **US01 - Autenticação no Sistema**
+  > **Como** usuário,  
+  > **Quero** realizar login informando meu CPF/E-mail e senha,  
+  > **Para** que eu possa acessar o menu correspondente ao meu nível de permissão (Estudante ou Admin) com segurança.
 
-- **Administrador:**  
-  _Como administrador, quero gerenciar os estudantes e suas carteirinhas, para que eu possa controlar saldos, corrigir erros e acompanhar as transações do sistema._
+- [ ] **US02 - Segurança de Credenciais**
+  > **Como** usuário,  
+  > **Quero** que o sistema valide se minha senha está correta,  
+  > **Para** impedir que terceiros acessem meus dados financeiros ou acadêmicos.
 
-- **Carteirinha:**  
-  _Como carteirinha digital, quero armazenar e atualizar o saldo de cada estudante com segurança, para que todas as transações sejam registradas e o uso seja confiável._
+---
 
-- **Transação:**  
-  _Como transação, quero registrar e aplicar alterações de saldo na carteirinha digital com validação e rastreabilidade, para que o sistema possa garantir a integridade dos saldos e permitir auditoria._
+### 🧑‍💼 Ator: Administrador
+_Responsável pela gestão acadêmica, financeira e do acervo._
 
-- **Biblioteca:**  
-  _Como biblioteca, quero validar o acesso de estudantes por meio da carteirinha digital, para que apenas usuários regulares possam utilizar o espaço físico e os serviços oferecidos._
+#### 🔹 Gestão de Estudantes
+- [ ] **US03 - Cadastrar Novo Estudante**
+  > **Como** administrador,  
+  > **Quero** registrar novos alunos informando nome, CPF, matrícula, curso e senha,  
+  > **Para** que eles possam começar a utilizar os serviços da universidade.
 
-- **Livro:**  
-  _Como livro, quero armazenar minhas informações bibliográficas e estado de empréstimo, para que a biblioteca e os estudantes possam consultar minha disponibilidade e registrar empréstimos ou devoluções corretamente._
+- [ ] **US04 - Editar Dados de Estudante**
+  > **Como** administrador,  
+  > **Quero** alterar informações cadastrais de um estudante existente,  
+  > **Para** corrigir erros de digitação ou atualizar dados desatualizados.
 
-- **Graduação:**  
-  _Como estudante de graduação, quero utilizar minha carteirinha para acessar serviços e realizar empréstimos conforme as regras da graduação._
+- [ ] **US05 - Mobilidade Acadêmica**
+  > **Como** administrador,  
+  > **Quero** alterar o status acadêmico de um aluno (ex: mudar de curso ou modalidade),  
+  > **Para** refletir transferências internas ou mudanças de nível (Graduação/Pós).
 
-- **Pós-Graduação:**  
-  _Como estudante de pós-graduação, quero utilizar minha carteirinha digital para acessar serviços da universidade e empréstimos prolongados de livros, para que eu possa otimizar meu tempo e ter suporte às minhas atividades de pesquisa._
+- [ ] **US06 - Listagem Geral**
+  > **Como** administrador,  
+  > **Quero** visualizar a lista de todos os estudantes cadastrados,  
+  > **Para** ter controle sobre o corpo discente ativo no sistema.
+
+#### 🔹 Gestão Financeira & Configuração
+- [ ] **US07 - Recarga de Saldo Manual**
+  > **Como** administrador,  
+  > **Quero** inserir créditos manualmente na carteirinha de um estudante,  
+  > **Para** realizar atendimentos presenciais de recarga.
+
+- [ ] **US08 - Configurar Preço do RU**
+  > **Como** administrador,  
+  > **Quero** definir valores diferenciados para o Restaurante Universitário (Graduação vs. Pós),  
+  > **Para** ajustar a cobrança conforme as políticas de subsídio da universidade.
+
+- [ ] **US09 - Configurar Valor de Multa**
+  > **Como** administrador,  
+  > **Quero** alterar o valor da multa diária por atraso na biblioteca,  
+  > **Para** atualizar as penalidades sem precisar recompilar o código.
+
+- [ ] **US10 - Auditoria de Transações**
+  > **Como** administrador,  
+  > **Quero** consultar o extrato detalhado de qualquer estudante,  
+  > **Para** verificar gastos, identificar inconsistências ou resolver disputas de saldo.
+
+#### 🔹 Gestão da Biblioteca
+- [ ] **US11 - Cadastrar Livros**
+  > **Como** administrador,  
+  > **Quero** adicionar novos títulos ao acervo (informando autor, gênero e quantidade),  
+  > **Para** disponibilizá-los para empréstimo.
+
+- [ ] **US12 - Monitoramento de Empréstimos**
+  > **Como** administrador,  
+  > **Quero** visualizar todos os livros que estão emprestados no momento,  
+  > **Para** ter controle sobre o patrimônio da biblioteca.
+
+---
+
+### 🎓 Ator: Estudante
+_Funcionalidades para alunos de Graduação e Pós-Graduação._
+
+#### 🔹 Serviços Financeiros (Carteirinha)
+- [ ] **US13 - Consultar Saldo**
+  > **Como** estudante,  
+  > **Quero** visualizar meu saldo atual na tela inicial,  
+  > **Para** saber se tenho créditos suficientes para usar os serviços.
+
+- [ ] **US14 - Utilizar o RU (Restaurante Universitário)**
+  > **Como** estudante,  
+  > **Quero** pagar minha refeição debitando diretamente da carteirinha,  
+  > **Para** agilizar o atendimento e evitar o uso de dinheiro físico.
+
+- [ ] **US15 - Visualizar Extrato**
+  > **Como** estudante,  
+  > **Quero** ver o histórico das minhas últimas transações (débitos e créditos),  
+  > **Para** controlar meus gastos mensais.
+
+- [ ] **US16 - Visualizar Carteirinha Digital**
+  > **Como** estudante,  
+  > **Quero** gerar uma visualização gráfica da minha carteirinha (com foto/dados),  
+  > **Para** comprovar meu vínculo na entrada da universidade ou biblioteca.
+
+#### 🔹 Biblioteca & Acervo
+- [ ] **US17 - Realizar Empréstimo**
+  > **Como** estudante,  
+  > **Quero** pegar um livro emprestado caso ele esteja disponível e eu não tenha pendências,  
+  > **Para** auxiliar em meus estudos acadêmicos.
+
+- [ ] **US18 - Devolver Livro**
+  > **Como** estudante,  
+  > **Quero** registrar a devolução de um livro,  
+  > **Para** liberar o exemplar e estancar a contagem de dias de posse.
+
+- [ ] **US19 - Consultar Meus Empréstimos**
+  > **Como** estudante,  
+  > **Quero** listar os livros que estão comigo e suas datas de devolução,  
+  > **Para** evitar atrasos e multas.
+
+---
+
+### ⚙️ Requisitos de Sistema (Back-end)
+_Comportamentos automatizados e regras de negócio._
+
+- [ ] **US20 - Persistência de Dados**
+  > **Como** sistema,  
+  > **Devo** salvar automaticamente estudantes, livros e transações em arquivos (.txt/csv) ao fechar,  
+  > **Para** garantir que nenhum dado seja perdido entre execuções.
+
+- [ ] **US21 - Validação de Dados Cadastrais**
+  > **Como** sistema,  
+  > **Devo** validar o formato de CPF, E-mail e Matrícula durante o cadastro,  
+  > **Para** garantir a integridade e padronização do banco de dados.
+
+- [ ] **US22 - Cálculo Automático de Multa**
+  > **Como** sistema,  
+  > **Devo** calcular o valor da multa baseada nos dias de atraso no ato da devolução,  
+  > **Para** debitar o valor correto do saldo do estudante automaticamente.
+
+- [ ] **US23 - Bloqueio por Saldo Insuficiente**
+  > **Como** sistema,  
+  > **Devo** impedir transações (RU/Multas) caso o saldo seja insuficiente,  
+  > **Para** evitar que a carteirinha fique com saldo negativo (exceto em regras específicas).
 
 ---
 
 ## ⚙️ Funcionalidades Principais
 
-- Cadastro de pessoas e autenticação.  
-- Consulta e recarga de saldo por estudante.  
-- Registro e validação de transações financeiras.  
-- Controle de acesso à biblioteca por carteirinha.  
-- Empréstimo e devolução de livros.  
-- Diferenciação de regras entre graduação e pós-graduação.  
-- Ajustes administrativos e auditoria.  
+- **Gestão Completa de Acervo:** Cadastro e listagem de livros.
+- **Sistema Financeiro:** Recarga, débito (RU) e pagamento de multas.
+- **Restaurante Universitário:** Diferenciação de cobrança.
+- **Empréstimos Inteligentes:** Cálculo automático de dias de atraso e multa.
+- **Validações Robustas:** CPF, formatos de string e datas.
+- **Visualização Gráfica:** Geração de "imagem" da carteirinha (usando CImg).
+- **Persistência:** Salvamento automático em arquivos.
 
 ---
 
@@ -166,7 +265,8 @@ Representa um estudante de pós-graduação.
 
 - **Linguagem:** C++  
 - **Paradigma:** Programação Orientada a Objetos (POO)  
-- **Arquitetura:** Classes CRC, Abstração, Encapsulamento, Herança e Polimorfismo  
+- **Arquitetura:** Classes CRC, Abstração, Encapsulamento, Herança e Polimorfismo
+- **CImg.h:** Processamento e exibição de imagens.
 - **Entrada/Saída:** Arquivos e terminal  
 - **Possível extensão:** Persistência em banco de dados e interface gráfica (GUI)
 
@@ -176,38 +276,60 @@ Representa um estudante de pós-graduação.
 
 ```
 📁 carteirinha-digital
-├── main.cpp
-├── Pessoa.h / Pessoa.cpp
-├── Estudante.h / Estudante.cpp
-├── Administrador.h / Administrador.cpp
-├── Carteirinha.h / Carteirinha.cpp
-├── Biblioteca.h / Biblioteca.cpp
-├── Livro.h / Livro.cpp
-├── Transacao.h / Transacao.cpp
-├── Graduacao.h / Graduacao.cpp
-├── PosGraduacao.h / PosGraduacao.cpp
-├── README.md
+├── .vscode/ # Configurações do editor
+├── images/ # Recursos visuais (templates, códigos de barra)
+├── main.cpp # Ponto de entrada
+├── Sistema.hpp/cpp # Orquestrador
+├── Auxiliares.hpp/cpp # Utilitários e Validações
+├── Usuario.hpp/cpp # Classe Base
+├── Estudante.hpp/cpp # Classe Derivada
+├── EstudanteGraduacao.hpp/cpp
+├── EstudantePosGraduacao.hpp/cpp
+├── Administrador.hpp/cpp
+├── Carteirinha.hpp/cpp
+├── Transacao.hpp/cpp
+├── Biblioteca.hpp/cpp
+├── Livro.hpp/cpp
+├── Emprestimo.hpp/cpp
+├── Makefile # Automação de compilação
+└── *.txt # Bancos de dados (ex: banco_estudantes.txt)
 ```
 
 ---
 
 ## 🚀 Como Executar
 
-1. **Clone o repositório:**
-   ```bash
-   git clone https://github.com/INF112-Programacao2/20252-team-12.git
-   cd carteirinha-digital
-   ```
+### ⚠️ Pré-requisitos
+Para que a geração e visualização da carteirinha funcionem corretamente, é necessário instalar as dependências gráficas do X11 (utilizadas pela biblioteca `CImg`).
 
-2. **Compile o projeto (exemplo com g++):**
-   ```bash
-   g++ main.cpp Pessoa.cpp Estudante.cpp Administrador.cpp Carteirinha.cpp Biblioteca.cpp Livro.cpp Transacao.cpp Graduacao.cpp PosGraduacao.cpp -o carteirinha
-   ```
+**No Linux (Ubuntu/Debian):**
+```bash
+sudo apt-get update
+sudo apt-get install libx11-dev
+sudo apt-get install libjpeg-dev libpng-dev zlib1g-dev
+```
 
-3. **Execute o programa:**
-   ```bash
-   ./carteirinha
-   ```
+.  **Clone o repositório:**
+    ```bash
+    git clone [https://github.com/INF112-Programacao2/20252-team-12.git](https://github.com/INF112-Programacao2/20252-team-12.git)
+    cd 20252-team-12
+    ```
+
+2.  **Compile usando Make (Recomendado):**
+    ```bash
+    make
+    ```
+
+3.  **Ou compile manualmente (exemplo):**
+    _Nota: Pode ser necessário vincular bibliotecas gráficas (X11, pthread) dependendo do seu sistema operacional devido ao uso da CImg._
+    ```bash
+    g++ main.cpp Sistema.cpp Auxiliares.cpp Usuario.cpp Estudante.cpp EstudanteGraduacao.cpp EstudantePosGraduacao.cpp Administrador.cpp Carteirinha.cpp Transacao.cpp Biblioteca.cpp Livro.cpp Emprestimo.cpp -o carteirinha -lpthread -lX11
+    ```
+
+4.  **Execute:**
+    ```bash
+    ./carteirinha
+    ```
 
 ---
 
