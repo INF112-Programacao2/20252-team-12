@@ -298,11 +298,6 @@ void Estudante::recarregarCarteirinha()
     escreveDevagar("✅ Valor depositado com sucesso!\n", 50);
 }
 
-// TODO: (Thales) Implementar a função de gerar carteirinha
-// Pede para colocar a foto na pasta images com algum formato
-// Verificar se existe e trata os erros
-// Gera a carteirinha e coloca em uma pasta separada. Ex: 'Carteirinhas'
-// Tenta seguir o padrão das funções quando for pedir algum dado escrito e no UI
 void Estudante::visualizarCarteirinha()
 {
 
@@ -386,8 +381,6 @@ void Estudante::visualizarCarteirinha()
         primeiroNome = aux.substr(0, pos);
 
     primeiroNome = deixar_maiusculo(primeiroNome);
-
-    std::cout << primeiroNome;
 
     // procurar uma foto que é salva no formato "PRIMEIRONOMEALUNO_MATRICULA_foto.bmp" - ex: para Julio Soares dos Reis "JULIO_3213131_foto.bmp"
     std::string nome_foto_aluno = "images/";

@@ -56,11 +56,7 @@ void Biblioteca::listarLivrosDisponiveis(){
     }
 }
 
-//TODO: ajustar filtro para caso em que não encontra resultado
 void Biblioteca::listarLivros() const{
-
-    // TODO: Erro ao nao fazer busca
-
     if (acervo.empty()) {
         std::cout << "\n❌ Nenhum livro cadastrado no acervo.\n";
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

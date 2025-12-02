@@ -384,8 +384,6 @@ bool validarDATA(std::string &data)
     return true;
 }
 
-// TODO: Tratar para menos de 6 caracteres
-//alterado
 bool validarMATRICULA(std::string &matricula)
 {
     //preencher com zeros a esquerda até inteirar os 6 digitos
@@ -410,8 +408,6 @@ bool validarMATRICULA(std::string &matricula)
     return true;
 }
 
-
-// TODO: Aceitar apenas dentro da lista
 bool validarCURSO(std::string &cursoInput)
 {
     if (cursoInput.empty())
