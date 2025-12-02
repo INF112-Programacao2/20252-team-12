@@ -438,14 +438,22 @@ void Estudante::visualizarCarteirinha()
     std::string primeiroNome = (pos == std::string::npos ? aux : aux.substr(0, pos));
     primeiroNome = deixar_maiusculo(primeiroNome);
 
+    if(primeiroNome.empty()){
+        std::cerr<<"❌ Nome do aluno inválido!\n";
+        return;
+    }
+
     // Monta caminho do arquivo da foto do aluno
     std::string nome_foto = "images/" + primeiroNome + "_" + get_matricula() + "_foto";
     nome_foto += (opcao == 1 ? ".png" : (opcao == 2 ? ".jpg" : ".bmp"));
 
     CImg<unsigned char> aluno;
-
+    std::cout<<"Tentando carregar: "<<nome_foto<<std::endl;
     try { aluno.assign(nome_foto.c_str()); }
-    catch (...) { throw std::runtime_error("❌ Não foi possível carregar " + nome_foto); }
+    catch (const cimg_library::CImgIOException &erro) { 
+        std::cerr<<"❌ Não foi possivel carregar o arquivo da foto do aluno: " << nome_foto<<std::endl;
+        return;
+    }
 
     // --- REDIMENSIONAMENTO E INSERÇÃO DE ELEMENTOS ---
     aluno.resize(350, 525);        // Redimensiona foto para caber na carteirinha

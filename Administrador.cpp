@@ -915,7 +915,13 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
         }
 
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        aluno_carteirinha->visualizarCarteirinha();
+            if (aluno_carteirinha) {
+                 aluno_carteirinha->visualizarCarteirinha();
+             } 
+            else {
+               std::cout << "❌ Aluno não encontrado!\n";
+            }
+
     }
     // --- OPÇÃO 2: VISUALIZAR DE TODOS OS ESTUDANTES ---
     else if (opcao == 2) {
@@ -930,6 +936,10 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
             }
 
             for (auto estudante : estudantes) {
+                if(!estudante){
+                    std::cout<<"❌ Ponteiro inválido no vetor de estudantes, pulando...\n";
+                    continue;
+                }
                 escreveDevagar("Exibindo carteirinha de: ", 20);
                 std::cout << estudante->getNome() << " (" << estudante->get_matricula() << ")\n\n";
                 estudante->visualizarCarteirinha();
