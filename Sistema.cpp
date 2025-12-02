@@ -21,7 +21,6 @@ Sistema::Sistema() : estudantes()
 
 Sistema::~Sistema()
 {
-    this->salvarDados();
     for (auto estudante : this->estudantes)
     {
         delete estudante;
@@ -78,16 +77,9 @@ void Sistema::salvarDados()
     escreveLog("Dados salvos com sucesso!");
 }
 
+// TODO: ler RU e Multa
 void Sistema::carregarDados()
 {
-
-    if (this->estudantes.empty())
-    {
-        EstudanteGraduacao *estudante = new EstudanteGraduacao("Luiz Filipe Santos Oliveira", "14422059629", "22/09/2006", "luiz.s.oliveira@ufv.br", "luiz", "120553", "141", "SISU");
-        this->estudantes.push_back(estudante);
-        return;
-    }
-
     std::ifstream file("banco_estudantes.txt");
     if (!file.is_open())
     {
@@ -145,6 +137,12 @@ void Sistema::carregarDados()
         }
     }
     file.close();
+    if (this->estudantes.empty())
+    {
+        EstudanteGraduacao *estudante = new EstudanteGraduacao("Luiz Filipe Santos Oliveira", "14422059629", "22/09/2006", "luiz.s.oliveira@ufv.br", "luiz", "120553", "141", "SISU");
+        this->estudantes.push_back(estudante);
+        return;
+    }
 }
 
 std::vector<Estudante *> Sistema::get_estudantes()
@@ -348,7 +346,6 @@ void Sistema::menuAdministrador()
             case 4:
                 escreveLog("Administrador escolheu a opcao: 4 - Listar Livros");
                 this->biblioteca->listarLivros();
-                pausa(2);
                 apagarTerminal();
                 break;
             case 5:
@@ -371,17 +368,14 @@ void Sistema::menuAdministrador()
                 escreveLog("Administrador escolheu a opcao: 7 - Alterar sua Senha");
                 this->admin->alterarSenhaAdministrador();
                 this->salvarAdmin();
-                escreveDevagar("Nova senha salva com sucesso!", 20);
                 pausa(2);
                 apagarTerminal();
                 break;
             case 8:
                 escreveLog("Administrador escolheu a opcao: 8 - Consultar Transações");
                 this->admin->consultarTransacoes(this->estudantes);
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 std::cout << "\nAperte ENTER para continuar...";
-                std::cin.ignore();
-                pausa(2);
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 apagarTerminal();
                 break;
             case 9:
@@ -389,8 +383,6 @@ void Sistema::menuAdministrador()
                 this->admin->consultarEmprestimos(this->estudantes);
                 std::cout << "\nAperte ENTER para continuar...";
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cin.ignore();
-                pausa(2);
                 apagarTerminal();
                 break;
             case 10:
@@ -416,11 +408,7 @@ void Sistema::menuAdministrador()
                 break;
             case 13:
                 escreveLog("Administrador escolheu a opcao: 13 - Realizar reopção de curso");
-                escreveDevagar("Preencha os seguintes campos: ", 30);
-                std::cout << std::endl;
-                pausa(1);
                 this->admin->mobilidadeAcademica(this->estudantes);
-                escreveDevagar("Reopção realizada com sucesso!", 30);
                 pausa(2);
                 apagarTerminal();
                 break;
@@ -435,6 +423,7 @@ void Sistema::menuAdministrador()
                 throw std::invalid_argument("Digite um número válido!");
                 break;
             }
+            this->salvarDados();
         }
         catch (const std::exception &e)
         {
@@ -463,7 +452,7 @@ void Sistema::menuEstudante()
         std::cout << "7 - Pegar Livro Emprestado\n";
         std::cout << "8 - Devolver Livro\n";
         std::cout << "9 - Comer no RU\n";
-        std::cout << "0 - Sair\n";
+        std::cout << "10 - Sair\n";
         std::cout << "--------------------------------------------\n";
         std::cout << "Opção: ";
 
@@ -506,13 +495,11 @@ void Sistema::menuEstudante()
                 apagarTerminal();
                 break;
             case 5:
-                // TODO: nao esta mostrando os filtros e precisa de enter duplo
                 escreveLog("Estudante Escolheu a Opção: 5 - Buscar Livro no Acervo");
                 this->biblioteca->listarLivros();
                 apagarTerminal();
                 break;
             case 6:
-                // TODO: ID ambiguo, dá a entender que pode ser tanto o id da transação quanto do livro, especificar
                 escreveLog("Estudante Escolheu a Opcao: 6 - Ver Meus Empréstimos");
                 this->estudante_logado->exibirEmprestimos();
                 std::cout << "\nPressione ENTER para continuar...";
@@ -521,7 +508,6 @@ void Sistema::menuEstudante()
                 apagarTerminal();
                 break;
             case 7:
-                // TODO: perguntar primeiro se quer buscar o livro, esta caindo direto na busca
                 escreveLog("Estudante Escolheu a Opcao: 7 - Pegar Livro Emprestado");
                 this->estudante_logado->pegarLivro(*this->biblioteca);
                 pausa(2);
@@ -539,7 +525,7 @@ void Sistema::menuEstudante()
                 this->estudante_logado->comerRU();
                 apagarTerminal();
                 break;
-            case 0:
+            case 10:
                 escreveLog("Logout realizado");
                 escreveDevagar("📤 Fazendo logout...\n", 50);
                 pausa(2);
@@ -550,6 +536,7 @@ void Sistema::menuEstudante()
                 throw std::invalid_argument("Digite um número válido!");
                 break;
             }
+            this->salvarDados();
         }
         catch (const std::exception &e)
         {
@@ -599,12 +586,12 @@ void Sistema::iniciarSistema()
                 {
                     std::string email, senha;
 
-                    // ====== LEITURA DO EMAIL ====== TODO: TRATAMENTO DE ERRO
+                    // ====== LEITURA DO EMAIL ====== TODO: TRATAMENTO DE ERRO - Luiz
                     std::cout << "--------------------------------------------\n";
                     std::cout << "Email: ";
                     std::getline(std::cin, email);
 
-                    // ====== LEITURA DA SENHA ====== TODO: TRATAMENTO DE ERRO
+                    // ====== LEITURA DA SENHA ====== TODO: TRATAMENTO DE ERRO - Luiz
                     std::cout << "--------------------------------------------\n";
                     std::cout << "Senha: ";
                     std::getline(std::cin, senha);

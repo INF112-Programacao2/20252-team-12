@@ -133,10 +133,21 @@ void Estudante::devolverLivro(const Biblioteca &biblioteca)
         std::cout << "-> Escolha o ID do empréstimo que deseja devolver: ";
 
         int id_livro_devolvido;
-        std::cin >> id_livro_devolvido;
 
         try
         {
+            if (!(std::cin >> id_livro_devolvido))
+            {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                throw std::invalid_argument("❌ Entrada inválida! Digite um número.");
+            }
+
+            if (id_livro_devolvido < 1 || id_livro_devolvido > this->emprestimos.size())
+            {
+                throw std::invalid_argument("❌ Opção inválida! Digite 1 ou 2.");
+            }
+
             for (auto emprestimo : this->emprestimos)
             {
                 if (emprestimo->getId() == id_livro_devolvido && !emprestimo->isDevolvido())
@@ -246,6 +257,7 @@ void Estudante::devolverLivro(const Biblioteca &biblioteca)
     escreveDevagar("✅ Livro devolvido com sucesso!\n", 50);
 }
 
+// TODO: Não pode aceitar virgula - Luiz
 void Estudante::recarregarCarteirinha()
 {
     this->consultarSaldo();
@@ -254,7 +266,7 @@ void Estudante::recarregarCarteirinha()
 
     while (1)
     {
-        std::cout << "-> Digite o valor a ser depositado: ";
+        std::cout << "-> Digite o valor a ser depositado: R$";
         std::cin >> valor;
 
         try
@@ -263,11 +275,11 @@ void Estudante::recarregarCarteirinha()
             {
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                throw std::invalid_argument("❌ O valor deve ser um número\n");
+                throw std::invalid_argument("❌ O valor deve ser um número");
             }
             if (valor <= 0)
             {
-                throw std::invalid_argument("❌ O valor deve ser maior que 0\n");
+                throw std::invalid_argument("❌ O valor deve ser maior que 0");
             }
             break;
         }
@@ -287,16 +299,26 @@ void Estudante::recarregarCarteirinha()
 // Tenta seguir o padrão das funções quando for pedir algum dado escrito e no UI
 void Estudante::visualizarCarteirinha()
 {
+
+    std::cout << "\n============================================\n";
+    std::cout << "  📚 VISUALIZAÇÃO DE CARTEIRINHA 📚\n";
+    std::cout << "============================================\n";
+
     escreveDevagar("Antes de visualizar a carteirinha, adicione a imagem do estudante na pasta images (PRIMEIRONOMEALUNO_MATRICULA_(formato da imagem))", 30);
     std::cout << std::endl;
+    std::cout << "--------------------------------------------\n";
     escreveDevagar("Selecione qual e a extensao do arquivo adicionado:", 30);
     std::cout << std::endl;
+    std::cout << "--------------------------------------------\n";
     escreveDevagar("1 - .PNG", 20);
     std::cout << std::endl;
+    std::cout << "--------------------------------------------\n";
     escreveDevagar("2 - .JPG/JPEG", 20);
     std::cout << std::endl;
+    std::cout << "--------------------------------------------\n";
     escreveDevagar("3 - .BMP", 20);
     std::cout << std::endl;
+    std::cout << "--------------------------------------------\n";
 
     int opcao;
 
@@ -304,18 +326,18 @@ void Estudante::visualizarCarteirinha()
     {
         try
         {
-            std::cout << "Opção: ";
+            std::cout << "-> Opção: ";
 
             if (!(std::cin >> opcao))
             { // erro cin -- usuario digitou letra,simbolo,etc
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                throw std::invalid_argument("Entrada invalida! Digite um numero 1,2 ou 3.");
+                throw std::invalid_argument("❌ Entrada invalida! Digite um numero 1,2 ou 3.");
             }
 
             if (opcao < 1 || opcao > 3)
             {
-                throw std::invalid_argument("Opcao invalida! Digite 1, 2 ou 3.");
+                throw std::invalid_argument("❌ Opcao invalida! Digite 1, 2 ou 3.");
             }
 
             break; // caso a entrada e a opcao seja valida
@@ -336,7 +358,7 @@ void Estudante::visualizarCarteirinha()
     }
     catch (const cimg_library::CImgIOException &erro)
     {
-        throw std::runtime_error("Não foi possível carregar template.bmp");
+        throw std::runtime_error("❌ Não foi possível carregar template.bmp");
     }
 
     try
@@ -345,7 +367,7 @@ void Estudante::visualizarCarteirinha()
     }
     catch (const cimg_library::CImgIOException &erro)
     {
-        throw std::runtime_error("Não foi possível carregar barcode.bmp");
+        throw std::runtime_error("❌ Não foi possível carregar barcode.bmp");
     }
 
     // capturar o primeiro nome do estudante
@@ -375,7 +397,6 @@ void Estudante::visualizarCarteirinha()
     else if (opcao == 3)
         nome_foto_aluno += ".bmp";
 
-    std::cout << "Nome do arquivo: " << nome_foto_aluno << std::endl;
     CImg<unsigned char> aluno;
 
     try
@@ -384,7 +405,7 @@ void Estudante::visualizarCarteirinha()
     }
     catch (const cimg_library::CImgIOException &erro)
     {
-        throw std::runtime_error("Não foi possivel carregar o arquivo da foto do aluno: " + nome_foto_aluno); // TODO: a mensagem de erro não está muito atrativa, favor olhar
+        throw std::runtime_error("❌ Não foi possivel carregar o arquivo da foto do aluno: " + nome_foto_aluno);
     }
 
     // colocar a imagem do aluno e do codigo de barra no local certo
@@ -413,9 +434,8 @@ void Estudante::visualizarCarteirinha()
 
     aplicarTextoPreto(img, mask);
     img.save(nomeArquivo.c_str());
-    escreveDevagar("✅ Carteirinha criada com sucesso! Verifique a pasta 'Carteirinhas' para visualizar", 30);
-    std::cout << std::endl
-              << std::endl;
+    std::cout << "--------------------------------------------\n";
+    escreveDevagar("✅ Carteirinha criada com sucesso! Verifique a pasta 'Carteirinhas' para visualizar\n", 30);
 }
 
 void Estudante::consultarSaldo()

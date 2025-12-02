@@ -216,6 +216,7 @@ void escreveLog(std::string mensagem)
     fout.close();
 }
 
+// TODO: Aceitar acentos
 bool validarNOME(const std::string &nome)
 {
     if ((int)nome.size() < 2)
@@ -238,6 +239,7 @@ bool validarNOME(const std::string &nome)
     return true;
 }
 
+// TODO: Aceitar apenas @ufv
 bool validarEMAIL(const std::string &email)
 {
     int arroba = email.find('@');
@@ -329,6 +331,7 @@ bool validarSENHA(const std::string &senha)
     return true;
 }
 
+// TODO: Não esta colocando 0 antes de 22/9/2006 - Luiz
 bool validarDATA(const std::string &data)
 {
     // aceita D/M/YYYY, DD/MM/YYYY, com '/' como separador
@@ -376,6 +379,7 @@ bool validarDATA(const std::string &data)
     return true;
 }
 
+// TODO: Tratar para menos de 6 caracteres
 bool validarMATRICULA(const std::string &matricula)
 {
     // Deve ter exatamente 6 caracteres
@@ -385,6 +389,7 @@ bool validarMATRICULA(const std::string &matricula)
     }
 
     // Verifica se todos são números
+    
     for (char c : matricula)
     {
         if (!isdigit((unsigned char)c))
@@ -396,6 +401,8 @@ bool validarMATRICULA(const std::string &matricula)
     return true;
 }
 
+// TODO: Não pode aceitar caracter alfabetico
+// Esta aceitando o caracter 'a'
 bool validarCURSO(std::string &cursoInput)
 {
     if (cursoInput.empty())
@@ -469,25 +476,7 @@ bool validarTIPOPOS(const std::string &tipopos)
 
     throw std::invalid_argument("❌ Tipo de pós-graduação inválido. As opções permitidas são: MEST ou DOUT.");
 }
-bool validarLINHAPESQUISA(const std::string &linhapesquisa)
-{
-    if (linhapesquisa.size() < 5)
-    {
-        throw std::invalid_argument("❌ A linha de pesquisa deve conter pelo menos 5 caracteres.");
-    }
 
-    for (unsigned char c : linhapesquisa)
-    {
-        bool letra = std::isalpha(c);
-        bool espaco = (c == ' ');
-
-        if (!letra && !espaco)
-        {
-            throw std::invalid_argument("❌ A linha de pesquisa deve conter apenas letras e espaços.");
-        }
-    }
-    return true;
-}
 bool validarTITULO(const std::string &titulo)
 {
     if (titulo.empty())

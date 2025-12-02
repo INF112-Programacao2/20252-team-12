@@ -3,7 +3,10 @@
 # ==========================================
 
 CXX = g++
-CXXFLAGS = -Wall -std=c++17 -g
+CXXFLAGS = -Wall -std=c++17 -g \
+           -Dcimg_use_jpeg -Dcimg_use_png
+
+LDFLAGS = -ljpeg -lpng -lz -lm -lpthread -lX11
 
 TARGET = main
 
@@ -27,7 +30,7 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	@echo "Linkando o executável: $(TARGET)..."
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
 	@echo "Compilação concluída com sucesso!"
 
 %.o: %.cpp
@@ -36,7 +39,7 @@ $(TARGET): $(OBJS)
 
 clean:
 	@echo "Limpando arquivos temporários..."
-	del /Q $(OBJS) $(TARGET).exe 2>nul || true
+	rm -f $(OBJS) $(TARGET)
 
 run: $(TARGET)
 	@echo "Executando o programa..."
