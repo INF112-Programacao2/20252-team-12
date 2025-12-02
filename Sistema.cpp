@@ -20,6 +20,7 @@ Sistema::Sistema() : estudantes()
     this->carregarDados(); // Carrega os estudantes existentes
     this->carregarLivros();
     this->carregarEmprestimos();
+    this->carregarTransacoes();
 }
 
 Sistema::~Sistema()
@@ -27,6 +28,7 @@ Sistema::~Sistema()
     this->salvarAdmin();
     this->salvarDados();
     this->salvarEmprestimos();
+    this->salvarTransacoes();
 
     for (auto estudante : this->estudantes)
     {
@@ -152,8 +154,87 @@ void Sistema::carregarDados()
     }
 }
 
-// TODO: salvarTransações
-// TODO: carregarTransações
+void Sistema::salvarTransacoes()
+{
+    std::ofstream file("banco_transacoes.txt"); 
+
+    if (!file.is_open())
+    {
+        escreveLog("Erro ao salvar transações!");
+        return;
+    }
+
+    // Formato: MATRICULA;TIPO;VALOR;DATA
+    for (Estudante *est : this->estudantes)
+    {
+        if (est->get_carteirinha()) 
+        {
+            for (Transacao *t : est->get_carteirinha()->getExtrato())
+            {
+                file << est->get_matricula() << ";"
+                     << t->get_tipo_transacao() << ";"
+                     << t->get_valor_transacao() << ";"
+                     << t->get_data() << "\n";
+            }
+        }
+    }
+    file.close();
+    escreveLog("Log de transações salvo com sucesso.");
+}
+
+void Sistema::carregarTransacoes()
+{
+    std::ifstream file("banco_transacoes.txt");
+    if (!file.is_open())
+    {
+        escreveLog("Arquivo banco_transacoes.txt não encontrado. Criando novo log.");
+        return;
+    }
+
+    std::string linha;
+    while (std::getline(file, linha))
+    {
+        std::stringstream ss(linha);
+        std::string segmento;
+        std::vector<std::string> dados;
+
+        while (std::getline(ss, segmento, ';'))
+        {
+            dados.push_back(segmento);
+        }
+
+        if (dados.size() >= 4)
+        {
+            std::string matricula = dados[0];
+            std::string tipo = dados[1];
+            double valor;
+            try {
+                valor = std::stod(dados[2]);
+            } catch (...) { continue; }
+            std::string data = dados[3];
+
+            Estudante *estudanteAlvo = nullptr;
+            for (auto est : this->estudantes)
+            {
+                if (est->get_matricula() == matricula)
+                {
+                    estudanteAlvo = est;
+                    break;
+                }
+            }
+
+            if (estudanteAlvo != nullptr && estudanteAlvo->get_carteirinha() != nullptr)
+            {
+                Transacao *novaTransacao = new Transacao(tipo, valor, data);
+                
+                novaTransacao->set_origem(*estudanteAlvo);
+
+                estudanteAlvo->get_carteirinha()->adicionarTransacao(novaTransacao);
+            }
+        }
+    }
+    file.close();
+}
 
 void Sistema::salvarEmprestimos()
 {
@@ -537,6 +618,7 @@ void Sistema::menuAdministrador()
             this->salvarDados();
             this->salvarEmprestimos();
             this->salvarAdmin();
+            this->salvarTransacoes();
         }
         catch (const std::exception &e)
         {
@@ -653,6 +735,7 @@ void Sistema::menuEstudante()
             }
             this->salvarDados();
             this->salvarEmprestimos();
+            this->salvarTransacoes();
         }
         catch (const std::exception &e)
         {

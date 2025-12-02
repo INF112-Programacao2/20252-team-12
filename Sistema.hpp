@@ -25,6 +25,8 @@ private:
     void menuEstudante();
     void carregarEmprestimos();
     void salvarEmprestimos();
+    void carregarTransacoes();
+    void salvarTransacoes();
 
 public:
     Sistema();
