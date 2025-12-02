@@ -216,21 +216,20 @@ void escreveLog(std::string mensagem)
     fout.close();
 }
 
-// TODO: Aceitar acentos
 bool validarNOME(const std::string &nome)
 {
-    if ((int)nome.size() < 2)
+    if (nome.size() < 2)
     {
         throw std::invalid_argument("❌ Nome muito curto.");
     }
 
     for (unsigned char c : nome)
     {
-        bool letraOuNumero = std::isalpha(c); // vai pegar as letras normais
+        bool letraNormal = std::isalpha(c);
         bool espaco = (c == ' ');
+        bool acentuadoOuUnicode = (c >= 128);
 
-        // Qualquer coisa que não seja letra nem espaço é inválida
-        if (!letraOuNumero && !espaco)
+        if (!letraNormal && !espaco && !acentuadoOuUnicode)
         {
             throw std::invalid_argument("❌ Nome contém caracteres inválidos.");
         }
@@ -239,30 +238,31 @@ bool validarNOME(const std::string &nome)
     return true;
 }
 
-// TODO: Aceitar apenas @ufv
 bool validarEMAIL(const std::string &email)
 {
     int arroba = email.find('@');
     int ponto = email.rfind('.');
 
+    // precisa ter algo antes do @
     if (arroba < 1)
     {
         throw std::invalid_argument("❌ Email deve conter '@' e algo antes dele.");
     }
 
-    if (ponto < arroba + 2)
-    {
-        throw std::invalid_argument("❌ Domínio do email inválido.");
-    }
-
-    if (ponto == (int)email.size() - 1)
-    {
-        throw std::invalid_argument("❌ Email deve terminar com um domínio válido (.com, .br).");
-    }
-
+    // email só pode ter um @
     if (email.find('@', arroba + 1) != std::string::npos)
     {
         throw std::invalid_argument("❌ Email não pode ter dois '@'.");
+    }
+
+    // domínio obrigatório da UFV
+    const std::string dominioUFV = "@ufv.br";
+
+    // verificar se termina exatamente com @ufv.br
+    if (email.size() <= dominioUFV.size() ||
+        email.substr(email.size() - dominioUFV.size()) != dominioUFV)
+    {
+        throw std::invalid_argument("❌ Email inválido. Use apenas emails institucionais @ufv.br.");
     }
 
     return true;
@@ -389,7 +389,7 @@ bool validarMATRICULA(const std::string &matricula)
     }
 
     // Verifica se todos são números
-    
+
     for (char c : matricula)
     {
         if (!isdigit((unsigned char)c))
@@ -524,4 +524,4 @@ bool validarTITULO(const std::string &titulo)
 
     return true;
 }
-//fazer validaTIPO
+// fazer validaTIPO
