@@ -65,7 +65,6 @@ void Biblioteca::listarLivros() const{
     }
 
     std::string filtro;
-    apagarTerminal();
     std::cout << "\n=================== 🔍 CONSULTA AO ACERVO 🔍 ===================\n";
     std::cout << "Digite um termo para filtrar. Ex: Titulo, Autor ou Area\n";
     std::cout << "Ou pressione [ENTER] para ver todos os livros: ";

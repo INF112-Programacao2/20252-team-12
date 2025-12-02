@@ -617,6 +617,7 @@ void Sistema::menuEstudante()
                 break;
             case 7:
                 escreveLog("Estudante Escolheu a Opcao: 7 - Pegar Livro Emprestado");
+                apagarTerminal();
                 this->estudante_logado->pegarLivro(*this->biblioteca);
                 pausa(2);
                 apagarTerminal();
