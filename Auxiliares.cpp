@@ -623,7 +623,7 @@ bool validarCURSO(std::string &cursoInput)
 
     for (char c : cursoInput)
     { // contra entrada de caracter alfabetico
-        if (!isdigit((unsigned char)c))
+        if (c < '0' || c > '9')
             throw std::invalid_argument("❌ O código do curso deve conter APENAS números.");
     }
 
@@ -638,6 +638,7 @@ bool validarCURSO(std::string &cursoInput)
 
     std::string linha;
     bool header = true;
+    bool encontrado = false;
 
     while (std::getline(arquivo, linha))
     {
@@ -657,9 +658,12 @@ bool validarCURSO(std::string &cursoInput)
             stringMaiuscula(cursoInput) == stringMaiuscula(nome))
         {
             cursoInput = codigo;
+            encontrado = true;
             break;
         }
     }
+    if(!encontrado)
+        throw std::invalid_argument("❌ O código informado NÃO corresponde a nenhum curso existente.");
 
     return true;
 }

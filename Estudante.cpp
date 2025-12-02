@@ -14,6 +14,7 @@
 #include <chrono>                      // Duplicado (pode ser removido)
 #include <thread>                      // Para threads (se necessário)
 #include <filesystem>                  // Para operações com diretórios (create_directory, exists)
+#include <vector>                      // Para vetor de extensões de imagem
 
 // ========== CONSTRUTOR ==========
 // Inicializa um estudante herdando dados do Usuario e criando automaticamente uma carteirinha
@@ -389,47 +390,24 @@ void Estudante::visualizarCarteirinha()
     std::cout << "  📚 VISUALIZAÇÃO DE CARTEIRINHA 📚\n";
     std::cout << "============================================\n";
 
-    escreveDevagar("Antes de visualizar, adicione a imagem do aluno na pasta images.", 30);
+    escreveDevagar("Antes de visualizar, adicione a imagem do aluno na pasta images. A extensão da imagem pode ser: .png / .jpg / .bmp", 30);
     std::cout << "\n--------------------------------------------\n";
-
-    std::cout << "Selecione a extensão da imagem:\n";
-    std::cout << "1 - .PNG\n2 - .JPG/JPEG\n3 - .BMP\n--------------------------------------------\n";
-
-    int opcao;
-
-    // --- SELEÇÃO DA EXTENSÃO DA IMAGEM ---
-    while (1)
-    {
-        try
-        {
-            std::cout << "-> Opção: ";
-            if (!(std::cin >> opcao))
-            {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                throw std::invalid_argument("❌ Entrada inválida!");
-            }
-
-            if (opcao < 1 || opcao > 3)
-                throw std::invalid_argument("❌ Opção inválida!");
-
-            break;
-        }
-        catch (std::exception &e)
-        {
-            std::cout << e.what() << "\n";
-        }
-    }
 
     // --- CARREGAMENTO DE ARQUIVOS DE IMAGEM ---
     CImg<unsigned char> img;
     CImg<unsigned char> barcode;
 
     try { img.assign("images/template.bmp"); }
-    catch (...) { throw std::runtime_error("❌ Não foi possível carregar template.bmp"); }
+    catch (const cimg_library::CImgIOException&) {
+        std::cerr<<"❌ Erro: não foi possível carregar 'images/template.bmp'.\n";
+        return;
+     }
 
     try { barcode.assign("images/codigo_barra.bmp"); }
-    catch (...) { throw std::runtime_error("❌ Não foi possível carregar barcode.bmp"); }
+    catch (const cimg_library::CImgIOException&) { 
+        std::cerr << "❌ Erro: não foi possível carregar 'images/codigo_barra.bmp'.\n";
+        return;
+    }
 
     // --- PREPARAÇÃO DE DADOS ---
     // Extrai primeiro nome do estudante
@@ -441,14 +419,37 @@ void Estudante::visualizarCarteirinha()
     if(primeiroNome.empty()){
         std::cerr<<"❌ Nome do aluno inválido!\n";
         return;
-    }
+        }
 
     // Monta caminho do arquivo da foto do aluno
-    std::string nome_foto = "images/" + primeiroNome + "_" + get_matricula() + "_foto";
-    nome_foto += (opcao == 1 ? ".png" : (opcao == 2 ? ".jpg" : ".bmp"));
+    std::string base = "images/" + primeiroNome + "_" + get_matricula() + "_foto";
+    
+    //Descobrir extensão da imagem automaticamente
+    std::vector <std::string> extensoes = {".png", ".jpg", ".jpeg", ".bmp"};
+
+    std::string nome_foto;
+
+    for(auto &extensao: extensoes){
+        std::string tentativa = base + extensao;
+        if(std::filesystem::exists(tentativa)){
+            nome_foto = tentativa;
+            break;
+        }
+    }
+
+    if(nome_foto.empty()){
+        std::cerr<<"❌ Nenhuma foto encontrada!\n";
+        std::cerr<<"Procurei pelos arquivos:\n";
+        for(auto &extensao : extensoes){
+            std::cerr<<" - "<<base + extensao <<std::endl;
+        }
+        return;
+    }
 
     CImg<unsigned char> aluno;
-    std::cout<<"Tentando carregar: "<<nome_foto<<std::endl;
+    std::cout<<"📸 Foto encontrada: " << nome_foto << "\n";
+    std::cout<<"Carregando imagem..."<<std::endl;
+    
     try { aluno.assign(nome_foto.c_str()); }
     catch (const cimg_library::CImgIOException &erro) { 
         std::cerr<<"❌ Não foi possivel carregar o arquivo da foto do aluno: " << nome_foto<<std::endl;
@@ -487,6 +488,7 @@ void Estudante::visualizarCarteirinha()
     std::cout << "--------------------------------------------\n";
     escreveDevagar("✅ Carteirinha criada com sucesso!\n", 30);
 }
+
 
 // ========== CONSULTAR SALDO ==========
 // Exibe o saldo atual da carteirinha formatado como moeda
