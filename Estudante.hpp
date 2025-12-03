@@ -129,6 +129,13 @@ public:
     //   - EstudantePosGraduacao: cobra valor diferente de Graduação
     // Nota: torna Estudante uma classe abstrata (não pode ser instanciada diretamente)
     virtual void comerRU() = 0;
+    
+    // Método virtual puro:
+    // - Obriga todas as subclasses concretas (Graduação/Pos) a implementar
+    //   uma rotina para exibir os dados do estudante.
+    // - O '= 0' torna a classe abstrata (não pode instanciá-la diretamente).
+    // - O 'const' indica que a função não modifica o objeto.
+    virtual void exibirDados() const = 0;
 
     // ========== GETTERS ==========
     

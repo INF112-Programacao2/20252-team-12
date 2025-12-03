@@ -114,6 +114,16 @@ public:
     //   4. Exibe mensagem de confirmação com efeito de digitação lenta
     // Exceção: std::invalid_argument se saldo < valor do RU
     void comerRU() override;
+
+    // ========== MÉTODOS DE EXIBIÇÃO E POLIMORFISMO ==========
+
+    // Exibe os dados detalhados do estudante de graduação na consola
+    // Implementa método abstrato puro da classe Estudante
+    // Saída formatada:
+    //   - Dados básicos (Nome, Matrícula, Curso)
+    //   - Nível de ensino: "Graduação"
+    //   - Modalidade de ingresso (ex: SISU, TRANSF)
+    void exibirDados() const override;
 };
 
 #endif

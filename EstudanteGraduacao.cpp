@@ -3,6 +3,7 @@
 #include <stdexcept>                  // Para exceções padrão (std::invalid_argument)
 #include <thread>                     // Para operações com threads (se necessário)
 #include <chrono>                     // Para operações com tempo
+#include <iomanip>                    // Para formatação de saída (std::setprecision, std::fixed)
 #include <iostream>                   // Para entrada/saída padrão
 
 // ========== INICIALIZAÇÃO DE ATRIBUTOS ESTÁTICOS ==========
@@ -104,4 +105,25 @@ void EstudanteGraduacao::comerRU() {
     // --- CONFIRMAÇÃO ---
     // Exibe mensagem com efeito de digitação lenta
     escreveDevagar("\n✅ Aproveite sua refeição!\n", 50);
+}
+
+// ========== MÉTODOS DE EXIBIÇÃO E POLIMORFISMO ==========
+
+// Exibe os dados detalhados do estudante de graduação na consola
+// Implementa método abstrato puro da classe Estudante
+// Saída formatada:
+//   - Dados básicos (Nome, Matrícula, Curso)
+//   - Nível de ensino: "Graduação"
+//   - Modalidade de ingresso (ex: SISU, TRANSF)
+void EstudanteGraduacao::exibirDados() const {
+    std::cout << "--------------------------------------------\n";
+    std::cout << "NOME: " << this->nome << std::endl;
+    std::cout << "MATRÍCULA: " << this->matricula << std::endl;
+    std::cout << "CURSO: " << this->curso << std::endl;
+    std::cout << "EMAIL: " << this->email << std::endl;
+    std::cout << std::fixed << std::setprecision(2) << "SALDO CARTEIRINHA: " << this->carteirinha->getSaldo() << std::endl;
+    std::cout << "EMPRÉSTIMOS REALIZADOS: " << this->emprestimos.size() << std::endl;
+    std::cout << "NÍVEL: Graduação\n";
+    std::cout << "MODALIDADE: " << this->modalidade << std::endl;
+    std::cout << "--------------------------------------------\n";
 }

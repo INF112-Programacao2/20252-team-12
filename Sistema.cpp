@@ -847,16 +847,17 @@ void Sistema::menuEstudante()
         
         // --- OPÇÕES DO MENU ---
         std::cout << "--------------------------------------------\n";
-        std::cout << "1 - Consultar Saldo\n";
-        std::cout << "2 - Recarregar Carteirinha\n";
-        std::cout << "3 - Visualizar Carteirinha\n";
-        std::cout << "4 - Ver Extrato Financeiro\n";
-        std::cout << "5 - Buscar Livro no Acervo\n";
-        std::cout << "6 - Ver Meus Empréstimos\n";
-        std::cout << "7 - Pegar Livro Emprestado\n";
-        std::cout << "8 - Devolver Livro\n";
-        std::cout << "9 - Comer no RU\n";
-        std::cout << "10 - Sair\n";
+        std::cout << "1 - Visualizar Suas Informações\n";
+        std::cout << "2 - Consultar Saldo\n";
+        std::cout << "3 - Recarregar Carteirinha\n";
+        std::cout << "4 - Visualizar Carteirinha\n";
+        std::cout << "5 - Ver Extrato Financeiro\n";
+        std::cout << "6 - Buscar Livro no Acervo\n";
+        std::cout << "7 - Ver Meus Empréstimos\n";
+        std::cout << "8 - Pegar Livro Emprestado\n";
+        std::cout << "9 - Devolver Livro\n";
+        std::cout << "10 - Comer no RU\n";
+        std::cout << "11 - Sair\n";
         std::cout << "--------------------------------------------\n";
         std::cout << "Opção: ";
 
@@ -875,65 +876,73 @@ void Sistema::menuEstudante()
             switch (opcao)
             {
             case 1:
-                escreveLog("Estudante Escolheu a Opcao: 1 - Consultar Saldo");
+                escreveLog("Estudante Escolheu a Opcao: 1 - Visualizar Suas Informações");
+                this->estudante_logado->exibirDados();
+                std::cout << "\nPressione ENTER para continuar...";
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cin.ignore();
+                apagarTerminal();
+                break;
+            case 2:
+                escreveLog("Estudante Escolheu a Opcao: 2 - Consultar Saldo");
                 this->estudante_logado->consultarSaldo();
                 pausa(2);
                 apagarTerminal();
                 break;
-            case 2:
-                escreveLog("Estudante Escolheu a Opcao: 2 - Recarregar Carteirinha");
+            case 3:
+                escreveLog("Estudante Escolheu a Opcao: 3 - Recarregar Carteirinha");
                 this->estudante_logado->recarregarCarteirinha();
                 pausa(2);
                 apagarTerminal();
                 break;
-            case 3:
-                escreveLog("Estudante Escolheu a Opcao: 3 - Visualizar Carteirinha");
+            case 4:
+                escreveLog("Estudante Escolheu a Opcao: 4 - Visualizar Carteirinha");
                 this->estudante_logado->visualizarCarteirinha();
                 pausa(2);
                 apagarTerminal();
                 break;
-            case 4:
-                escreveLog("Estudante Escolheu a Opcao: 4 - Ver Extrato Financeiro");
+            case 5:
+                escreveLog("Estudante Escolheu a Opcao: 5 - Ver Extrato Financeiro");
                 this->estudante_logado->get_carteirinha()->exibir_extrato();
                 std::cout << "\nPressione ENTER para continuar...";
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 std::cin.ignore();
                 apagarTerminal();
                 break;
-            case 5:
-                escreveLog("Estudante Escolheu a Opção: 5 - Buscar Livro no Acervo");
+            case 6:
+                escreveLog("Estudante Escolheu a Opção: 6 - Buscar Livro no Acervo");
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 this->biblioteca->listarLivros();
                 apagarTerminal();
                 break;
-            case 6:
-                escreveLog("Estudante Escolheu a Opcao: 6 - Ver Meus Empréstimos");
+            case 7:
+                escreveLog("Estudante Escolheu a Opcao: 7 - Ver Meus Empréstimos");
                 this->estudante_logado->exibirEmprestimos();
                 std::cout << "\nPressione ENTER para continuar...";
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 std::cin.ignore();
                 apagarTerminal();
                 break;
-            case 7:
-                escreveLog("Estudante Escolheu a Opcao: 7 - Pegar Livro Emprestado");
+            case 8:
+                escreveLog("Estudante Escolheu a Opcao: 8 - Pegar Livro Emprestado");
                 apagarTerminal();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 this->estudante_logado->pegarLivro(*this->biblioteca);
                 pausa(2);
                 apagarTerminal();
                 break;
-            case 8:
-                escreveLog("Estudante Escolheu a Opcao: 8 - Devolver Livro");
+            case 9:
+                escreveLog("Estudante Escolheu a Opcao: 9 - Devolver Livro");
                 this->estudante_logado->devolverLivro(*this->biblioteca);
                 pausa(2);
                 apagarTerminal();
                 break;
-            case 9:
-                escreveLog("Estudante Escolheu a Opcao: 9 - ComerRU");
+            case 10:
+                escreveLog("Estudante Escolheu a Opcao: 10 - ComerRU");
                 this->estudante_logado->comerRU();
                 apagarTerminal();
                 break;
-            case 10:
+            case 11:
                 escreveLog("Logout realizado");
                 escreveDevagar("📤 Fazendo logout...\n", 50);
                 pausa(2);
