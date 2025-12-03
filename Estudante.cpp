@@ -392,6 +392,9 @@ void Estudante::visualizarCarteirinha()
 
     escreveDevagar("Antes de visualizar, adicione a imagem do aluno na pasta images. A extensão da imagem pode ser: .png / .jpg / .bmp", 30);
     std::cout << "\n--------------------------------------------\n";
+    std::cout << "Aperte ENTER para continuar...\n";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.get();
 
     // --- CARREGAMENTO DE ARQUIVOS DE IMAGEM ---
     CImg<unsigned char> img;

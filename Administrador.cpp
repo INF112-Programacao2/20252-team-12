@@ -886,17 +886,12 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
                 if (matricula_aluno == "0")
                     return;
 
-                if (validarMATRICULA(matricula_aluno))
-                {
-                    break;
-                }
-
                 for (auto estudante : estudantes)
                 {
                     if (estudante->get_matricula() == matricula_aluno)
                     {
                         aluno_carteirinha = estudante;
-                        break;
+                        aluno_carteirinha->visualizarCarteirinha();
                     }
                 }
 
@@ -904,7 +899,6 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
                 {
                     throw std::invalid_argument("❌ Credenciais inválidas! Não foi possível localizar o aluno com essa matrícula.");
                 }
-
                 break;
             }
             catch (const std::exception &e)
@@ -913,15 +907,6 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Limpa buffer em caso de erro
             }
         }
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            if (aluno_carteirinha) {
-                 aluno_carteirinha->visualizarCarteirinha();
-             } 
-            else {
-               std::cout << "❌ Aluno não encontrado!\n";
-            }
-
     }
     // --- OPÇÃO 2: VISUALIZAR DE TODOS OS ESTUDANTES ---
     else if (opcao == 2) {
@@ -932,12 +917,12 @@ void Administrador::visualizarCarteirinhas(std::vector<Estudante *> &estudantes)
             std::cout << "\n\n";
 
             if (estudantes.empty()) {
-                std::cout << "❌  Nenhum estudante cadastrado.\n";
+                throw std::invalid_argument("❌ Nenhum estudante cadastrado.");
             }
 
             for (auto estudante : estudantes) {
                 if(!estudante){
-                    std::cout<<"❌ Ponteiro inválido no vetor de estudantes, pulando...\n";
+                    std::cerr << "❌ Ponteiro inválido no vetor de estudantes, pulando...\n";
                     continue;
                 }
                 escreveDevagar("Exibindo carteirinha de: ", 20);
