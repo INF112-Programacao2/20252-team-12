@@ -32,7 +32,6 @@ Módulo de funções estáticas e utilitárias.
 - Processamento de imagens (via biblioteca `CImg`) para visualização da carteirinha.
 
 ### 👤 Usuario (Base)
-Substitui a antiga classe `Pessoa`. Representa um usuário genérico.
 
 **Principais responsabilidades:**
 - Armazenar credenciais (CPF, Senha) e dados pessoais.
